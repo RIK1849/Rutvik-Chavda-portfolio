@@ -11,8 +11,38 @@ export default function ContactSection() {
   const onSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
     setStatus("sending");
-    await new Promise(r => setTimeout(r, 1100));
-    setStatus("sent");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "YOUR_ACCESS_KEY_HERE", // ⚠️ YOU MUST REPLACE THIS LINE
+          name: form.name,
+          email: form.email,
+          subject: form.subject,
+          message: form.message
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setStatus("sent");
+        setForm({ name: "", email: "", subject: "", message: "" }); // Clears the form
+      } else {
+        console.log("Error sending message", result);
+        setStatus("idle");
+        alert("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setStatus("idle");
+      alert("Network error. Please try again later.");
+    }
   };
 
   return (
@@ -33,7 +63,7 @@ export default function ContactSection() {
             <div className="con-links">
               {[
                 { icon:"📞", lbl:"PHONE",    val:"+91 722 689 4089",                  href:"tel:+917226894089"},
-                { icon:"✉️", lbl:"EMAIL",    val:"chavdarutvik1849@gmail.com",         href:"mailto:chavdarutvik1849@gmail.com"},
+                { icon:"✉️", lbl:"EMAIL",    val:"chavdarutvik1849@gmail.com",        href:"mailto:chavdarutvik1849@gmail.com"},
                 { icon:"💼", lbl:"LINKEDIN", val:"linkedin.com/in/rutvikchavda-584b37197", href:"https://www.linkedin.com/in/rutvik-chavda-584b37197/"},
                 { icon:"🐙", lbl:"GITHUB",   val:"github.com/RIK1849",                href:"https://github.com/RIK1849"},
                 { icon:"📍", lbl:"LOCATION", val:"Ahmedabad, Gujarat, India",         href:"#"},
@@ -71,7 +101,7 @@ export default function ContactSection() {
                   <div key={field} className="frm-group">
                     <label className="frm-label" htmlFor={field}>{field.toUpperCase()}</label>
                     <input id={field} name={field} type={field === "email" ? "email" : "text"}
-                      className="frm-input" value={form[field]} onChange={onChange}
+                      className="frm-input" value={form[field as keyof typeof form]} onChange={onChange}
                       placeholder={field === "name" ? "Your Full Name" : field === "email" ? "you@company.com" : "Senior Security Engineer Opportunity"}
                       autoComplete="off"
                     />
