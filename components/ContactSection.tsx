@@ -20,7 +20,7 @@ export default function ContactSection() {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: "YOUR_ACCESS_KEY_HERE", // ⚠️ YOU MUST REPLACE THIS LINE
+          access_key: "9f72abfd-a57b-4428-96e0-0f935d46f6b1", // ⚠️ YOU MUST REPLACE THIS LINE
           name: form.name,
           email: form.email,
           subject: form.subject,
