@@ -1,24 +1,28 @@
+import React from "react";
+import AnimatedBackground from "@/components/AnimatedBackground";
+import CustomCursor       from "@/components/CustomCursor";
+import Navbar             from "@/components/Navbar";
+import HeroSection        from "@/components/HeroSection";
+import AboutSection       from "@/components/AboutSection";
+import ExperienceSection  from "@/components/ExperienceSection";
+import ProjectsSection    from "@/components/ProjectsSection";
+import ContactSection     from "@/components/ContactSection";
+import Footer             from "@/components/Footer";
+
 export default function Home() {
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        padding: '2rem',
-        textAlign: 'center',
-      }}
-    >
-      <h1
-        style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}
-      >
-        Rutvik Chavda
-      </h1>
-      <p style={{ fontSize: '1.25rem', maxWidth: '600px', opacity: 0.8 }}>
-        Endpoint Security Engineer | EDR XDR | Threat Hunting
-      </p>
-    </div>
+    <>
+      <AnimatedBackground />
+      <CustomCursor />
+      <Navbar />
+      <main>
+        <HeroSection />
+        <AboutSection />
+        <ExperienceSection />
+        <ProjectsSection />
+        <ContactSection />
+      </main>
+      <Footer />
+    </>
   );
 }
