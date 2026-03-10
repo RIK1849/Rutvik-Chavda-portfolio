@@ -34,7 +34,7 @@ export default function ContactSection() {
               {[
                 { icon:"📞", lbl:"PHONE",    val:"+91 722 689 4089",                  href:"tel:+917226894089"},
                 { icon:"✉️", lbl:"EMAIL",    val:"chavdarutvik1849@gmail.com",         href:"mailto:chavdarutvik1849@gmail.com"},
-                { icon:"💼", lbl:"LINKEDIN", val:"linkedin.com/in/rutvikchavda-584b37197", href:"https://www.linkedin.com/in/rutvikchavda-584b37197"},
+                { icon:"💼", lbl:"LINKEDIN", val:"linkedin.com/in/rutvikchavda-584b37197", href:"https://www.linkedin.com/in/rutvik-chavda-584b37197/"},
                 { icon:"🐙", lbl:"GITHUB",   val:"github.com/RIK1849",                href:"https://github.com/RIK1849"},
                 { icon:"📍", lbl:"LOCATION", val:"Ahmedabad, Gujarat, India",         href:"#"},
               ].map(l => (
