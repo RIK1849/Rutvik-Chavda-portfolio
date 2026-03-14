@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from "react";
 
 const LINES = [
-  "sophos_xdr --hunt=ransomware_precursors",
-  "live_discover --query=lateral_movement",
-  "incident_response --client=enterprise --sev=critical",
-  "threat_hunt --platform=windows,macos,linux",
-  "dlp_policy --configure=data_exfiltration_block",
+  "xdr_hunt --tactic=TA0003 --platform=windows,macos,linux",
+  "live_discover --query=credential_access --severity=critical",
+  "incident_response --type=ransomware --containment=auto",
+  "threat_intel --ioc=c2_domains --correlate=data_lake",
+  "sophos_central --policy=dlp,amsi,ips --deploy=enterprise",
 ];
 
 export default function HeroSection() {
@@ -49,13 +49,13 @@ export default function HeroSection() {
             </h1>
 
             <p className="hero-role">
-              Certified Sophos Central Engineer &nbsp;·&nbsp; <em>EDR · XDR · MDR</em>
+              Sophos Certified Engineer &nbsp;·&nbsp; <em>EDR · XDR · MDR · Threat Hunting</em>
             </p>
 
             <div className="hero-term">
               <div><span className="t-prompt">rutvik@sophos:~$ </span>{typed}<span className="t-cur" /></div>
               <div style={{ marginTop:".4rem", color:"rgba(0,255,157,.55)", fontSize:".7rem" }}>
-                ✓ &nbsp;Protecting enterprise endpoints · Ahmedabad, Gujarat, India
+                ✓ &nbsp;3+ yrs defending enterprise endpoints · Open to CrowdStrike · Zscaler · Microsoft · Palo Alto
               </div>
             </div>
 
@@ -88,8 +88,8 @@ export default function HeroSection() {
         {[
           { n:"3+",    l:"Years at Sophos"        },
           { n:"500+",  l:"Incidents Resolved"      },
+          { n:"1000+", l:"Endpoints Protected"     },
           { n:"3",     l:"Sophos Certifications"   },
-          { n:"24/7",  l:"Threat Monitoring"       },
         ].map(s => (
           <div key={s.l} className="hstat">
             <span className="hstat-n">{s.n}</span>
