@@ -1,129 +1,125 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-export default function ContactSection() {
-  const [form, setForm] = useState({ name:"", email:"", subject:"", message:"" });
-  const [status, setStatus] = useState<"idle"|"sending"|"sent">("idle");
+const SKILL_GROUPS = [
+  {
+    cat: "DETECTION & RESPONSE",
+    skills: [
+      { name: "Sophos XDR / Intercept X",   lv: "Expert",       pct: 97 },
+      { name: "EDR / MDR Operations",        lv: "Expert",       pct: 95 },
+      { name: "Threat Hunting",              lv: "Expert",       pct: 93 },
+      { name: "Incident Response",           lv: "Expert",       pct: 96 },
+    ],
+  },
+  {
+    cat: "PLATFORMS & POLICIES",
+    skills: [
+      { name: "Sophos Central Admin",        lv: "Expert",       pct: 98 },
+      { name: "DLP / Web Control / AMSI",    lv: "Expert",       pct: 92 },
+      { name: "IPS / IDS Policy Design",     lv: "Advanced",     pct: 88 },
+      { name: "Cloud & On-Premise Env.",     lv: "Advanced",     pct: 87 },
+    ],
+  },
+  {
+    cat: "INFRASTRUCTURE",
+    skills: [
+      { name: "Google Cloud Platform (GCP)", lv: "Advanced",     pct: 84 },
+      { name: "Windows / macOS / Linux",     lv: "Expert",       pct: 93 },
+      { name: "Penetration Testing",         lv: "Intermediate", pct: 76 },
+      { name: "Big Data Analytics",          lv: "Intermediate", pct: 74 },
+    ],
+  },
+];
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+const CERTS = [
+  { label: "Sophos Central – Support Engineer",                   active: true },
+  { label: "Sophos Certified – Endpoint Security Eng.",           active: true },
+  { label: "Sophos Central – Certified Engineer",                 active: true },
+  { label: "Sophos Support Team 10 FY24 (Award)",                 active: true },
+  { label: "BTech Computer Engineering – Ganpat Univ.",           active: true },
+  { label: "TCS ION – Career Edge Young Professional (2022)",     active: true },
+  { label: "Introduction To Cyber Security – SkillUp",            active: true },
+  { label: "Introduction To CISSP Security Assessment – SkillUp", active: true },
+  { label: "Introduction To Cloud Computing – SkillUp",           active: true },
+  { label: "Complete Blockchain Professional Course – Udemy",     active: true },
+  { label: "Learn Ethical Hacking From Scratch – Udemy",         active: true },
+];
 
-  const onSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    setStatus("sending");
+export default function AboutSection() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [vis, setVis] = useState(false);
 
-    try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          access_key: "9f72abfd-a57b-4428-96e0-0f935d46f6b1", // ⚠️ YOU MUST REPLACE THIS LINE
-          name: form.name,
-          email: form.email,
-          subject: form.subject,
-          message: form.message
-        }),
-      });
-
-      const result = await response.json();
-      
-      if (result.success) {
-        setStatus("sent");
-        setForm({ name: "", email: "", subject: "", message: "" }); // Clears the form
-      } else {
-        console.log("Error sending message", result);
-        setStatus("idle");
-        alert("Something went wrong. Please try again.");
-      }
-    } catch (error) {
-      console.error("Fetch error:", error);
-      setStatus("idle");
-      alert("Network error. Please try again later.");
-    }
-  };
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVis(true); }, { threshold: 0.12 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
 
   return (
-    <section id="contact" className="section">
+    <section id="about" className="section" ref={ref}>
       <div className="container">
-        <p className="sec-label">CONTACT</p>
-        <h2 className="sec-title">Get In <span>Touch</span></h2>
+        <p className="sec-label">ABOUT</p>
+        <h2 className="sec-title">Who I <span>Am</span></h2>
 
-        <div className="con-grid">
-          {/* INFO */}
+        <div className="about-grid">
+          {/* BIO */}
           <div>
-            <p className="con-p">
-              Open to senior security engineering roles, threat intelligence positions,
-              and XDR/MDR opportunities — including at Google, Microsoft, CrowdStrike, Palo Alto Networks,
-              and leading MSSPs. Based in Ahmedabad, Gujarat — open to relocation and remote.
+            <p className="about-p">
+              I&apos;m <strong>Rutvik Chavda</strong>, an <strong>Endpoint Security Engineer at Sophos</strong> based
+              in Ahmedabad, Gujarat, India — with 3+ years protecting enterprise environments
+              from advanced threats.
+            </p>
+            <p className="about-p">
+              I am a <strong>Certified Sophos Central Engineer &amp; Architect</strong>, specialising in
+              endpoint security and threat response. I investigate malware outbreaks, assist
+              customers during <strong>ransomware incidents</strong>, and design &amp; implement
+              security policies including <strong>DLP, Web Control, AMSI, IPS, and IDS</strong>.
+            </p>
+            <p className="about-p">
+              My work spans <strong>cloud and on-premise environments</strong>, leveraging GCP,
+              penetration testing methodology, and big data analytics to ensure cybersecurity
+              resilience for enterprise clients worldwide.
             </p>
 
-            <div className="con-links">
-              {[
-                { icon:"📞", lbl:"PHONE",    val:"+91 722 689 4089",                  href:"tel:+917226894089"},
-                { icon:"✉️", lbl:"EMAIL",    val:"chavdarutvik1849@gmail.com",        href:"mailto:chavdarutvik1849@gmail.com"},
-                { icon:"💼", lbl:"LINKEDIN", val:"linkedin.com/in/rutvikchavda-584b37197", href:"https://www.linkedin.com/in/rutvik-chavda-584b37197/"},
-                { icon:"🐙", lbl:"GITHUB",   val:"github.com/RIK1849",                href:"https://github.com/RIK1849"},
-                { icon:"📍", lbl:"LOCATION", val:"Ahmedabad, Gujarat, India",         href:"#"},
-              ].map(l => (
-                <a key={l.lbl} href={l.href} className="con-link"
-                  target={l.href.startsWith("http") ? "_blank" : undefined}
-                  rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                >
-                  <span className="con-icon">{l.icon}</span>
-                  <span className="con-txt">
-                    <span className="con-lbl">{l.lbl}</span>
-                    <span className="con-val">{l.val}</span>
+            <div className="cert-grid">
+              {CERTS.map(c => (
+                <div key={c.label} className="cert-item">
+                  <span className="cert-chk" style={{ color: c.active ? "var(--green)" : "var(--amber)" }}>
+                    {c.active ? "✓" : "◎"}
                   </span>
-                  <span className="con-arr">→</span>
-                </a>
+                  {c.label}
+                </div>
               ))}
             </div>
           </div>
 
-          {/* FORM */}
-          <div>
-            {status === "sent" ? (
-              <div className="panel" style={{ padding:"3rem", textAlign:"center" }}>
-                <div style={{ fontSize:"2rem", marginBottom:"1rem", color:"var(--green)" }}>✓</div>
-                <p style={{ fontFamily:"var(--font-hd)", color:"var(--cyan)", fontSize:"1.05rem", marginBottom:".5rem" }}>
-                  MESSAGE TRANSMITTED
-                </p>
-                <p style={{ fontFamily:"var(--font-mono)", fontSize:".72rem", color:"var(--muted)" }}>
-                  I&apos;ll respond within 24 hours.
-                </p>
-              </div>
-            ) : (
-              <div>
-                {(["name","email","subject"] as const).map(field => (
-                  <div key={field} className="frm-group">
-                    <label className="frm-label" htmlFor={field}>{field.toUpperCase()}</label>
-                    <input id={field} name={field} type={field === "email" ? "email" : "text"}
-                      className="frm-input" value={form[field as keyof typeof form]} onChange={onChange}
-                      placeholder={field === "name" ? "Your Full Name" : field === "email" ? "you@company.com" : "Senior Security Engineer Opportunity"}
-                      autoComplete="off"
-                    />
+          {/* SKILLS */}
+          <div className="panel skills-panel">
+            {SKILL_GROUPS.map(g => (
+              <div key={g.cat} className="sk-cat">
+                <p className="sk-cat-title">{g.cat}</p>
+                {g.skills.map(s => (
+                  <div key={s.name}>
+                    <div className="sk-row">
+                      <span className="sk-name">{s.name}</span>
+                      <span className="sk-lv">{s.lv}</span>
+                    </div>
+                    <div className="bar-track">
+                      <div className="bar-fill" style={{ width: vis ? `${s.pct}%` : "0%" }} />
+                    </div>
+                    <div style={{ marginBottom:".65rem" }} />
                   </div>
                 ))}
-                <div className="frm-group">
-                  <label className="frm-label" htmlFor="message">MESSAGE</label>
-                  <textarea id="message" name="message" className="frm-ta"
-                    value={form.message} onChange={onChange}
-                    placeholder="Tell me about the role or opportunity..."
-                  />
-                </div>
-                <button className="btn-p" style={{ width:"100%", justifyContent:"center" }}
-                  onClick={onSubmit} disabled={status === "sending"}
-                >
-                  <span>{status === "sending" ? "TRANSMITTING..." : "⟶ SEND MESSAGE"}</span>
-                </button>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
     </section>
   );
 }
+```
+
+Go to `github.dev` → `components/AboutSection.tsx` → **Ctrl+A → Delete → Paste → Ctrl+S** → commit:
+```
+update certificates
