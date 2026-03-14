@@ -16,7 +16,7 @@ const EXP = [
     tags: ["Sophos Central","EDR","XDR","MDR","Ransomware IR","DLP","AMSI","IPS/IDS","GCP","MITRE ATT&CK","Live Discover","Threat Hunting"],
   },
   {
-    title:   "Endpoint Security Engineer",
+    title:   "Endpoint Security Engineer Trainee",
     company: "Sophos",
     period:  "Jan 2022 – Oct 2023",
     loc:     "Ahmedabad, Gujarat, India",
