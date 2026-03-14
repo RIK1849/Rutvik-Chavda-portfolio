@@ -2,31 +2,32 @@ import React from "react";
 
 const EXP = [
   {
-    title:   "Endpoint Security Engineer — L2/L3",
+    title:   "Endpoint Security Engineer",
     company: "Sophos",
     period:  "Oct 2023 – Present",
     loc:     "Ahmedabad, Gujarat, India",
     bullets: [
-      "Lead L2/L3 escalation handling for enterprise EDR/XDR incidents across Windows, macOS, and Linux — covering ransomware containment, malware triage, and advanced persistent threat (APT) investigation.",
-      "Architect and deploy Sophos Central security policies (DLP, Web Control, AMSI, IPS/IDS) for enterprise clients across EMEA — reducing policy-related incidents by 35%.",
-      "Build and maintain a Live Discover XDR query library (OSQL) targeting MITRE ATT&CK tactics — persistence, lateral movement, credential access — with cross-platform coverage and false-positive suppression.",
-      "Drive GCP cloud endpoint security rollouts integrating Sophos Intercept X with auto-isolation policies for compromised VMs and custom SOC alert routing.",
-      "Collaborate directly with Sophos engineering on product feedback loops — identifying detection gaps and validating new Intercept X features pre-release.",
+      "Investigate and resolve endpoint security incidents for enterprise customers across Windows, macOS, and Linux — including malware outbreaks, ransomware events, and suspicious process activity.",
+      "Design and deploy Sophos Central security policies — DLP, Web Control, AMSI, IPS/IDS — tailored to customer environments to strengthen security posture and reduce attack surface.",
+      "Write and maintain Live Discover OSQL queries for proactive threat hunting across Sophos Data Lake — targeting MITRE ATT&CK techniques including persistence, lateral movement, and credential access.",
+      "Support GCP cloud endpoint deployments integrating Sophos Intercept X — configuring auto-isolation policies and SOC alert routing for cloud-hosted workloads.",
+      "Actively contribute to Sophos Community Forums — answering technical questions, sharing detection queries, and helping customers resolve product issues.",
     ],
     tags: ["Sophos Central","EDR","XDR","MDR","Ransomware IR","DLP","AMSI","IPS/IDS","GCP","MITRE ATT&CK","Live Discover","Threat Hunting"],
   },
   {
-    title:   "Endpoint Security Engineer — L1/L2",
+    title:   "Endpoint Security Engineer",
     company: "Sophos",
     period:  "Jan 2022 – Oct 2023",
     loc:     "Ahmedabad, Gujarat, India",
     bullets: [
-      "Handled endpoint security support for enterprise customers — diagnosing detection anomalies, policy misconfigurations, and agent health issues across Sophos Intercept X and Sophos Central.",
-      "Resolved 500+ security incidents including malware outbreaks, false-positive tuning, and MDR alert triage — achieving consistent SLA adherence above 97%.",
-      "Developed automated forensic triage scripts via Sophos Live Response — collecting memory artefacts, process trees, network connections, and prefetch data for DFIR analysis.",
-      "Delivered customer security posture reviews — identifying configuration gaps across Endpoint, Server, and Mobile protection verticals and implementing hardening recommendations.",
+      "Provided endpoint security support for enterprise customers — diagnosing detection issues, policy misconfigurations, and agent health problems across Sophos Intercept X and Sophos Central.",
+      "Resolved 500+ security incidents including malware infections, false-positive tuning, and MDR alert investigations — consistently meeting SLA targets above 97%.",
+      "Used Sophos Live Response to perform forensic triage — collecting memory artefacts, running process snapshots, network connections, and prefetch data to support DFIR workflows.",
+      "Conducted security posture reviews for customers — identifying configuration gaps across Endpoint, Server, and Mobile verticals and recommending hardening steps.",
+      "Recognised with Sophos Support Team 10 FY24 Excellence Award for outstanding contribution to customer success and team performance.",
     ],
-    tags: ["Endpoint Protection","Server Security","Mobile Security","MDR","Sophos Intercept X","Live Response","DFIR","Forensics","SLA Management"],
+    tags: ["Endpoint Protection","Server Security","Mobile Security","MDR","Sophos Intercept X","Live Response","DFIR","Forensics","Community Forums"],
   },
 ];
 
@@ -37,8 +38,8 @@ const EDU = [
     period:  "Jul 2019 – Jun 2023",
     loc:     "Mehsana, Gujarat, India",
     bullets: [
-      "Specialised in networking, cybersecurity fundamentals, and software engineering — building foundational knowledge applied directly in enterprise endpoint security operations.",
-      "Developed projects in C#, Java/Kotlin with Firebase — demonstrating practical software engineering skills across desktop and mobile platforms.",
+      "Studied networking, cybersecurity fundamentals, and software engineering — building a strong technical foundation directly applied in enterprise endpoint security work.",
+      "Built hands-on projects using C#, Java, and Kotlin with Firebase — developing practical skills in software development across desktop and mobile platforms.",
     ],
     tags: ["Computer Engineering","Networking","Cybersecurity Fundamentals","Software Development"],
   },
