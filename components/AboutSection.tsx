@@ -65,7 +65,6 @@ export default function AboutSection() {
       <div className="container">
         <p className="sec-label">ABOUT</p>
         <h2 className="sec-title">Who I <span>Am</span></h2>
-
         <div className="about-grid">
           <div>
             <p className="about-p">
@@ -84,7 +83,6 @@ export default function AboutSection() {
               leveraging GCP, Live Discover XDR queries, and big-data analytics to deliver
               measurable cybersecurity resilience for enterprise clients across EMEA and beyond.
             </p>
-
             <p className="sec-label" style={{ marginTop:"1.5rem", marginBottom:".75rem" }}>
               SOPHOS CERTIFICATIONS
             </p>
@@ -96,7 +94,6 @@ export default function AboutSection() {
                 </div>
               ))}
             </div>
-
             <p className="sec-label" style={{ marginTop:"1.5rem", marginBottom:".75rem" }}>
               ADDITIONAL CERTIFICATIONS
             </p>
@@ -109,7 +106,6 @@ export default function AboutSection() {
               ))}
             </div>
           </div>
-
           <div className="panel skills-panel">
             {SKILL_GROUPS.map(g => (
               <div key={g.cat} className="sk-cat">
