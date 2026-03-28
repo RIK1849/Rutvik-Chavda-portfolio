@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 
 const LINES = [
@@ -12,41 +13,40 @@ const LINES = [
 
 export default function HeroSection() {
   const [typed, setTyped] = useState("");
-  const [si, setSi] = useState(0);
-  const [ci, setCi] = useState(0);
-  const [del, setDel] = useState(false);
+  const [lineIndex, setLineIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const target = LINES[si];
-    const delay = del ? 36 : ci === target.length ? 2000 : 55;
+    const target = LINES[lineIndex];
+    const delay = isDeleting ? 36 : charIndex === target.length ? 1800 : 55;
 
-    const t = setTimeout(() => {
-      if (!del) {
-        if (ci < target.length) {
-          setTyped(target.slice(0, ci + 1));
-          setCi(ci + 1);
+    const timer = window.setTimeout(() => {
+      if (!isDeleting) {
+        if (charIndex < target.length) {
+          setTyped(target.slice(0, charIndex + 1));
+          setCharIndex((prev) => prev + 1);
         } else {
-          setDel(true);
+          setIsDeleting(true);
         }
       } else {
-        if (ci > 0) {
-          setTyped(target.slice(0, ci - 1));
-          setCi(ci - 1);
+        if (charIndex > 0) {
+          setTyped(target.slice(0, charIndex - 1));
+          setCharIndex((prev) => prev - 1);
         } else {
-          setDel(false);
-          setSi((prev) => (prev + 1) % LINES.length);
+          setIsDeleting(false);
+          setLineIndex((prev) => (prev + 1) % LINES.length);
         }
       }
     }, delay);
 
-    return () => clearTimeout(t);
-  }, [si, ci, del]);
+    return () => window.clearTimeout(timer);
+  }, [lineIndex, charIndex, isDeleting]);
 
   return (
     <>
       <section id="hero" className="hero">
         <div className="hero-inner">
-          {/* LEFT */}
           <div>
             <p className="hero-eyebrow">
               {"// TECHNICAL SUPPORT ENGINEER · ENDPOINT SECURITY · SOPHOS"}
@@ -117,7 +117,6 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* RIGHT — orbit visual */}
           <div className="hero-vis">
             <div className="orb-wrap">
               <div className="orb-ring orb-r1">
@@ -137,7 +136,6 @@ export default function HeroSection() {
         </div>
       </section>
 
-      {/* STATS BAR */}
       <div className="hero-stats" style={{ padding: "0 2rem" }}>
         {[
           { n: "3+", l: "Years at Sophos" },
