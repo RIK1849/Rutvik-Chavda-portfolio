@@ -15,6 +15,7 @@ export default function Home() {
       <AnimatedBackground />
       <CustomCursor />
       <Navbar />
+
       <main>
         <HeroSection />
         <AboutSection />
@@ -22,6 +23,7 @@ export default function Home() {
         <ProjectsSection />
         <ContactSection />
       </main>
+
       <Footer />
     </>
   );

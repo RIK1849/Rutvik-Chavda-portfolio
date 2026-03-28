@@ -63,12 +63,14 @@ export default function AboutSection() {
               hands-on experience supporting enterprise customers across
               Windows, macOS, and Linux environments.
             </p>
+
             <p className="about-copy">
               My work focuses on malware and ransomware investigations,
               endpoint telemetry analysis, escalation handling, policy tuning,
               and structured troubleshooting across Sophos Central and
               EDR/XDR-driven workflows.
             </p>
+
             <p className="about-copy">
               I&apos;m targeting technical support, security engineering, threat
               investigation, and SOC/IR roles where I can combine deep product
