@@ -20,8 +20,10 @@ export default function CertificationsSection() {
         <div className="cert-grid">
           {CERTIFICATIONS.map((item) => (
             <div key={item} className="card cert-card">
-              <span className="cert-mark">✓</span>
-              <span>{item}</span>
+              <span className="cert-mark" aria-hidden="true">
+                ✓
+              </span>
+              <span className="cert-text">{item}</span>
             </div>
           ))}
         </div>

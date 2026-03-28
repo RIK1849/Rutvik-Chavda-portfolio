@@ -69,6 +69,12 @@ export default function HeroSection() {
             environments.
           </p>
 
+          <p className="hero-summary hero-summary-secondary">
+            My strongest fit is where enterprise troubleshooting, endpoint
+            investigation, threat analysis, and structured escalation handling
+            all matter.
+          </p>
+
           <div className="hero-terminal card">
             <div className="terminal-bar">
               <span className="terminal-dot terminal-red" />

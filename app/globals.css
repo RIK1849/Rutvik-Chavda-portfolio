@@ -259,6 +259,12 @@ main {
   font-size: 1.05rem;
 }
 
+.hero-summary-secondary {
+  margin-top: 12px;
+  color: var(--muted);
+  max-width: 720px;
+}
+
 .hero-terminal,
 .hero-panel {
   padding: 22px;
@@ -635,6 +641,12 @@ main {
   color: var(--cyan);
   font-weight: 700;
   flex-shrink: 0;
+}
+
+.cert-text {
+  display: inline-block;
+  color: var(--heading);
+  line-height: 1.45;
 }
 
 /* AWARDS */
