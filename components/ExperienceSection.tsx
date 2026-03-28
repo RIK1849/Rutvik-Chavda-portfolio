@@ -1,113 +1,82 @@
 import React from "react";
 
-type Entry = {
-  title: string;
-  company: string;
-  period: string;
-  loc: string;
-  bullets: string[];
-  tags: string[];
-};
+const CERTIFICATIONS = [
+  "Sophos Central - Certified Support Engineer",
+  "Sophos Certified Endpoint Security Engineer",
+  "Sophos Central - Certified Engineer",
+  "TCS iON - Career Edge Young Professional",
+  "Introduction to Cyber Security",
+  "Introduction to CISSP Security Assessment",
+];
 
-const EXPERIENCE: Entry[] = [
+const SPECIALTIES = [
   {
-    title: "Technical Support Engineer — Endpoint Security",
-    company: "Sophos",
-    period: "January 2023 – Present",
-    loc: "Ahmedabad, Gujarat, India",
-    bullets: [
-      "Handle advanced endpoint security escalations for enterprise customers across EMEA, APAC, and the Americas.",
-      "Investigate malware, ransomware, suspicious processes, and detection anomalies across Windows, macOS, and Linux.",
-      "Use endpoint telemetry, Windows Event Logs, Sysmon, and process analysis to validate activity and support root cause analysis.",
-      "Work with Sophos Central, EDR/XDR workflows, and threat-hunting queries to support triage, containment, and remediation validation.",
-      "Collaborate with Engineering on issue reproduction, escalation evidence, validation steps, and troubleshooting outcomes.",
-      "Create technical notes, repeatable investigation steps, and internal knowledge content to improve case quality and consistency.",
-    ],
-    tags: [
-      "Sophos Central",
-      "EDR/XDR",
-      "Malware Investigation",
-      "Ransomware Response",
-      "Windows",
-      "macOS",
-      "Linux",
-      "Sysmon",
-      "Splunk",
-      "MITRE ATT&CK",
-      "Root Cause Analysis",
-      "P1/P2 Escalations",
-    ],
+    title: "Threat Detection & Investigation",
+    body:
+      "Hands-on work across endpoint telemetry, suspicious process validation, malware triage, and escalation-focused investigation workflows.",
+  },
+  {
+    title: "Endpoint Policy & Product Troubleshooting",
+    body:
+      "Experience with web control, application control, device encryption, cloud-managed policies, and structured root cause analysis.",
+  },
+  {
+    title: "Cross-Platform Security Support",
+    body:
+      "Support coverage across Windows, macOS, and Linux environments in enterprise, hybrid, and customer-specific deployments.",
   },
 ];
 
-const EDUCATION: Entry[] = [
-  {
-    title: "Bachelor of Technology — Computer Engineering",
-    company: "Ganpat University · U.V. Patel College of Engineering",
-    period: "July 2019 – June 2023",
-    loc: "Mehsana, Gujarat, India",
-    bullets: [
-      "Built a foundation in networking, operating systems, cybersecurity fundamentals, and software engineering.",
-      "Worked on hands-on technical projects using C#, Java, Kotlin, and Firebase.",
-    ],
-    tags: [
-      "Computer Engineering",
-      "Networking",
-      "Cybersecurity Fundamentals",
-      "Software Development",
-    ],
-  },
-];
-
-function TimelineBlock({
-  title,
-  items,
-}: {
-  title: string;
-  items: Entry[];
-}) {
+export default function AboutSection() {
   return (
-    <div className="panel" style={{ marginBottom: "1.5rem" }}>
-      <p className="tl-head">{title}</p>
-
-      {items.map((item) => (
-        <div key={`${item.title}-${item.period}`} className="tl-item">
-          <h3 className="tl-title">{item.title}</h3>
-          <p className="tl-meta">
-            {item.company} · {item.loc}
-          </p>
-          <p className="tl-period">{item.period}</p>
-
-          <ul className="tl-bullets">
-            {item.bullets.map((bullet) => (
-              <li key={bullet}>{bullet}</li>
-            ))}
-          </ul>
-
-          <div className="tag-row">
-            {item.tags.map((tag) => (
-              <span key={tag} className="tag">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export default function ExperienceSection() {
-  return (
-    <section id="experience" className="section">
+    <section id="about" className="section">
       <div className="container">
-        <p className="sec-label">EXPERIENCE</p>
-        <h2 className="sec-title">
-          Career <span>Timeline</span>
+        <p className="section-label">ABOUT</p>
+        <h2 className="section-title">
+          Cyber Operations <span>Profile</span>
         </h2>
 
-        <TimelineBlock title="▸ WORK EXPERIENCE" items={EXPERIENCE} />
-        <TimelineBlock title="▸ EDUCATION" items={EDUCATION} />
+        <div className="about-layout">
+          <div className="panel about-main">
+            <p>
+              I am Rutvik Chavda, an endpoint security professional with
+              experience supporting enterprise customers in high-pressure,
+              escalation-driven environments.
+            </p>
+            <p>
+              My work combines deep product troubleshooting with practical
+              security operations. I investigate malware alerts, suspicious
+              activity, endpoint instability, policy conflicts, and complex
+              support cases that require clean analysis and technical precision.
+            </p>
+            <p>
+              I am targeting roles in endpoint security engineering, technical
+              support engineering, SOC operations, threat analysis, and incident
+              response where I can contribute both operational depth and strong
+              customer-facing execution.
+            </p>
+          </div>
+
+          <div className="panel cert-panel">
+            <h3 className="card-title">Selected Certifications</h3>
+            <div className="cert-stack">
+              {CERTIFICATIONS.map((item) => (
+                <div key={item} className="cert-chip">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="specialty-grid">
+          {SPECIALTIES.map((item) => (
+            <div key={item.title} className="panel specialty-card">
+              <h3 className="card-title">{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

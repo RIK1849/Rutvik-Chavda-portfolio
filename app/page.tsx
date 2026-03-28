@@ -1,30 +1,19 @@
-import React from "react";
-import AnimatedBackground from "@/components/AnimatedBackground";
-import CustomCursor from "@/components/CustomCursor";
-import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import AboutSection from "@/components/AboutSection";
-import ExperienceSection from "@/components/ExperienceSection";
-import ProjectsSection from "@/components/ProjectsSection";
-import ContactSection from "@/components/ContactSection";
-import Footer from "@/components/Footer";
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import "./globals.css";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "Rutvik Chavda | Endpoint Security Engineer",
+  description:
+    "Rutvik Chavda - Endpoint Security Engineer focused on EDR/XDR, threat investigation, incident response, and enterprise endpoint security.",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: ReactNode }>) {
   return (
-    <>
-      <AnimatedBackground />
-      <CustomCursor />
-      <Navbar />
-
-      <main>
-        <HeroSection />
-        <AboutSection />
-        <ExperienceSection />
-        <ProjectsSection />
-        <ContactSection />
-      </main>
-
-      <Footer />
-    </>
+    <html lang="en">
+      <body>{children}</body>
+    </html>
   );
 }

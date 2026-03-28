@@ -1,125 +1,79 @@
 import React from "react";
 
-type Project = {
-  sev: "WORK" | "PERSONAL";
-  sevCls: string;
-  name: string;
-  desc: string;
-  tags: string[];
-};
+const CERTIFICATIONS = [
+  "Sophos Central - Certified Support Engineer",
+  "Sophos Certified Endpoint Security Engineer",
+  "Sophos Central - Certified Engineer",
+  "TCS iON - Career Edge Young Professional",
+  "Introduction to Cyber Security",
+  "Introduction to CISSP Security Assessment",
+];
 
-const PROJECTS: Project[] = [
+const SPECIALTIES = [
   {
-    sev: "WORK",
-    sevCls: "sev-crit",
-    name: "Malware & Ransomware Incident Triage",
-    desc: "Investigated endpoint incidents by correlating EDR/XDR telemetry, Windows Event Logs, Sysmon activity, and process execution artifacts to validate suspicious behavior and support containment decisions.",
-    tags: [
-      "EDR/XDR",
-      "Ransomware IR",
-      "Windows Event Logs",
-      "Sysmon",
-      "Process Tree Analysis",
-      "Root Cause Analysis",
-    ],
+    title: "Threat Detection & Investigation",
+    body:
+      "Hands-on work across endpoint telemetry, suspicious process validation, malware triage, and escalation-focused investigation workflows.",
   },
   {
-    sev: "WORK",
-    sevCls: "sev-crit",
-    name: "Live Discover Threat Hunting Queries",
-    desc: "Built and used Live Discover / OSQL queries to surface suspicious activity across endpoint telemetry and support investigation workflows mapped to MITRE ATT&CK behaviors.",
-    tags: [
-      "Live Discover",
-      "OSQL",
-      "Sophos Data Lake",
-      "MITRE ATT&CK",
-      "Threat Hunting",
-      "Cross-Platform",
-    ],
+    title: "Endpoint Policy & Product Troubleshooting",
+    body:
+      "Experience with web control, application control, device encryption, cloud-managed policies, and structured root cause analysis.",
   },
   {
-    sev: "WORK",
-    sevCls: "sev-high",
-    name: "Sophos Central Policy Tuning & Optimisation",
-    desc: "Worked on endpoint policy tuning across web control, application control, device control, and device encryption to balance protection strength with customer environment stability.",
-    tags: [
-      "Sophos Central",
-      "Web Control",
-      "App Control",
-      "Device Encryption",
-      "Policy Tuning",
-      "Hybrid Environments",
-    ],
-  },
-  {
-    sev: "WORK",
-    sevCls: "sev-high",
-    name: "Defect Reproduction & Engineering Escalation",
-    desc: "Created repeatable test cases and lab scenarios to reproduce difficult customer issues, document expected vs actual behavior, and provide engineering-ready escalation evidence.",
-    tags: [
-      "Lab Environments",
-      "Defect Reproduction",
-      "Windows",
-      "macOS",
-      "Linux",
-      "Engineering Escalation",
-    ],
-  },
-  {
-    sev: "PERSONAL",
-    sevCls: "sev-med",
-    name: "Home Lab — SIEM & Endpoint Investigation Practice",
-    desc: "Used a personal lab to strengthen practical skills in detection logic, log correlation, Splunk fundamentals, and endpoint investigation workflows across Windows and Linux systems.",
-    tags: [
-      "Home Lab",
-      "Splunk",
-      "Endpoint Telemetry",
-      "Detection Engineering",
-      "Windows",
-      "Linux",
-    ],
+    title: "Cross-Platform Security Support",
+    body:
+      "Support coverage across Windows, macOS, and Linux environments in enterprise, hybrid, and customer-specific deployments.",
   },
 ];
 
-export default function ProjectsSection() {
+export default function AboutSection() {
   return (
-    <section id="projects" className="section">
+    <section id="about" className="section">
       <div className="container">
-        <p className="sec-label">WORK & PROJECTS</p>
-        <h2 className="sec-title">
-          What I <span>Do</span>
+        <p className="section-label">ABOUT</p>
+        <h2 className="section-title">
+          Cyber Operations <span>Profile</span>
         </h2>
 
-        <div className="legend-row">
-          <span className="legend-item">
-            <span className="sev sev-crit">WORK</span> Primary responsibilities
-          </span>
-          <span className="legend-item">
-            <span className="sev sev-high">WORK</span> Supporting
-            responsibilities
-          </span>
-          <span className="legend-item">
-            <span className="sev sev-med">PERSONAL</span> Lab / learning project
-          </span>
+        <div className="about-layout">
+          <div className="panel about-main">
+            <p>
+              I am Rutvik Chavda, an endpoint security professional with
+              experience supporting enterprise customers in high-pressure,
+              escalation-driven environments.
+            </p>
+            <p>
+              My work combines deep product troubleshooting with practical
+              security operations. I investigate malware alerts, suspicious
+              activity, endpoint instability, policy conflicts, and complex
+              support cases that require clean analysis and technical precision.
+            </p>
+            <p>
+              I am targeting roles in endpoint security engineering, technical
+              support engineering, SOC operations, threat analysis, and incident
+              response where I can contribute both operational depth and strong
+              customer-facing execution.
+            </p>
+          </div>
+
+          <div className="panel cert-panel">
+            <h3 className="card-title">Selected Certifications</h3>
+            <div className="cert-stack">
+              {CERTIFICATIONS.map((item) => (
+                <div key={item} className="cert-chip">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="proj-grid">
-          {PROJECTS.map((project) => (
-            <div key={project.name} className="proj-card panel">
-              <div className="proj-top">
-                <span className={`sev ${project.sevCls}`}>{project.sev}</span>
-              </div>
-
-              <h3 className="proj-name">{project.name}</h3>
-              <p className="proj-desc">{project.desc}</p>
-
-              <div className="tag-row">
-                {project.tags.map((tag) => (
-                  <span key={tag} className="tag">
-                    {tag}
-                  </span>
-                ))}
-              </div>
+        <div className="specialty-grid">
+          {SPECIALTIES.map((item) => (
+            <div key={item.title} className="panel specialty-card">
+              <h3 className="card-title">{item.title}</h3>
+              <p>{item.body}</p>
             </div>
           ))}
         </div>

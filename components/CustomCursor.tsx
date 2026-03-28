@@ -12,18 +12,20 @@ export default function CustomCursor() {
     const finePointer = window.matchMedia("(pointer: fine)");
     if (!finePointer.matches) return;
 
+    document.body.classList.add("cursor-ready");
+
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let ringX = mouseX;
     let ringY = mouseY;
     let raf = 0;
 
-    const move = (e: MouseEvent) => {
+    const onMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
 
       if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+        dotRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
         dotRef.current.style.opacity = "1";
       }
 
@@ -33,58 +35,58 @@ export default function CustomCursor() {
     };
 
     const animate = () => {
-      ringX += (mouseX - ringX) * 0.18;
-      ringY += (mouseY - ringY) * 0.18;
+      ringX += (mouseX - ringX) * 0.16;
+      ringY += (mouseY - ringY) * 0.16;
 
       if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${ringX}px, ${ringY}px)`;
+        ringRef.current.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
       }
 
       raf = window.requestAnimationFrame(animate);
     };
 
+    const onDown = () => ringRef.current?.classList.add("down");
+    const onUp = () => ringRef.current?.classList.remove("down");
+
+    const onEnterInteractive = () => ringRef.current?.classList.add("hover");
+    const onLeaveInteractive = () => ringRef.current?.classList.remove("hover");
+
     const interactiveSelector =
-      'a, button, input, textarea, select, [role="button"], .btn-p, .btn-g, .nav-a, .con-link, .proj-card, .tl-item, .cert-item';
+      'a, button, input, textarea, select, [role="button"], .panel, .project-card, .contact-link';
 
-    const handleEnter = () => {
-      ringRef.current?.classList.add("hov");
-    };
+    const interactiveElements = Array.from(
+      document.querySelectorAll(interactiveSelector)
+    );
 
-    const handleLeave = () => {
-      ringRef.current?.classList.remove("hov");
-    };
+    interactiveElements.forEach((el) => {
+      el.addEventListener("mouseenter", onEnterInteractive);
+      el.addEventListener("mouseleave", onLeaveInteractive);
+    });
 
-    const attachHoverListeners = () => {
-      const elements = document.querySelectorAll(interactiveSelector);
-      elements.forEach((el) => {
-        el.addEventListener("mouseenter", handleEnter);
-        el.addEventListener("mouseleave", handleLeave);
-      });
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("mouseup", onUp);
 
-      return () => {
-        elements.forEach((el) => {
-          el.removeEventListener("mouseenter", handleEnter);
-          el.removeEventListener("mouseleave", handleLeave);
-        });
-      };
-    };
-
-    const detachHoverListeners = attachHoverListeners();
-
-    window.addEventListener("mousemove", move);
     raf = window.requestAnimationFrame(animate);
 
     return () => {
-      window.removeEventListener("mousemove", move);
-      detachHoverListeners();
+      document.body.classList.remove("cursor-ready");
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mouseup", onUp);
       window.cancelAnimationFrame(raf);
+
+      interactiveElements.forEach((el) => {
+        el.removeEventListener("mouseenter", onEnterInteractive);
+        el.removeEventListener("mouseleave", onLeaveInteractive);
+      });
     };
   }, []);
 
   return (
     <>
-      <div className="cursor-dot" ref={dotRef} />
-      <div className="cursor-ring" ref={ringRef} />
+      <div ref={dotRef} className="cursor-dot" />
+      <div ref={ringRef} className="cursor-ring" />
     </>
   );
 }
