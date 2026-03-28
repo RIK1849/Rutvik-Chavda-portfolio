@@ -47,9 +47,8 @@ export default function CustomCursor() {
 
     const onDown = () => ringRef.current?.classList.add("down");
     const onUp = () => ringRef.current?.classList.remove("down");
-
-    const onEnterInteractive = () => ringRef.current?.classList.add("hover");
-    const onLeaveInteractive = () => ringRef.current?.classList.remove("hover");
+    const onEnter = () => ringRef.current?.classList.add("hover");
+    const onLeave = () => ringRef.current?.classList.remove("hover");
 
     const interactiveSelector =
       'a, button, input, textarea, select, [role="button"], .panel, .project-card, .contact-link';
@@ -59,8 +58,8 @@ export default function CustomCursor() {
     );
 
     interactiveElements.forEach((el) => {
-      el.addEventListener("mouseenter", onEnterInteractive);
-      el.addEventListener("mouseleave", onLeaveInteractive);
+      el.addEventListener("mouseenter", onEnter);
+      el.addEventListener("mouseleave", onLeave);
     });
 
     window.addEventListener("mousemove", onMove);
@@ -77,8 +76,8 @@ export default function CustomCursor() {
       window.cancelAnimationFrame(raf);
 
       interactiveElements.forEach((el) => {
-        el.removeEventListener("mouseenter", onEnterInteractive);
-        el.removeEventListener("mouseleave", onLeaveInteractive);
+        el.removeEventListener("mouseenter", onEnter);
+        el.removeEventListener("mouseleave", onLeave);
       });
     };
   }, []);
