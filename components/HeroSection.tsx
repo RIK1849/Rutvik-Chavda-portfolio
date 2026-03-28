@@ -55,14 +55,16 @@ export default function HeroSection() {
 
           <h1 className="hero-title">
             Technical Support Engineer
-            <span>Endpoint Security · EDR/XDR · Threat Investigation · Incident Response</span>
+            <span>
+              Endpoint Security | EDR/XDR | Threat Investigation | Incident Response
+            </span>
           </h1>
 
           <p className="hero-summary">
-            Technical Support Engineer with strong endpoint security specialization and
-            hands-on experience supporting enterprise customers, investigating endpoint
-            threats, handling escalations, and validating remediation across Windows,
-            macOS, and Linux environments.
+            Technical Support Engineer with strong endpoint security specialization
+            and hands-on experience supporting enterprise customers, investigating
+            endpoint threats, handling escalations, and validating remediation
+            across Windows, macOS, and Linux environments.
           </p>
 
           <div className="hero-terminal card">
@@ -109,24 +111,25 @@ export default function HeroSection() {
             <div className="hero-focus-item">
               <h3>Technical Support + Security Depth</h3>
               <p>
-                Enterprise-focused support work with strong alignment to security
-                engineering, incident triage, and endpoint investigation workflows.
+                Enterprise-focused support work aligned to endpoint security,
+                investigation quality, escalation handling, and structured
+                troubleshooting.
               </p>
             </div>
 
             <div className="hero-focus-item">
               <h3>Threat Investigation</h3>
               <p>
-                Malware and ransomware investigations, suspicious process analysis,
-                remediation validation, and root cause analysis.
+                Malware and ransomware investigations, suspicious process
+                analysis, remediation validation, and root cause analysis.
               </p>
             </div>
 
             <div className="hero-focus-item">
-              <h3>Escalation Ownership</h3>
+              <h3>Engineering Collaboration</h3>
               <p>
-                SLA-driven case ownership, complex troubleshooting, engineering
-                collaboration, and knowledge documentation.
+                Defect reproduction support, validation, escalation handoff, and
+                technical documentation for repeatable investigation workflows.
               </p>
             </div>
           </div>

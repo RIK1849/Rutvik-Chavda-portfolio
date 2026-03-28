@@ -7,8 +7,6 @@ export default function CustomCursor() {
   const ringRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
     const finePointer = window.matchMedia("(pointer: fine)");
     if (!finePointer.matches) return;
 
@@ -18,9 +16,9 @@ export default function CustomCursor() {
     let mouseY = window.innerHeight / 2;
     let ringX = mouseX;
     let ringY = mouseY;
-    let raf = 0;
+    let frame = 0;
 
-    const onMove = (e: MouseEvent) => {
+    const move = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
 
@@ -35,14 +33,14 @@ export default function CustomCursor() {
     };
 
     const animate = () => {
-      ringX += (mouseX - ringX) * 0.16;
-      ringY += (mouseY - ringY) * 0.16;
+      ringX += (mouseX - ringX) * 0.18;
+      ringY += (mouseY - ringY) * 0.18;
 
       if (ringRef.current) {
         ringRef.current.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
       }
 
-      raf = window.requestAnimationFrame(animate);
+      frame = window.requestAnimationFrame(animate);
     };
 
     const onDown = () => ringRef.current?.classList.add("down");
@@ -51,34 +49,29 @@ export default function CustomCursor() {
     const onLeave = () => ringRef.current?.classList.remove("hover");
 
     const interactiveSelector =
-      'a, button, input, textarea, select, [role="button"], .panel, .project-card, .contact-link';
+      'a, button, input, textarea, select, [role="button"], .card';
+    const items = Array.from(document.querySelectorAll(interactiveSelector));
 
-    const interactiveElements = Array.from(
-      document.querySelectorAll(interactiveSelector)
-    );
-
-    interactiveElements.forEach((el) => {
+    items.forEach((el) => {
       el.addEventListener("mouseenter", onEnter);
       el.addEventListener("mouseleave", onLeave);
     });
 
-    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousemove", move);
     window.addEventListener("mousedown", onDown);
     window.addEventListener("mouseup", onUp);
-
-    raf = window.requestAnimationFrame(animate);
+    frame = window.requestAnimationFrame(animate);
 
     return () => {
       document.body.classList.remove("cursor-ready");
-      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mousemove", move);
       window.removeEventListener("mousedown", onDown);
       window.removeEventListener("mouseup", onUp);
-      window.cancelAnimationFrame(raf);
-
-      interactiveElements.forEach((el) => {
+      items.forEach((el) => {
         el.removeEventListener("mouseenter", onEnter);
         el.removeEventListener("mouseleave", onLeave);
       });
+      window.cancelAnimationFrame(frame);
     };
   }, []);
 

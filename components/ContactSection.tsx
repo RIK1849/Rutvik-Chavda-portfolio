@@ -39,7 +39,6 @@ export default function ContactSection() {
     subject: "",
     message: "",
   });
-
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
 
   const handleChange = (
@@ -73,12 +72,7 @@ export default function ContactSection() {
 
       if (result.success) {
         setStatus("sent");
-        setForm({
-          name: "",
-          email: "",
-          subject: "",
-          message: "",
-        });
+        setForm({ name: "", email: "", subject: "", message: "" });
       } else {
         setStatus("idle");
         alert("Something went wrong. Please try again.");

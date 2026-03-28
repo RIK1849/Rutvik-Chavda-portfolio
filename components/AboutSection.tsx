@@ -4,14 +4,14 @@ const PROFILE_POINTS = [
   "Technical Support Engineer with strong Endpoint Security specialization.",
   "Hands-on experience supporting enterprise customers across Windows, macOS, and Linux.",
   "Focused on threat investigation, escalation handling, root cause analysis, and structured troubleshooting.",
-  "Positioned for Technical Support Engineer, Endpoint Security Engineer, Security Operations, and Incident Response aligned roles.",
+  "Aligned for Technical Support Engineer, Endpoint Security Engineer, Security Operations, and Incident Response roles.",
 ];
 
 const FOCUS_AREAS = [
   {
     title: "Enterprise Endpoint Support",
     text:
-      "Support experience in customer-facing environments where resolution quality, case ownership, and escalation handling matter.",
+      "Customer-facing support work where resolution quality, case ownership, investigation accuracy, and escalation handling matter.",
   },
   {
     title: "Threat Investigation",

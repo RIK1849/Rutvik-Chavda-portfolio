@@ -2,20 +2,21 @@
 
 import React, { useEffect, useState } from "react";
 
-const NAV_LINKS = [
-  { label: "ABOUT", href: "#about" },
-  { label: "EXPERIENCE", href: "#experience" },
-  { label: "PROJECTS", href: "#projects" },
-  { label: "CONTACT", href: "#contact" },
+const LINKS = [
+  { label: "About", href: "#about" },
+  { label: "Experience", href: "#experience" },
+  { label: "Skills", href: "#skills" },
+  { label: "Projects", href: "#projects" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 18);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -27,7 +28,7 @@ export default function Navbar() {
         </a>
 
         <nav className="nav-links" aria-label="Primary">
-          {NAV_LINKS.map((item) => (
+          {LINKS.map((item) => (
             <a key={item.href} href={item.href} className="nav-link">
               {item.label}
             </a>
