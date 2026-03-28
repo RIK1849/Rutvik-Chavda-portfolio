@@ -1,80 +1,47 @@
 import React from "react";
 
-const CERTIFICATIONS = [
-  "Sophos Central - Certified Support Engineer",
-  "Sophos Certified Endpoint Security Engineer",
-  "Sophos Central - Certified Engineer",
-  "TCS iON - Career Edge Young Professional",
-  "Introduction to Cyber Security",
-  "Introduction to CISSP Security Assessment",
-];
-
-const SPECIALTIES = [
+const EXPERIENCE = [
   {
-    title: "Threat Detection & Investigation",
-    body:
-      "Hands-on work across endpoint telemetry, suspicious process validation, malware triage, and escalation-focused investigation workflows.",
-  },
-  {
-    title: "Endpoint Policy & Product Troubleshooting",
-    body:
-      "Experience with web control, application control, device encryption, cloud-managed policies, and structured root cause analysis.",
-  },
-  {
-    title: "Cross-Platform Security Support",
-    body:
-      "Support coverage across Windows, macOS, and Linux environments in enterprise, hybrid, and customer-specific deployments.",
+    role: "Technical Support Engineer",
+    company: "Sophos",
+    period: "January 2023 – Present",
+    points: [
+      "Support enterprise customers with complex endpoint security cases across Windows, macOS, and Linux environments.",
+      "Investigate malware, ransomware, suspicious processes, and policy-related issues using Sophos tooling, telemetry, and supporting endpoint data.",
+      "Perform incident triage, remediation validation, and root cause analysis for escalated support cases.",
+      "Use Splunk, Windows Event Logs, Sysmon, and Live Discover style workflows to support troubleshooting and investigation.",
+      "Collaborate with engineering teams for defect reproduction, validation, and escalation handoff.",
+      "Create and maintain technical documentation, knowledge content, and runbooks to improve case handling and repeatability.",
+    ],
   },
 ];
 
-export default function AboutSection() {
+export default function ExperienceSection() {
   return (
-    <section id="about" className="section">
+    <section id="experience" className="section">
       <div className="container">
-        <p className="section-label">ABOUT</p>
+        <p className="section-kicker">EXPERIENCE</p>
         <h2 className="section-title">
-          Cyber Operations <span>Profile</span>
+          Work Experience with Strong <span>Security Relevance</span>
         </h2>
 
-        <div className="about-layout">
-          <div className="panel about-main">
-            <p>
-              I am Rutvik Chavda, an endpoint security professional with
-              experience supporting enterprise customers in high-pressure,
-              escalation-driven environments.
-            </p>
-            <p>
-              My work combines deep product troubleshooting with practical
-              security operations. I investigate malware alerts, suspicious
-              activity, endpoint instability, policy conflicts, and complex
-              support cases that require clean analysis and technical precision.
-            </p>
-            <p>
-              I am targeting roles in endpoint security engineering, technical
-              support engineering, SOC operations, threat analysis, and incident
-              response where I can contribute both operational depth and strong
-              customer-facing execution.
-            </p>
-          </div>
-
-          <div className="panel cert-panel">
-            <h3 className="card-title">Selected Certifications</h3>
-            <div className="cert-stack">
-              {CERTIFICATIONS.map((item) => (
-                <div key={item} className="cert-chip">
-                  {item}
+        <div className="timeline">
+          {EXPERIENCE.map((item) => (
+            <article key={item.role} className="card timeline-card">
+              <div className="timeline-top">
+                <div>
+                  <h3 className="card-title">{item.role}</h3>
+                  <p className="timeline-meta">{item.company}</p>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
+                <span className="timeline-period">{item.period}</span>
+              </div>
 
-        <div className="specialty-grid">
-          {SPECIALTIES.map((item) => (
-            <div key={item.title} className="panel specialty-card">
-              <h3 className="card-title">{item.title}</h3>
-              <p>{item.body}</p>
-            </div>
+              <ul className="timeline-list">
+                {item.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </article>
           ))}
         </div>
       </div>

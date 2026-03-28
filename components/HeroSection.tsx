@@ -1,92 +1,146 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
-export default function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement | null>(null);
-  const ringRef = useRef<HTMLDivElement | null>(null);
+const COMMANDS = [
+  "investigate --type=malware --platform=windows,macos,linux",
+  "query --source=live_discover --focus=suspicious_process",
+  "correlate --tool=splunk --logs=endpoint_telemetry",
+  "triage --severity=p1 --workflow=incident_response",
+  "map --framework=mitre_attack --use_case=threat_investigation",
+];
+
+const STATS = [
+  { value: "3+ Years", label: "Endpoint Security Experience" },
+  { value: "Sophos", label: "January 2023 – Present" },
+  { value: "Windows · macOS · Linux", label: "Cross-Platform Support" },
+  { value: "EDR/XDR · IR", label: "Core Focus Areas" },
+];
+
+export default function HeroSection() {
+  const [typed, setTyped] = useState("");
+  const [lineIndex, setLineIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    const current = COMMANDS[lineIndex];
+    const delay = isDeleting ? 24 : charIndex === current.length ? 1200 : 44;
 
-    const finePointer = window.matchMedia("(pointer: fine)");
-    if (!finePointer.matches) return;
-
-    document.body.classList.add("cursor-ready");
-
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let ringX = mouseX;
-    let ringY = mouseY;
-    let raf = 0;
-
-    const onMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-        dotRef.current.style.opacity = "1";
+    const timer = window.setTimeout(() => {
+      if (!isDeleting) {
+        if (charIndex < current.length) {
+          setTyped(current.slice(0, charIndex + 1));
+          setCharIndex((prev) => prev + 1);
+        } else {
+          setIsDeleting(true);
+        }
+      } else if (charIndex > 0) {
+        setTyped(current.slice(0, charIndex - 1));
+        setCharIndex((prev) => prev - 1);
+      } else {
+        setIsDeleting(false);
+        setLineIndex((prev) => (prev + 1) % COMMANDS.length);
       }
+    }, delay);
 
-      if (ringRef.current) {
-        ringRef.current.style.opacity = "1";
-      }
-    };
-
-    const animate = () => {
-      ringX += (mouseX - ringX) * 0.16;
-      ringY += (mouseY - ringY) * 0.16;
-
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
-      }
-
-      raf = window.requestAnimationFrame(animate);
-    };
-
-    const onDown = () => ringRef.current?.classList.add("down");
-    const onUp = () => ringRef.current?.classList.remove("down");
-
-    const onEnterInteractive = () => ringRef.current?.classList.add("hover");
-    const onLeaveInteractive = () => ringRef.current?.classList.remove("hover");
-
-    const interactiveSelector =
-      'a, button, input, textarea, select, [role="button"], .panel, .project-card, .contact-link';
-
-    const interactiveElements = Array.from(
-      document.querySelectorAll(interactiveSelector)
-    );
-
-    interactiveElements.forEach((el) => {
-      el.addEventListener("mouseenter", onEnterInteractive);
-      el.addEventListener("mouseleave", onLeaveInteractive);
-    });
-
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mousedown", onDown);
-    window.addEventListener("mouseup", onUp);
-
-    raf = window.requestAnimationFrame(animate);
-
-    return () => {
-      document.body.classList.remove("cursor-ready");
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mousedown", onDown);
-      window.removeEventListener("mouseup", onUp);
-      window.cancelAnimationFrame(raf);
-
-      interactiveElements.forEach((el) => {
-        el.removeEventListener("mouseenter", onEnterInteractive);
-        el.removeEventListener("mouseleave", onLeaveInteractive);
-      });
-    };
-  }, []);
+    return () => window.clearTimeout(timer);
+  }, [lineIndex, charIndex, isDeleting]);
 
   return (
-    <>
-      <div ref={dotRef} className="cursor-dot" />
-      <div ref={ringRef} className="cursor-ring" />
-    </>
+    <section id="hero" className="hero">
+      <div className="container hero-grid">
+        <div className="hero-copy">
+          <p className="section-kicker">RUTVIK CHAVDA</p>
+
+          <h1 className="hero-title">
+            Technical Support Engineer
+            <span>Endpoint Security · EDR/XDR · Threat Investigation · Incident Response</span>
+          </h1>
+
+          <p className="hero-summary">
+            Technical Support Engineer with strong endpoint security specialization and
+            hands-on experience supporting enterprise customers, investigating endpoint
+            threats, handling escalations, and validating remediation across Windows,
+            macOS, and Linux environments.
+          </p>
+
+          <div className="hero-terminal card">
+            <div className="terminal-bar">
+              <span className="terminal-dot terminal-red" />
+              <span className="terminal-dot terminal-yellow" />
+              <span className="terminal-dot terminal-green" />
+              <span className="terminal-label">live session / endpoint security</span>
+            </div>
+
+            <div className="terminal-line">
+              <span className="terminal-prompt">rutvik@sophos:~$</span>
+              <span className="terminal-command">{typed}</span>
+              <span className="terminal-caret" />
+            </div>
+
+            <div className="terminal-tags">
+              <span>Sophos Central</span>
+              <span>Intercept X</span>
+              <span>Live Discover</span>
+              <span>Splunk</span>
+              <span>Windows Event Logs</span>
+              <span>Sysmon</span>
+            </div>
+          </div>
+
+          <div className="hero-actions">
+            <a href="#contact" className="btn btn-primary">
+              Contact Me
+            </a>
+            <a href="#experience" className="btn btn-secondary">
+              View Experience
+            </a>
+          </div>
+        </div>
+
+        <div className="hero-panel card">
+          <div className="hero-panel-head">
+            <span className="status-dot" />
+            <span>Current Positioning</span>
+          </div>
+
+          <div className="hero-focus-list">
+            <div className="hero-focus-item">
+              <h3>Technical Support + Security Depth</h3>
+              <p>
+                Enterprise-focused support work with strong alignment to security
+                engineering, incident triage, and endpoint investigation workflows.
+              </p>
+            </div>
+
+            <div className="hero-focus-item">
+              <h3>Threat Investigation</h3>
+              <p>
+                Malware and ransomware investigations, suspicious process analysis,
+                remediation validation, and root cause analysis.
+              </p>
+            </div>
+
+            <div className="hero-focus-item">
+              <h3>Escalation Ownership</h3>
+              <p>
+                SLA-driven case ownership, complex troubleshooting, engineering
+                collaboration, and knowledge documentation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container stat-grid">
+        {STATS.map((item) => (
+          <div key={item.label} className="stat-card card">
+            <div className="stat-value">{item.value}</div>
+            <div className="stat-label">{item.label}</div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

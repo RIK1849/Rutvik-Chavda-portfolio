@@ -1,29 +1,27 @@
 import React from "react";
 
-const CERTIFICATIONS = [
-  "Sophos Central - Certified Support Engineer",
-  "Sophos Certified Endpoint Security Engineer",
-  "Sophos Central - Certified Engineer",
-  "TCS iON - Career Edge Young Professional",
-  "Introduction to Cyber Security",
-  "Introduction to CISSP Security Assessment",
+const PROFILE_POINTS = [
+  "Technical Support Engineer with strong Endpoint Security specialization.",
+  "Hands-on experience supporting enterprise customers across Windows, macOS, and Linux.",
+  "Focused on threat investigation, escalation handling, root cause analysis, and structured troubleshooting.",
+  "Positioned for Technical Support Engineer, Endpoint Security Engineer, Security Operations, and Incident Response aligned roles.",
 ];
 
-const SPECIALTIES = [
+const FOCUS_AREAS = [
   {
-    title: "Threat Detection & Investigation",
-    body:
-      "Hands-on work across endpoint telemetry, suspicious process validation, malware triage, and escalation-focused investigation workflows.",
+    title: "Enterprise Endpoint Support",
+    text:
+      "Support experience in customer-facing environments where resolution quality, case ownership, and escalation handling matter.",
   },
   {
-    title: "Endpoint Policy & Product Troubleshooting",
-    body:
-      "Experience with web control, application control, device encryption, cloud-managed policies, and structured root cause analysis.",
+    title: "Threat Investigation",
+    text:
+      "Investigation of malware, ransomware, suspicious activity, and endpoint events using telemetry, logs, and supporting artifacts.",
   },
   {
-    title: "Cross-Platform Security Support",
-    body:
-      "Support coverage across Windows, macOS, and Linux environments in enterprise, hybrid, and customer-specific deployments.",
+    title: "Engineering Collaboration",
+    text:
+      "Defect reproduction support, validation testing, documentation, and structured handoff for deeper product investigation.",
   },
 ];
 
@@ -31,51 +29,45 @@ export default function AboutSection() {
   return (
     <section id="about" className="section">
       <div className="container">
-        <p className="section-label">ABOUT</p>
+        <p className="section-kicker">ABOUT</p>
         <h2 className="section-title">
-          Cyber Operations <span>Profile</span>
+          A Clear and Credible <span>Profile</span>
         </h2>
 
-        <div className="about-layout">
-          <div className="panel about-main">
-            <p>
-              I am Rutvik Chavda, an endpoint security professional with
-              experience supporting enterprise customers in high-pressure,
-              escalation-driven environments.
+        <div className="about-grid">
+          <div className="card about-main">
+            <h3 className="card-title">Who I Am</h3>
+            <p className="section-copy">
+              I&apos;m Rutvik Chavda, a Technical Support Engineer with strong
+              specialization in endpoint security. My background sits at the
+              intersection of enterprise support, endpoint investigation, and
+              escalation-driven troubleshooting.
             </p>
-            <p>
-              My work combines deep product troubleshooting with practical
-              security operations. I investigate malware alerts, suspicious
-              activity, endpoint instability, policy conflicts, and complex
-              support cases that require clean analysis and technical precision.
+            <p className="section-copy">
+              I work on complex support cases involving endpoint protection,
+              threat investigation, policy-related issues, incident triage, and
+              remediation validation. My experience is strongest in environments
+              where technical depth, structured analysis, and customer-facing
+              execution all matter.
             </p>
-            <p>
-              I am targeting roles in endpoint security engineering, technical
-              support engineering, SOC operations, threat analysis, and incident
-              response where I can contribute both operational depth and strong
-              customer-facing execution.
-            </p>
-          </div>
 
-          <div className="panel cert-panel">
-            <h3 className="card-title">Selected Certifications</h3>
-            <div className="cert-stack">
-              {CERTIFICATIONS.map((item) => (
-                <div key={item} className="cert-chip">
+            <div className="bullet-stack">
+              {PROFILE_POINTS.map((item) => (
+                <div key={item} className="bullet-item">
                   {item}
                 </div>
               ))}
             </div>
           </div>
-        </div>
 
-        <div className="specialty-grid">
-          {SPECIALTIES.map((item) => (
-            <div key={item.title} className="panel specialty-card">
-              <h3 className="card-title">{item.title}</h3>
-              <p>{item.body}</p>
-            </div>
-          ))}
+          <div className="about-side">
+            {FOCUS_AREAS.map((item) => (
+              <div key={item.title} className="card focus-card">
+                <h3 className="card-title">{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
