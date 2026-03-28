@@ -1,44 +1,83 @@
 import React from "react";
 
-// All projects reflect real work experience or clearly labelled personal/lab investigations.
-// No invented metrics, no fabricated enterprise ownership claims.
+type Project = {
+  sev: "WORK" | "PERSONAL";
+  sevCls: string;
+  name: string;
+  desc: string;
+  tags: string[];
+};
 
-const PROJECTS = [
+const PROJECTS: Project[] = [
   {
-    icon: "🔍", sev: "WORK", sevCls: "sev-crit",
+    sev: "WORK",
+    sevCls: "sev-crit",
     name: "Malware & Ransomware Incident Triage",
-    desc: "Hands-on investigation of malware and ransomware incidents for enterprise customers at Sophos. Work involves correlating EDR/XDR telemetry, Windows Event Logs, Sysmon data, and process tree analysis to identify suspicious activity, reconstruct attack timelines, validate containment, and document findings for root cause reporting.",
-    tags: ["Sophos EDR/XDR", "Ransomware IR", "Windows Event Logs", "Sysmon", "Process Tree Analysis", "Root Cause Analysis", "IOC/IOA"],
+    desc: "Investigated endpoint incidents by correlating EDR/XDR telemetry, Windows Event Logs, Sysmon activity, and process execution artifacts to validate suspicious behavior and support containment decisions.",
+    tags: [
+      "EDR/XDR",
+      "Ransomware IR",
+      "Windows Event Logs",
+      "Sysmon",
+      "Process Tree Analysis",
+      "Root Cause Analysis",
+    ],
   },
   {
-    icon: "📊", sev: "WORK", sevCls: "sev-crit",
+    sev: "WORK",
+    sevCls: "sev-crit",
     name: "Live Discover Threat Hunting Queries",
-    desc: "Authored and maintained Live Discover OSQL queries used during threat investigations to surface suspicious activity across the Sophos Data Lake — targeting MITRE ATT&CK tactics including persistence, lateral movement, and credential access across Windows, macOS, and Linux endpoints.",
-    tags: ["Live Discover", "OSQL", "SQL", "Sophos Data Lake", "MITRE ATT&CK", "Threat Hunting", "Cross-Platform"],
+    desc: "Built and used Live Discover / OSQL queries to surface suspicious activity across endpoint telemetry and support investigation workflows mapped to MITRE ATT&CK behaviors.",
+    tags: [
+      "Live Discover",
+      "OSQL",
+      "Sophos Data Lake",
+      "MITRE ATT&CK",
+      "Threat Hunting",
+      "Cross-Platform",
+    ],
   },
   {
-    icon: "🛡️", sev: "WORK", sevCls: "sev-high",
+    sev: "WORK",
+    sevCls: "sev-high",
     name: "Sophos Central Policy Tuning & Optimisation",
-    desc: "Designed and tuned enterprise Sophos Central security policies for customers across cloud, hybrid, and on-premise environments. Covered web content control, application control, device control, device encryption, and endpoint protection settings — balancing security coverage with operational stability and reducing false positives.",
-    tags: ["Sophos Central", "Web Control", "App Control", "Device Encryption", "DLP", "Policy Tuning", "Azure"],
+    desc: "Worked on endpoint policy tuning across web control, application control, device control, and device encryption to balance protection strength with customer environment stability.",
+    tags: [
+      "Sophos Central",
+      "Web Control",
+      "App Control",
+      "Device Encryption",
+      "Policy Tuning",
+      "Hybrid Environments",
+    ],
   },
   {
-    icon: "🔬", sev: "WORK", sevCls: "sev-high",
+    sev: "WORK",
+    sevCls: "sev-high",
     name: "Defect Reproduction & Engineering Escalation",
-    desc: "Built and maintained lab environments across Windows, macOS, and Linux to reproduce complex customer defects — including agent behaviour issues, policy conflicts, performance problems, and update compatibility failures. Documented detailed reproduction steps and test cases to accelerate engineering investigation and validate fixes before customer delivery.",
-    tags: ["Lab Environments", "Defect Reproduction", "Windows", "macOS", "Linux", "Engineering Escalation", "QA Validation"],
+    desc: "Created repeatable test cases and lab scenarios to reproduce difficult customer issues, document expected vs actual behavior, and provide engineering-ready escalation evidence.",
+    tags: [
+      "Lab Environments",
+      "Defect Reproduction",
+      "Windows",
+      "macOS",
+      "Linux",
+      "Engineering Escalation",
+    ],
   },
   {
-    icon: "📝", sev: "WORK", sevCls: "sev-high",
-    name: "Knowledge Base Articles & Troubleshooting Runbooks",
-    desc: "Authored internal knowledge base articles, troubleshooting runbooks, and investigation playbooks covering common endpoint security, policy, and incident response scenarios. These resources improved analyst consistency, reduced repeat escalations, and directly contributed to the case quality standards recognised in the Sophos Support Team Top 10 FY24 award.",
-    tags: ["Knowledge Base", "Runbooks", "Technical Documentation", "Investigation Playbooks", "Case Quality"],
-  },
-  {
-    icon: "💻", sev: "PERSONAL", sevCls: "sev-med",
-    name: "Home Lab — Endpoint Security & MITRE ATT&CK Mapping",
-    desc: "Personal lab environment used to practise threat investigation techniques, test detection logic against simulated attack scenarios, and map observed behaviours to MITRE ATT&CK tactics and techniques. Supports ongoing learning in EDR/XDR telemetry analysis, Splunk correlation, and endpoint forensics across Windows and Linux.",
-    tags: ["Home Lab", "MITRE ATT&CK", "Splunk", "EDR Telemetry", "Detection Engineering", "Windows", "Linux"],
+    sev: "PERSONAL",
+    sevCls: "sev-med",
+    name: "Home Lab — SIEM & Endpoint Investigation Practice",
+    desc: "Used a personal lab to strengthen practical skills in detection logic, log correlation, Splunk fundamentals, and endpoint investigation workflows across Windows and Linux systems.",
+    tags: [
+      "Home Lab",
+      "Splunk",
+      "Endpoint Telemetry",
+      "Detection Engineering",
+      "Windows",
+      "Linux",
+    ],
   },
 ];
 
@@ -47,33 +86,39 @@ export default function ProjectsSection() {
     <section id="projects" className="section">
       <div className="container">
         <p className="sec-label">WORK & PROJECTS</p>
-        <h2 className="sec-title">What I <span>Do</span></h2>
+        <h2 className="sec-title">
+          What I <span>Do</span>
+        </h2>
 
-        {/* Legend */}
-        <div style={{ display: "flex", gap: "1rem", marginBottom: "2rem", flexWrap: "wrap" }}>
-          {[
-            { cls: "sev-crit", label: "WORK — Primary responsibilities at Sophos" },
-            { cls: "sev-high",  label: "WORK — Supporting responsibilities"        },
-            { cls: "sev-med",   label: "PERSONAL — Lab / Learning project"         },
-          ].map(l => (
-            <span key={l.label} style={{ display: "flex", alignItems: "center", gap: ".4rem", fontFamily: "var(--font-mono)", fontSize: ".62rem", color: "var(--muted)" }}>
-              <span className={`proj-sev ${l.cls}`} style={{ padding: ".12rem .4rem" }}>{l.cls === "sev-crit" ? "WORK" : l.cls === "sev-high" ? "WORK" : "PERSONAL"}</span>
-              {l.label.split("—")[1]}
-            </span>
-          ))}
+        <div className="legend-row">
+          <span className="legend-item">
+            <span className="sev sev-crit">WORK</span> Primary responsibilities
+          </span>
+          <span className="legend-item">
+            <span className="sev sev-high">WORK</span> Supporting
+            responsibilities
+          </span>
+          <span className="legend-item">
+            <span className="sev sev-med">PERSONAL</span> Lab / learning project
+          </span>
         </div>
 
         <div className="proj-grid">
-          {PROJECTS.map(p => (
-            <div key={p.name} className="proj-card">
-              <div className="proj-head">
-                <span className="proj-icon">{p.icon}</span>
-                <span className={`proj-sev ${p.sevCls}`}>{p.sev}</span>
+          {PROJECTS.map((project) => (
+            <div key={project.name} className="proj-card panel">
+              <div className="proj-top">
+                <span className={`sev ${project.sevCls}`}>{project.sev}</span>
               </div>
-              <p className="proj-name">{p.name}</p>
-              <p className="proj-desc">{p.desc}</p>
-              <div className="proj-tags">
-                {p.tags.map(t => <span key={t} className="tag">{t}</span>)}
+
+              <h3 className="proj-name">{project.name}</h3>
+              <p className="proj-desc">{project.desc}</p>
+
+              <div className="tag-row">
+                {project.tags.map((tag) => (
+                  <span key={tag} className="tag">
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
           ))}

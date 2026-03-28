@@ -133,14 +133,13 @@ export default function ContactSection() {
               <strong style={{ color: "var(--cyan)" }}>
                 Security Operations / Incident Response
               </strong>{" "}
-              roles at security-focused companies globally. Based in Ahmedabad,
-              Gujarat — open to remote and relocation opportunities.
+              roles at security-focused companies globally.
             </p>
 
-            <p className="con-p" style={{ marginTop: "-.5rem" }}>
-              If you&apos;re hiring for roles in endpoint security, EDR/XDR
-              investigations, threat analysis, or enterprise security support —
-              feel free to reach out directly.
+            <p className="con-p" style={{ marginTop: "-.4rem" }}>
+              If you&apos;re hiring for endpoint security, EDR/XDR
+              investigations, threat analysis, or escalation-driven technical
+              support work, feel free to reach out directly.
             </p>
 
             <div className="con-links">
@@ -213,15 +212,15 @@ export default function ContactSection() {
                       className="frm-input"
                       value={form[field]}
                       onChange={onChange}
+                      autoComplete="off"
+                      required
                       placeholder={
                         field === "name"
                           ? "Your Full Name"
                           : field === "email"
                           ? "you@company.com"
-                          : "Endpoint Security Engineer Opportunity"
+                          : "Opportunity / Role"
                       }
-                      autoComplete="off"
-                      required
                     />
                   </div>
                 ))}

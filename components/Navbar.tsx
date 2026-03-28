@@ -1,35 +1,42 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 
 const LINKS = [
-  { label: "01.about",      href: "#about"      },
-  { label: "02.experience", href: "#experience"  },
-  { label: "03.projects",   href: "#projects"    },
-  { label: "04.contact",    href: "#contact"     },
+  { label: "01.about", href: "#about" },
+  { label: "02.experience", href: "#experience" },
+  { label: "03.projects", href: "#projects" },
+  { label: "04.contact", href: "#contact" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", fn);
-    return () => window.removeEventListener("scroll", fn);
+    const onScroll = () => setScrolled(window.scrollY > 32);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <nav className="nav" style={{ borderBottomColor: scrolled ? "rgba(0,229,255,.14)" : "rgba(12,37,64,.5)" }}>
-      <a href="#hero" className="nav-logo">
-        <span className="nav-b">[</span>RC<span className="nav-b">]</span>
-      </a>
-      <ul className="nav-links">
-        {LINKS.map(l => (
-          <li key={l.href}><a href={l.href} className="nav-a">{l.label}</a></li>
-        ))}
-      </ul>
-      <div className="nav-status">
-        <span className="sdot" />
-        OPEN_TO_OPPORTUNITIES
+    <header className={`nav ${scrolled ? "nav-scrolled" : ""}`}>
+      <div className="container nav-inner">
+        <a href="#hero" className="nav-brand" aria-label="Go to top">
+          [ RC ]
+        </a>
+
+        <nav className="nav-links" aria-label="Primary">
+          {LINKS.map((link) => (
+            <a key={link.href} href={link.href} className="nav-a">
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        <a href="#contact" className="nav-cta">
+          OPEN_TO_OPPORTUNITIES
+        </a>
       </div>
-    </nav>
+    </header>
   );
 }

@@ -19,7 +19,7 @@ export default function HeroSection() {
 
   useEffect(() => {
     const target = LINES[lineIndex];
-    const delay = isDeleting ? 36 : charIndex === target.length ? 1800 : 55;
+    const delay = isDeleting ? 32 : charIndex === target.length ? 1800 : 48;
 
     const timer = window.setTimeout(() => {
       if (!isDeleting) {
@@ -46,7 +46,7 @@ export default function HeroSection() {
   return (
     <>
       <section id="hero" className="hero">
-        <div className="hero-inner">
+        <div className="container hero-inner">
           <div>
             <p className="hero-eyebrow">
               {"// TECHNICAL SUPPORT ENGINEER · ENDPOINT SECURITY · SOPHOS"}
@@ -90,9 +90,9 @@ export default function HeroSection() {
 
               <div
                 style={{
-                  marginTop: ".55rem",
-                  color: "rgba(0,255,157,.55)",
-                  fontSize: ".7rem",
+                  marginTop: ".6rem",
+                  color: "rgba(0,255,157,.58)",
+                  fontSize: ".72rem",
                   lineHeight: 1.8,
                 }}
               >
@@ -142,10 +142,10 @@ export default function HeroSection() {
           { n: "P1/P2", l: "Escalation Ownership" },
           { n: "Top 2", l: "Community Contributor FY25" },
           { n: "4+", l: "Sophos Certifications" },
-        ].map((s) => (
-          <div key={s.l} className="hstat">
-            <span className="hstat-n">{s.n}</span>
-            <span className="hstat-l">{s.l}</span>
+        ].map((item) => (
+          <div key={item.l} className="hstat">
+            <span className="hstat-n">{item.n}</span>
+            <span className="hstat-l">{item.l}</span>
           </div>
         ))}
       </div>
