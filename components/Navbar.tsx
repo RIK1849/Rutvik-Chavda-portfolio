@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from "react";
 
 const LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Experience", href: "#experience" },
-  { label: "Skills", href: "#skills" },
-  { label: "Projects", href: "#projects" },
-  { label: "Contact", href: "#contact" },
+  { label: "ABOUT", href: "#about" },
+  { label: "EXPERIENCE", href: "#experience" },
+  { label: "SKILLS", href: "#skills" },
+  { label: "PROJECTS", href: "#projects" },
+  { label: "CONTACT", href: "#contact" },
 ];
 
 export default function Navbar() {
@@ -27,7 +27,7 @@ export default function Navbar() {
           <span className="nav-brand-text">RUTVIK CHAVDA</span>
         </a>
 
-        <nav className="nav-links" aria-label="Primary">
+        <nav className="nav-links" aria-label="Primary Navigation">
           {LINKS.map((item) => (
             <a key={item.href} href={item.href} className="nav-link">
               {item.label}

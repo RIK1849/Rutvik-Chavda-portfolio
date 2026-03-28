@@ -31,6 +31,8 @@ body {
   color: var(--text);
   font-family: var(--sans);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -94,7 +96,11 @@ main {
 }
 
 .card {
-  background: linear-gradient(180deg, rgba(10, 21, 31, 0.88), rgba(7, 16, 25, 0.72));
+  background: linear-gradient(
+    180deg,
+    rgba(10, 21, 31, 0.88),
+    rgba(7, 16, 25, 0.72)
+  );
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -116,7 +122,10 @@ main {
   inset: 0 0 auto 0;
   z-index: 20;
   border-bottom: 1px solid transparent;
-  transition: background 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    backdrop-filter 0.25s ease;
 }
 
 .nav-scrolled {
@@ -131,7 +140,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 26px;
+  gap: 28px;
 }
 
 .nav-brand {
@@ -140,6 +149,7 @@ main {
   gap: 12px;
   color: var(--heading);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-brand-mark {
@@ -158,14 +168,22 @@ main {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  justify-content: center;
+  gap: 28px;
+  flex: 1;
+  flex-wrap: wrap;
 }
 
 .nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 2px;
   color: var(--muted);
   font-family: var(--mono);
   font-size: 0.78rem;
   letter-spacing: 0.12em;
+  white-space: nowrap;
   transition: color 0.2s ease;
 }
 
@@ -186,6 +204,8 @@ main {
   font-family: var(--mono);
   font-size: 0.74rem;
   letter-spacing: 0.1em;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-cta:hover {
@@ -204,7 +224,7 @@ main {
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.16fr) minmax(340px, 0.84fr);
-  gap: 28px;
+  gap: 32px;
   align-items: start;
 }
 
@@ -246,6 +266,7 @@ main {
 
 .hero-terminal {
   margin-top: 26px;
+  max-width: 760px;
 }
 
 .terminal-bar {
@@ -325,6 +346,7 @@ main {
   border: 1px solid rgba(255, 255, 255, 0.06);
   color: var(--muted);
   font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 @keyframes blink {
@@ -336,8 +358,12 @@ main {
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 16px;
   margin-top: 24px;
+}
+
+.hero-actions .btn {
+  min-width: 190px;
 }
 
 .btn {
@@ -345,13 +371,18 @@ main {
   align-items: center;
   justify-content: center;
   min-height: 50px;
-  padding: 0 18px;
+  padding: 0 20px;
   border-radius: 14px;
   border: 1px solid transparent;
   font-family: var(--mono);
   font-size: 0.84rem;
   letter-spacing: 0.08em;
-  transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease;
 }
 
 .btn:hover {
@@ -589,7 +620,7 @@ main {
 .cert-card {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   padding: 18px 20px;
 }
 
@@ -603,6 +634,7 @@ main {
   border: 1px solid rgba(34, 211, 238, 0.18);
   color: var(--cyan);
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 /* AWARDS */
@@ -630,6 +662,7 @@ main {
   border: 1px solid rgba(255, 216, 77, 0.16);
   color: var(--yellow);
   font-size: 1.05rem;
+  flex-shrink: 0;
 }
 
 .award-text {
@@ -664,7 +697,9 @@ main {
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .contact-link:hover {
@@ -718,7 +753,9 @@ main {
   background: rgba(0, 0, 0, 0.22);
   color: var(--heading);
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .field input:focus,
@@ -884,8 +921,10 @@ main {
     grid-template-columns: 1fr;
   }
 
+  .hero-actions .btn,
   .btn {
     width: 100%;
+    min-width: 0;
   }
 
   .nav-links {

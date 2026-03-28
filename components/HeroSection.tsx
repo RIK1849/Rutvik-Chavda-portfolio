@@ -56,15 +56,17 @@ export default function HeroSection() {
           <h1 className="hero-title">
             Technical Support Engineer
             <span>
-              Endpoint Security | EDR/XDR | Threat Investigation | Incident Response
+              Endpoint Security | EDR/XDR | Threat Investigation | Incident
+              Response
             </span>
           </h1>
 
           <p className="hero-summary">
-            Technical Support Engineer with strong endpoint security specialization
-            and hands-on experience supporting enterprise customers, investigating
-            endpoint threats, handling escalations, and validating remediation
-            across Windows, macOS, and Linux environments.
+            Technical Support Engineer with strong endpoint security
+            specialization and hands-on experience supporting enterprise
+            customers, investigating endpoint threats, handling escalations, and
+            validating remediation across Windows, macOS, and Linux
+            environments.
           </p>
 
           <div className="hero-terminal card">
@@ -72,7 +74,9 @@ export default function HeroSection() {
               <span className="terminal-dot terminal-red" />
               <span className="terminal-dot terminal-yellow" />
               <span className="terminal-dot terminal-green" />
-              <span className="terminal-label">live session / endpoint security</span>
+              <span className="terminal-label">
+                live session / endpoint security
+              </span>
             </div>
 
             <div className="terminal-line">
