@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 
 export default function ContactSection() {
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [form, setForm]     = useState({ name: "", email: "", subject: "", message: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -17,8 +17,8 @@ export default function ContactSection() {
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           access_key: "9f72abfd-a57b-4428-96e0-0f935d46f6b1",
-          name: form.name,
-          email: form.email,
+          name:    form.name,
+          email:   form.email,
           subject: form.subject,
           message: form.message,
         }),
@@ -43,22 +43,49 @@ export default function ContactSection() {
       <div className="container">
         <p className="sec-label">CONTACT</p>
         <h2 className="sec-title">Get In <span>Touch</span></h2>
+
         <div className="con-grid">
 
-          {/* LEFT — info */}
+          {/* LEFT */}
           <div>
             <p className="con-p">
-              Open to senior endpoint security, threat hunting, and XDR/MDR engineering roles — including at
-              <strong style={{ color: "var(--cyan)" }}> CrowdStrike, Microsoft, Palo Alto Networks, Zscaler, </strong>
-              and leading MSSPs globally. Based in Ahmedabad, Gujarat — open to relocation and remote opportunities.
+              I&apos;m open to <strong style={{ color: "var(--cyan)" }}>Technical Support Engineer</strong>,{" "}
+              <strong style={{ color: "var(--cyan)" }}>Endpoint Security Engineer</strong>, and{" "}
+              <strong style={{ color: "var(--cyan)" }}>Security Operations / Incident Response</strong> roles
+              at security-focused companies globally. Based in Ahmedabad, Gujarat — open to remote and relocation opportunities.
             </p>
+            <p className="con-p" style={{ marginTop: "-.5rem" }}>
+              If you&apos;re hiring for roles in endpoint security, EDR/XDR investigations, threat analysis, or
+              enterprise security support — feel free to reach out directly.
+            </p>
+
             <div className="con-links">
               {[
-                { icon: "📞", lbl: "PHONE",    val: "+91 722 689 4089",                              href: "tel:+917226894089" },
-                { icon: "✉️", lbl: "EMAIL",    val: "chavdarutvik1849@gmail.com",                    href: "mailto:chavdarutvik1849@gmail.com" },
-                { icon: "💼", lbl: "LINKEDIN", val: "linkedin.com/in/rutvikchavda-584b37197",        href: "https://www.linkedin.com/in/rutvikchavda-584b37197/" },
-                { icon: "🐙", lbl: "GITHUB",   val: "github.com/RIK1849",                            href: "https://github.com/RIK1849" },
-                { icon: "📍", lbl: "LOCATION", val: "Ahmedabad, Gujarat, India",                     href: "#" },
+                {
+                  icon: "📞", lbl: "PHONE",
+                  val: "+91 722 689 4089",
+                  href: "tel:+917226894089",
+                },
+                {
+                  icon: "✉️", lbl: "EMAIL",
+                  val: "chavdarutvik1849@gmail.com",
+                  href: "mailto:chavdarutvik1849@gmail.com",
+                },
+                {
+                  icon: "💼", lbl: "LINKEDIN",
+                  val: "linkedin.com/in/rutvikchavda-584b37197",
+                  href: "https://www.linkedin.com/in/rutvikchavda-584b37197/",
+                },
+                {
+                  icon: "🐙", lbl: "GITHUB",
+                  val: "github.com/RIK1849",
+                  href: "https://github.com/RIK1849",
+                },
+                {
+                  icon: "📍", lbl: "LOCATION",
+                  val: "Ahmedabad, Gujarat, India",
+                  href: "#",
+                },
               ].map(l => (
                 <a
                   key={l.lbl}
@@ -104,7 +131,7 @@ export default function ContactSection() {
                       placeholder={
                         field === "name"    ? "Your Full Name" :
                         field === "email"   ? "you@company.com" :
-                        "Senior Security Engineer Opportunity"
+                                              "Endpoint Security Engineer Opportunity"
                       }
                       autoComplete="off"
                     />

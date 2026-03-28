@@ -1,3 +1,8 @@
+// BACKGROUND OPTION 3 — "Threat Radar + Data Pulses"
+// Animated radar sweep with pulsing threat nodes and data stream lines.
+// Best for: most unique, modern, stands out strongly from generic portfolios.
+// To use: replace your AnimatedBackground.tsx content with this file.
+
 "use client";
 import React, { useEffect, useRef } from "react";
 
@@ -12,106 +17,214 @@ export default function AnimatedBackground() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let raf: number;
-    let gridOff = 0;
+    let angle = 0;
 
-    class Particle {
-      x: number; y: number; vx: number; vy: number;
-      r: number; color: string; alpha: number;
-      constructor(w: number, h: number) {
-        this.x = Math.random() * w;
-        this.y = Math.random() * h;
-        this.vx = (Math.random() - 0.5) * 0.75;
-        this.vy = (Math.random() - 0.5) * 0.75;
-        this.r = Math.random() * 1.4 + 0.4;
-        this.alpha = Math.random() * 0.55 + 0.35;
-        const rng = Math.random();
-        this.color = rng > 0.97 ? "#ff3366" : rng > 0.88 ? "#00ff9d" : "#00e5ff";
-      }
-      update(w: number, h: number) {
-        this.x += this.vx; this.y += this.vy;
-        if (this.x < 0 || this.x > w) this.vx *= -1;
-        if (this.y < 0 || this.y > h) this.vy *= -1;
-      }
-      draw(c: CanvasRenderingContext2D) {
-        c.save();
-        c.globalAlpha = this.alpha;
-        c.beginPath();
-        c.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        c.fillStyle = this.color;
-        c.shadowBlur = 9; c.shadowColor = this.color;
-        c.fill(); c.restore();
-      }
-    }
+    // Threat nodes — static blips on the radar
+    type Node = { x: number; y: number; r: number; color: string; pulse: number; speed: number };
+    let nodes: Node[] = [];
 
-    let pts: Particle[] = [];
+    // Data stream lines
+    type Stream = { x: number; y: number; len: number; speed: number; alpha: number };
+    let streams: Stream[] = [];
+
+    const COLORS = ["#00e5ff", "#00ff9d", "#ff3366", "#ffcc00"];
 
     const init = (w: number, h: number) => {
-      pts = [];
-      const n = w < 768 ? 55 : 115;
-      for (let i = 0; i < n; i++) pts.push(new Particle(w, h));
+      nodes = [];
+      streams = [];
+
+      // Place ~18 threat nodes scattered across canvas
+      for (let i = 0; i < 18; i++) {
+        nodes.push({
+          x:     Math.random() * w,
+          y:     Math.random() * h,
+          r:     Math.random() * 2.5 + 1,
+          color: COLORS[Math.floor(Math.random() * COLORS.length)],
+          pulse: Math.random() * Math.PI * 2,
+          speed: Math.random() * 0.02 + 0.01,
+        });
+      }
+
+      // Vertical data streams
+      const count = Math.floor(w / 80);
+      for (let i = 0; i < count; i++) {
+        streams.push({
+          x:     (i / count) * w + Math.random() * 40,
+          y:     Math.random() * h,
+          len:   Math.random() * 80 + 40,
+          speed: Math.random() * 1.2 + 0.5,
+          alpha: Math.random() * 0.12 + 0.04,
+        });
+      }
     };
 
-    const drawLines = () => {
-      for (let i = 0; i < pts.length; i++) {
-        for (let j = i + 1; j < pts.length; j++) {
-          const dx = pts[i].x - pts[j].x;
-          const dy = pts[i].y - pts[j].y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < 115) {
-            ctx.save();
-            ctx.globalAlpha = (1 - d / 115) * 0.16;
-            ctx.beginPath();
-            ctx.strokeStyle = "#00e5ff";
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(pts[i].x, pts[i].y);
-            ctx.lineTo(pts[j].x, pts[j].y);
-            ctx.stroke(); ctx.restore();
-          }
+    const drawGrid = (w: number, h: number) => {
+      ctx.save();
+      ctx.strokeStyle = "rgba(0,229,255,0.025)";
+      ctx.lineWidth   = 1;
+      const step = 55;
+      for (let x = 0; x < w; x += step) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += step) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+      ctx.restore();
+    };
+
+    const drawRadar = (w: number, h: number) => {
+      // Radar positioned bottom-right
+      const cx = w * 0.82, cy = h * 0.78, R = Math.min(w, h) * 0.22;
+
+      ctx.save();
+
+      // Concentric rings
+      for (let i = 1; i <= 4; i++) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, (R / 4) * i, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0,229,255,${0.06 - i * 0.01})`;
+        ctx.lineWidth   = 1;
+        ctx.stroke();
+      }
+
+      // Crosshairs
+      ctx.strokeStyle = "rgba(0,229,255,0.05)";
+      ctx.beginPath(); ctx.moveTo(cx - R, cy); ctx.lineTo(cx + R, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R); ctx.stroke();
+
+      // Sweep gradient
+      const sweep = ctx.createConicalGradient
+        ? (ctx as unknown as { createConicalGradient: (a: number, x: number, y: number) => CanvasGradient }).createConicalGradient(angle, cx, cy)
+        : null;
+
+      if (!sweep) {
+        // Fallback sweep: arc slice
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, R, angle - 0.6, angle);
+        ctx.closePath();
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+        g.addColorStop(0, "rgba(0,229,255,0.18)");
+        g.addColorStop(1, "rgba(0,229,255,0)");
+        ctx.fillStyle = g;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Sweep line
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(angle) * R, cy + Math.sin(angle) * R);
+      ctx.strokeStyle = "rgba(0,229,255,0.55)";
+      ctx.lineWidth   = 1.5;
+      ctx.shadowBlur  = 8;
+      ctx.shadowColor = "#00e5ff";
+      ctx.stroke();
+      ctx.restore();
+
+      // Clip blips to radar circle
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.clip();
+
+      // Blips — light up when near sweep angle
+      const blipCount = 5;
+      for (let i = 0; i < blipCount; i++) {
+        const bAngle = (i / blipCount) * Math.PI * 2;
+        const bR     = (0.3 + (i % 3) * 0.22) * R;
+        const bx     = cx + Math.cos(bAngle) * bR;
+        const by     = cy + Math.sin(bAngle) * bR;
+        const diff   = Math.abs(((bAngle - angle) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2));
+        const bright = diff < 0.5 ? 1 - diff / 0.5 : 0;
+
+        if (bright > 0) {
+          ctx.beginPath();
+          ctx.arc(bx, by, 3, 0, Math.PI * 2);
+          ctx.fillStyle   = `rgba(0,255,157,${bright * 0.9})`;
+          ctx.shadowBlur  = 12 * bright;
+          ctx.shadowColor = "#00ff9d";
+          ctx.fill();
         }
       }
+
+      ctx.restore();
+    };
+
+    const drawStreams = (h: number) => {
+      streams.forEach(s => {
+        const grad = ctx.createLinearGradient(s.x, s.y, s.x, s.y + s.len);
+        grad.addColorStop(0, `rgba(0,229,255,0)`);
+        grad.addColorStop(0.5, `rgba(0,229,255,${s.alpha})`);
+        grad.addColorStop(1, `rgba(0,229,255,0)`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(s.x, s.y, 1, s.len);
+        s.y += s.speed;
+        if (s.y > h) s.y = -s.len;
+      });
+    };
+
+    const drawNodes = () => {
+      nodes.forEach(n => {
+        n.pulse += n.speed;
+        const a = (Math.sin(n.pulse) + 1) / 2;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r + a * 2, 0, Math.PI * 2);
+        ctx.fillStyle   = n.color;
+        ctx.globalAlpha = 0.35 + a * 0.5;
+        ctx.shadowBlur  = 8 + a * 10;
+        ctx.shadowColor = n.color;
+        ctx.fill();
+        ctx.restore();
+      });
     };
 
     const draw = () => {
       const w = canvas.width, h = canvas.height;
-      ctx.fillStyle = "#00050a";
+
+      ctx.fillStyle = "rgba(0,5,10,0.92)";
       ctx.fillRect(0, 0, w, h);
 
-      // drifting grid
-      gridOff = (gridOff + 0.12) % 60;
-      ctx.save();
-      ctx.strokeStyle = "rgba(0,229,255,.02)";
-      ctx.lineWidth = 1;
-      for (let x = (gridOff % 60) - 60; x < w + 60; x += 60) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-      }
-      for (let y = (gridOff % 60) - 60; y < h + 60; y += 60) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-      }
-      ctx.restore();
+      drawGrid(w, h);
+      drawStreams(h);
+      drawNodes();
+      drawRadar(w, h);
 
-      // center glow
-      const g = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w * 0.55);
-      g.addColorStop(0, "rgba(0,229,255,.022)");
-      g.addColorStop(1, "transparent");
-      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      // Vignette
+      const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.3, w / 2, h / 2, h);
+      vig.addColorStop(0, "transparent");
+      vig.addColorStop(1, "rgba(0,5,10,0.55)");
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, w, h);
 
-      pts.forEach(p => { p.update(w, h); p.draw(ctx); });
-      drawLines();
-      raf = requestAnimationFrame(draw);
+      angle = (angle + 0.012) % (Math.PI * 2);
+      raf   = requestAnimationFrame(draw);
     };
 
     const resize = () => {
-      canvas.width = window.innerWidth;
+      canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
       init(canvas.width, canvas.height);
     };
 
     window.addEventListener("resize", resize);
-    resize(); draw();
+    resize();
+    draw();
     return () => { window.removeEventListener("resize", resize); cancelAnimationFrame(raf); };
   }, []);
 
   return (
-    <canvas ref={canvasRef} style={{ position:"fixed", top:0, left:0, width:"100vw", height:"100vh", zIndex:-1, pointerEvents:"none", backgroundColor:"#00050a" }} aria-hidden="true" />
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: "fixed", top: 0, left: 0,
+        width: "100vw", height: "100vh",
+        zIndex: -1, pointerEvents: "none",
+        backgroundColor: "#00050a",
+      }}
+      aria-hidden="true"
+    />
   );
 }
