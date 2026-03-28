@@ -5,19 +5,20 @@ const LINES = [
   "xdr_hunt --tactic=TA0003 --platform=windows,macos,linux",
   "live_discover --query=credential_access --severity=critical",
   "incident_response --type=ransomware --containment=auto",
-  "threat_intel --ioc=c2_domains --correlate=data_lake",
-  "sophos_central --policy=dlp,amsi,ips --deploy=enterprise",
+  "splunk --correlate=endpoint_telemetry --ioc=validate",
+  "sophos_central --policy=dlp,amsi,ips,web_control --deploy=enterprise",
+  "mitre_attack --map=ttp --phase=lateral_movement,persistence",
 ];
 
 export default function HeroSection() {
-  const [typed, setTyped]   = useState("");
-  const [si, setSi]         = useState(0);
-  const [ci, setCi]         = useState(0);
-  const [del, setDel]       = useState(false);
+  const [typed, setTyped] = useState("");
+  const [si, setSi]       = useState(0);
+  const [ci, setCi]       = useState(0);
+  const [del, setDel]     = useState(false);
 
   useEffect(() => {
     const target = LINES[si];
-    const delay  = del ? 38 : ci === target.length ? 1900 : 58;
+    const delay  = del ? 36 : ci === target.length ? 1900 : 55;
     const t = setTimeout(() => {
       if (!del) {
         if (ci < target.length) { setTyped(target.slice(0, ci + 1)); setCi(ci + 1); }
@@ -37,25 +38,27 @@ export default function HeroSection() {
 
           {/* LEFT */}
           <div>
-            <p className="hero-eyebrow">&#47;&#47; ENDPOINT SECURITY ENGINEER &#47;&#47; SOPHOS</p>
+            <p className="hero-eyebrow">&#47;&#47; TECHNICAL SUPPORT ENGINEER · ENDPOINT SECURITY · SOPHOS &#47;&#47;</p>
 
             <h1 className="hero-name">
-              <span className="glitch" data-text="RUTVIK" style={{ display:"block", color:"var(--white)", fontFamily:"var(--font-hd)" }}>
+              <span className="glitch" data-text="RUTVIK" style={{ display: "block", color: "var(--white)", fontFamily: "var(--font-hd)" }}>
                 RUTVIK
               </span>
-              <span style={{ display:"block", color:"var(--cyan)", fontFamily:"var(--font-hd)", fontWeight:900 }}>
+              <span style={{ display: "block", color: "var(--cyan)", fontFamily: "var(--font-hd)", fontWeight: 900 }}>
                 CHAVDA
               </span>
             </h1>
 
             <p className="hero-role">
-              Sophos Certified Engineer &nbsp;·&nbsp; <em>EDR · XDR · MDR · Threat Hunting</em>
+              Sophos Certified Architect &nbsp;·&nbsp; <em>EDR · XDR · Threat Hunting · Incident Response</em>
             </p>
 
             <div className="hero-term">
               <div><span className="t-prompt">rutvik@sophos:~$ </span>{typed}<span className="t-cur" /></div>
-              <div style={{ marginTop:".4rem", color:"rgba(0,255,157,.55)", fontSize:".7rem" }}>
-                ✓ &nbsp;3+ yrs defending enterprise endpoints · Open to CrowdStrike · Zscaler · Microsoft · Palo Alto
+              <div style={{ marginTop: ".5rem", color: "rgba(0,255,157,.6)", fontSize: ".7rem", lineHeight: 1.7 }}>
+                ✓ &nbsp;3+ yrs · P1/P2 Escalations · EMEA, APAC, Americas<br />
+                ✓ &nbsp;Top 10 FY24 · Top 2 Community FY25 · Community Staff Spotlight<br />
+                ✓ &nbsp;Open to: CrowdStrike · Microsoft · Palo Alto · Zscaler · MSSPs
               </div>
             </div>
 
@@ -83,13 +86,13 @@ export default function HeroSection() {
         </div>
       </section>
 
-      {/* STATS */}
-      <div className="hero-stats" style={{ padding:"0 2rem" }}>
+      {/* STATS BAR */}
+      <div className="hero-stats" style={{ padding: "0 2rem" }}>
         {[
-          { n:"3+",    l:"Years at Sophos"        },
-          { n:"500+",  l:"Incidents Resolved"      },
-          { n:"1000+", l:"Endpoints Protected"     },
-          { n:"3",     l:"Sophos Certifications"   },
+          { n: "3+",   l: "Years at Sophos"         },
+          { n: "P1/P2",l: "Escalation Ownership"    },
+          { n: "Top 2",l: "Community FY25 Globally" },
+          { n: "5+",   l: "Sophos Certifications"   },
         ].map(s => (
           <div key={s.l} className="hstat">
             <span className="hstat-n">{s.n}</span>

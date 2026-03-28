@@ -3,39 +3,39 @@ import React from "react";
 const PROJECTS = [
   {
     icon: "🔍", sev: "CRITICAL", sevCls: "sev-crit",
-    name: "Ransomware Incident Response Framework",
-    desc: "End-to-end IR playbook for ransomware pre-encryption detection and containment via Sophos Central. Detects VSS deletion (T1490), LSASS dumping (T1003), and mass file rename events using Live Discover OSQL queries. Automated host isolation triggers reduce mean-time-to-contain by 65%. Playbook adopted across 12 enterprise accounts.",
-    tags: ["Sophos XDR","Ransomware","MITRE T1490","MITRE T1003","Live Discover","OSQL","Auto-Isolation","IR Playbook"],
-  },
-  {
-    icon: "🛡️", sev: "HIGH", sevCls: "sev-high",
-    name: "Enterprise DLP & Web Control Policy Suite",
-    desc: "Designed and deployed enterprise-grade DLP policies in Sophos Central blocking data exfiltration via USB, cloud storage, email, and removable media. Web Control rules target malicious C2 categories and phishing domains while preserving business productivity. Policy framework deployed across 5,000+ endpoints with zero productivity incidents.",
-    tags: ["Sophos Central","DLP","Web Control","C2 Blocking","Data Exfiltration","Policy Design","Compliance","5000+ Endpoints"],
+    name: "Ransomware Incident Response & Containment",
+    desc: "Led end-to-end P1 ransomware IR engagements for enterprise customers — triaging EDR/XDR telemetry, reconstructing attack timelines via process tree and registry analysis, validating containment actions, and driving remediation verification. Used Live Discover OSQL to hunt VSS deletion (T1490), LSASS access (T1003), and lateral movement patterns. Delivered customer-facing incident reports with root cause, IOCs, and hardening recommendations.",
+    tags: ["Sophos XDR", "Ransomware IR", "Live Discover", "OSQL", "MITRE T1490", "MITRE T1003", "Containment", "RCA"],
   },
   {
     icon: "📊", sev: "HIGH", sevCls: "sev-high",
-    name: "XDR Threat Hunting Query Library",
-    desc: "Production SQL query library for Sophos Data Lake targeting MITRE ATT&CK tactics — persistence (T1053, T1547), lateral movement (T1021), and credential access (T1078). Covers Windows scheduled tasks, registry run keys, macOS launchd agents, and Linux cron jobs. Includes false-positive suppression logic and severity scoring for SOC triage.",
-    tags: ["Data Lake","OSQL","MITRE ATT&CK","T1053","T1547","T1021","Cross-Platform","Threat Hunting","SOC Triage"],
+    name: "XDR Threat Hunting Query Library (Data Lake)",
+    desc: "Built and maintained a production SQL/OSQL query library for the Sophos Data Lake targeting MITRE ATT&CK tactics — persistence (T1053, T1547), lateral movement (T1021), credential access (T1078), and defence evasion. Covers Windows scheduled tasks, registry run keys, macOS launchd agents, and Linux cron jobs. Includes false-positive suppression logic and severity-scoring to streamline SOC triage and reduce analyst noise.",
+    tags: ["Data Lake", "OSQL", "SQL", "MITRE ATT&CK", "T1053", "T1547", "T1021", "Threat Hunting", "FP Tuning"],
+  },
+  {
+    icon: "🛡️", sev: "HIGH", sevCls: "sev-high",
+    name: "Enterprise Sophos Central Policy Architecture",
+    desc: "Designed and deployed enterprise-grade Sophos Central security policies for large cloud, hybrid (Azure), and on-premise environments — covering web control, application control, device encryption, DLP, and endpoint protection settings. Balanced security coverage with operational stability, reducing policy-driven false positives across 5,000+ endpoints while maintaining detection fidelity.",
+    tags: ["Sophos Central", "DLP", "Web Control", "App Control", "Device Encryption", "Azure", "Policy Design", "5000+ Endpoints"],
   },
   {
     icon: "⚡", sev: "HIGH", sevCls: "sev-high",
-    name: "AMSI & IPS/IDS Hardening — In-Memory Attack Detection",
-    desc: "Implemented AMSI integration to intercept and block in-memory script-based attacks (PowerShell, VBScript, JScript, .NET reflection). Tuned Sophos IPS/IDS ruleset to reduce false positives by 40% while maintaining detection fidelity against CVE-mapped exploit patterns. Validated against real-world Cobalt Strike and Metasploit payloads in isolated lab.",
-    tags: ["AMSI","IPS","IDS","PowerShell","In-Memory Detection",".NET Reflection","Cobalt Strike","Sophos Intercept X","CVE Mapping"],
+    name: "AMSI & IPS/IDS Tuning — In-Memory Attack Detection",
+    desc: "Tuned Sophos AMSI integration to intercept and block in-memory script-based attacks (PowerShell, VBScript, .NET reflection). Refined IPS/IDS rulesets to reduce false positives while maintaining detection fidelity against CVE-mapped exploit patterns. Validated configurations against real-world payloads in isolated lab environments, documenting reproduction steps for Engineering escalation.",
+    tags: ["AMSI", "IPS", "IDS", "PowerShell", "In-Memory Detection", ".NET Reflection", "CVE Mapping", "Lab Validation"],
   },
   {
-    icon: "☁️", sev: "MEDIUM", sevCls: "sev-med",
-    name: "GCP Cloud Endpoint Security Rollout",
-    desc: "Architected Sophos Intercept X deployment across GCP-hosted Linux and Windows workloads. Integrated Sophos Central with GCP IAM for unified identity-aware visibility. Implemented auto-isolation policies for compromised VMs with custom Pub/Sub alert routing to SOC dashboards — achieving sub-60-second detection-to-isolation SLA.",
-    tags: ["GCP","Cloud Security","Sophos Central","Auto-Isolation","GCP IAM","Pub/Sub","VM Security","SOC Integration","Sub-60s SLA"],
+    icon: "🔬", sev: "HIGH", sevCls: "sev-high",
+    name: "Defect Reproduction Lab & Engineering Escalation",
+    desc: "Built and maintained dedicated lab environments across Windows, macOS, and Linux to reproduce complex customer defects — covering agent behaviour, policy conflicts, performance regressions, and update compatibility issues across cloud, hybrid, and on-premise configurations. Authored structured reproduction cases, test steps, and validation tests fed directly into Sophos Engineering bug-fix cycles to accelerate resolution and prevent regressions.",
+    tags: ["Lab Environments", "Defect Reproduction", "Windows", "macOS", "Linux", "Engineering Escalation", "QA Validation"],
   },
   {
-    icon: "🔐", sev: "CRITICAL", sevCls: "sev-crit",
-    name: "Automated Malware Forensic Triage Toolkit",
-    desc: "Python-based forensic triage toolkit triggered via Sophos Live Response. Automatically collects volatile memory artefacts, running process trees, network socket states, prefetch files, and registry hives. Packages evidence in DFIR-ready format (E01/JSON) for downstream analysis in Volatility and SIEM ingestion. Reduces manual triage time from 45 mins to under 5 mins.",
-    tags: ["Live Response","DFIR","Forensics","Python","Volatility","Memory Analysis","Sophos Central","Automation","SIEM"],
+    icon: "📝", sev: "MEDIUM", sevCls: "sev-med",
+    name: "KB Articles, Runbooks & Investigation Playbooks",
+    desc: "Authored a library of internal knowledge base articles, troubleshooting runbooks, and investigation playbooks covering common endpoint, policy, and security incident scenarios. Content directly reduced repeat escalations, improved analyst consistency across the team, and raised measurable case quality scores — contributing to the Sophos Support Team Top 10 FY24 and Top 2 Community Staff FY25 recognitions.",
+    tags: ["Knowledge Base", "Runbooks", "Playbooks", "Technical Documentation", "Case Quality", "Analyst Enablement"],
   },
 ];
 
@@ -43,7 +43,7 @@ export default function ProjectsSection() {
   return (
     <section id="projects" className="section">
       <div className="container">
-        <p className="sec-label">PROJECTS</p>
+        <p className="sec-label">PROJECTS & WORK</p>
         <h2 className="sec-title">Security <span>Work</span></h2>
         <div className="proj-grid">
           {PROJECTS.map(p => (
