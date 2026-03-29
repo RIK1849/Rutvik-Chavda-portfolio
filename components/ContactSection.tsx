@@ -22,8 +22,8 @@ const LINKS = [
   },
   {
     label: "LinkedIn",
-    value: "linkedin.com/in/rutvikchavda-584b37197",
-    href: "https://www.linkedin.com/in/rutvikchavda-584b37197/",
+    value: "linkedin.com/in/rutvik-chavda-584b37197",
+    href: "https://www.linkedin.com/in/rutvik-chavda-584b37197/",
   },
   {
     label: "GitHub",
@@ -39,6 +39,7 @@ export default function ContactSection() {
     subject: "",
     message: "",
   });
+
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
 
   const handleChange = (
@@ -72,7 +73,12 @@ export default function ContactSection() {
 
       if (result.success) {
         setStatus("sent");
-        setForm({ name: "", email: "", subject: "", message: "" });
+        setForm({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+        });
       } else {
         setStatus("idle");
         alert("Something went wrong. Please try again.");
@@ -112,7 +118,11 @@ export default function ContactSection() {
                   href={item.href}
                   className="contact-link"
                   target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  rel={
+                    item.href.startsWith("http")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
                 >
                   <span className="contact-link-label">{item.label}</span>
                   <span className="contact-link-value">{item.value}</span>
@@ -181,7 +191,11 @@ export default function ContactSection() {
                   />
                 </div>
 
-                <button type="submit" className="btn btn-primary submit-btn" disabled={status === "sending"}>
+                <button
+                  type="submit"
+                  className="btn btn-primary submit-btn"
+                  disabled={status === "sending"}
+                >
                   {status === "sending" ? "Sending..." : "Send Message"}
                 </button>
               </form>

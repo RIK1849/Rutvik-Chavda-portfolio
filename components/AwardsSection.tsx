@@ -2,8 +2,7 @@ import React from "react";
 
 const AWARDS = [
   "Sophos Support Team Top 10 FY24",
-  "Top 2 Sophos Community Staff Contributor FY25",
-  "Top 3 Globally — Sophos Community Staff Contributor FY25",
+  "Ranked #2 among the Top 3 Global Sophos Community Staff Contributors FY25",
   "Sophos Community Staff Spotlight",
 ];
 
@@ -13,7 +12,7 @@ export default function AwardsSection() {
       <div className="container">
         <p className="section-kicker">AWARDS & RECOGNITION</p>
         <h2 className="section-title">
-          Recognition Already Earned Through <span>Real Work</span>
+          Recognition Earned Through <span>Real Work</span>
         </h2>
 
         <div className="awards-grid">
