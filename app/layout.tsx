@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
+import ThreatRadarBackground from "../components/ThreatRadarBackground";
 
 export const metadata: Metadata = {
   title: "Rutvik Chavda | Endpoint Security Engineer | EDR/XDR | Splunk",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ThreatRadarBackground />
+        <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
+      </body>
     </html>
   );
 }
