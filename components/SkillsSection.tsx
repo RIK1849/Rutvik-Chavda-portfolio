@@ -5,7 +5,7 @@ type SkillGroup = {
 
 const SKILL_GROUPS: SkillGroup[] = [
   {
-    title: "Security Platforms",
+    title: "Endpoint Security Platforms",
     items: [
       "Sophos Central",
       "Intercept X",
@@ -29,7 +29,7 @@ const SKILL_GROUPS: SkillGroup[] = [
     ],
   },
   {
-    title: "Networking & APIs",
+    title: "Networking & Integrations",
     items: [
       "TCP/IP",
       "DNS",
@@ -43,20 +43,20 @@ const SKILL_GROUPS: SkillGroup[] = [
     ],
   },
   {
-    title: "Operating Systems & Automation",
+    title: "Operating Systems & Scripting",
     items: [
       "Windows",
       "Windows Server",
       "macOS",
       "Linux",
-      "Azure Fundamentals",
       "PowerShell",
       "Python",
       "Bash",
+      "Azure Fundamentals",
     ],
   },
   {
-    title: "Support & Process",
+    title: "Support Operations",
     items: [
       "L2/L3 Support",
       "Incident Management",
@@ -69,7 +69,7 @@ const SKILL_GROUPS: SkillGroup[] = [
     ],
   },
   {
-    title: "Frameworks",
+    title: "Security Methods & Frameworks",
     items: [
       "MITRE ATT&CK",
       "Structured Triage",
@@ -85,12 +85,16 @@ export default function SkillsSection() {
       <div className="container stack-24">
         <div>
           <p className="section-kicker">CORE SKILLS</p>
+
           <h2 className="section-title">
-            Skills aligned to <span>security, support, and investigation</span>
+            Technical strengths across{" "}
+            <span>security, support, and investigation</span>
           </h2>
+
           <p className="section-copy">
-            This portfolio is positioned for endpoint security, technical
-            support, incident handling, and SIEM-aligned roles.
+            My skill set is strongest across endpoint security, incident-driven
+            troubleshooting, investigation workflows, enterprise support, and
+            technical analysis in customer-facing environments.
           </p>
         </div>
 
