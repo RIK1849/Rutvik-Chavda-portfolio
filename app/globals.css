@@ -22,12 +22,18 @@ html {
 
 body {
   margin: 0;
+  min-height: 100vh;
   color: var(--text);
   background:
     radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 30%),
     radial-gradient(circle at top right, rgba(14, 165, 233, 0.12), transparent 22%),
     linear-gradient(180deg, #07111f 0%, #081221 100%);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.25);
+  color: #ffffff;
 }
 
 a {
@@ -39,6 +45,11 @@ button,
 input,
 textarea {
   font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
 }
 
 .container {
@@ -83,6 +94,12 @@ textarea {
   border: 1px solid var(--border);
   border-radius: 24px;
   box-shadow: var(--shadow);
+  transition: transform 0.22s ease, border-color 0.22s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(56, 189, 248, 0.22);
 }
 
 .btn {
@@ -94,7 +111,7 @@ textarea {
   padding: 0 18px;
   border-radius: 14px;
   font-weight: 800;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
 }
 
 .btn:hover {
@@ -149,6 +166,7 @@ textarea {
   color: var(--muted);
   font-size: 14px;
   font-weight: 700;
+  transition: color 0.2s ease;
 }
 
 .nav-link:hover {
@@ -378,7 +396,6 @@ textarea {
 .cert-grid,
 .awards-grid,
 .work-grid,
-.resume-grid,
 .contact-grid {
   display: grid;
   gap: 20px;
@@ -390,7 +407,6 @@ textarea {
 
 .awards-grid,
 .work-grid,
-.resume-grid,
 .contact-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -398,7 +414,6 @@ textarea {
 .cert-card,
 .award-card,
 .work-card,
-.resume-card,
 .contact-card {
   padding: 22px;
 }
@@ -438,7 +453,6 @@ textarea {
 
 .award-card h3,
 .work-card h3,
-.resume-card h3,
 .contact-card h3 {
   margin: 0 0 10px 0;
   font-size: 20px;
@@ -447,7 +461,6 @@ textarea {
 
 .award-card p,
 .work-card p,
-.resume-card p,
 .contact-card p {
   margin: 0;
   color: var(--muted);
@@ -463,26 +476,14 @@ textarea {
   font-size: 14px;
 }
 
-.resume-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 14px 0 18px 0;
-}
-
-.resume-tag {
-  padding: 8px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  background: rgba(255, 255, 255, 0.03);
-  color: #dbeafe;
-}
-
 .contact-card a {
   color: #d7f4ff;
   font-weight: 800;
+  transition: color 0.2s ease;
+}
+
+.contact-card a:hover {
+  color: #ffffff;
 }
 
 .footer {
@@ -505,7 +506,6 @@ textarea {
   .cert-grid,
   .awards-grid,
   .work-grid,
-  .resume-grid,
   .contact-grid {
     grid-template-columns: 1fr;
   }

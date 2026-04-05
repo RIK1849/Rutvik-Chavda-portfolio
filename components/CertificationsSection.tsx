@@ -30,12 +30,15 @@ export default function CertificationsSection() {
       <div className="container stack-24">
         <div>
           <p className="section-kicker">CERTIFICATIONS</p>
+
           <h2 className="section-title">
-            Certifications that reinforce my <span>security profile</span>
+            Certifications that strengthen my <span>security foundation</span>
           </h2>
+
           <p className="section-copy">
-            This section shows platform, investigation, cloud, and SIEM-related
-            learning that supports my practical experience.
+            These certifications reflect continued learning across endpoint
+            security, investigation, cloud fundamentals, and SIEM-related
+            skills that support my practical experience.
           </p>
         </div>
 

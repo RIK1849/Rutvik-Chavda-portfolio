@@ -1,4 +1,4 @@
-const LINKEDIN_URL = "YOUR_LINKEDIN_URL_HERE";
+const LINKEDIN_URL = "https://www.linkedin.com/in/rutvik-chavda-584b37197/";
 
 export default function ContactSection() {
   return (
@@ -6,13 +6,16 @@ export default function ContactSection() {
       <div className="container stack-24">
         <div>
           <p className="section-kicker">CONTACT</p>
+
           <h2 className="section-title">
             Ready for the <span>next strong opportunity</span>
           </h2>
+
           <p className="section-copy">
             I am open to roles in endpoint security, technical support,
-            incident-focused engineering, SIEM-aligned operations, and related
-            enterprise security environments.
+            incident-focused engineering, and security operations aligned
+            environments where strong troubleshooting, ownership, and clear
+            communication matter.
           </p>
         </div>
 
