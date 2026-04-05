@@ -53,15 +53,8 @@ export default function ContactSection() {
           </div>
 
           <div className="card contact-card">
-            <h3>Resume Download</h3>
-            <p>
-              <a
-                href="/resumes/Rutvik-Chavda-Technical-Support-Resume.pdf"
-                download
-              >
-                Download current primary resume
-              </a>
-            </p>
+            <h3>Current Role</h3>
+            <p>Technical Support Engineer, Endpoint Security at Sophos</p>
           </div>
         </div>
       </div>

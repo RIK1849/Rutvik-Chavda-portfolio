@@ -48,15 +48,7 @@ export default function HeroSection() {
           </p>
 
           <div className="hero-actions">
-            <a
-              href="/resumes/Rutvik-Chavda-Technical-Support-Resume.pdf"
-              className="btn btn-primary"
-              download
-            >
-              Download Resume
-            </a>
-
-            <a href="#work" className="btn btn-secondary">
+            <a href="#work" className="btn btn-primary">
               View Work Areas
             </a>
 
