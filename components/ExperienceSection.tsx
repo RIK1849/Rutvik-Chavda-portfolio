@@ -1,11 +1,37 @@
-const EXPERIENCE_POINTS = [
-  "Own L2/L3 enterprise support and end-to-end resolution of complex P1/P2 endpoint security incidents across cloud, hybrid, and on-premises customer environments.",
-  "Troubleshoot agent health, policy behavior, update failures, connectivity issues, authentication workflows, and protection incidents across Windows, macOS, and Linux.",
-  "Investigate issues using endpoint telemetry, process trees, system logs, diagnostic artifacts, Splunk, and API / JSON evidence to isolate root cause and confirm impact.",
-  "Reproduce complex issues in lab environments and provide validated diagnostics to Engineering for defect tracking, escalation support, and long-term resolution.",
-  "Support EDR/XDR investigations by reviewing alerts, registry activity, telemetry, and suspicious process behavior to guide containment, remediation, and recovery steps.",
-  "Work across TCP/IP, DNS, HTTP/HTTPS, TLS/SSL, VPN, and proxy troubleshooting when product communication, SaaS connectivity, or endpoint service flows are affected.",
-  "Collaborate with Engineering, QA, Product, and SRE teams while maintaining clear customer communication, strong case ownership, and SLA adherence.",
+type ExperienceItem = {
+  period: string;
+  role: string;
+  company: string;
+  points: string[];
+};
+
+const EXPERIENCE: ExperienceItem[] = [
+  {
+    period: "July 2023 – March 2026 | Ahmedabad, India",
+    role: "Technical Support Engineer – Endpoint Security",
+    company: "Sophos",
+    points: [
+      "Provided advanced technical support for endpoint security solutions across enterprise environments, supporting Windows, macOS, and Linux systems.",
+      "Investigated and resolved complex issues related to product behavior, policy enforcement, deployment, updates, and endpoint performance.",
+      "Analyzed security alerts, system logs, and diagnostic data to identify root causes and recommend effective remediation steps.",
+      "Managed escalated support cases with end-to-end ownership, structured troubleshooting, and consistent customer communication throughout the case lifecycle.",
+      "Collaborated with engineering, product, and internal technical teams on issue reproduction, defect validation, fix verification, and long-term resolution.",
+      "Maintained accurate case documentation, technical notes, and knowledge sharing to improve support quality and customer experience.",
+    ],
+  },
+  {
+    period: "January 2023 – June 2023 | Ahmedabad, India",
+    role: "Technical Support Engineer Intern – Endpoint Security",
+    company: "Sophos",
+    points: [
+      "Provided technical support for endpoint security products across enterprise environments, supporting Windows, macOS, and Linux systems.",
+      "Assisted in troubleshooting product, policy, deployment, update, and performance-related issues by reviewing logs, diagnostics, and reported behavior.",
+      "Supported case handling through documentation, follow-ups, troubleshooting, and coordination with internal teams.",
+      "Worked closely with senior engineers to analyze issues, validate findings, and improve resolution quality.",
+      "Built practical exposure to endpoint security, customer support operations, and troubleshooting in enterprise environments.",
+      "Maintained clear case notes and contributed to internal knowledge sharing to support team efficiency and customer experience.",
+    ],
+  },
 ];
 
 export default function ExperienceSection() {
@@ -16,30 +42,32 @@ export default function ExperienceSection() {
           <p className="section-kicker">EXPERIENCE</p>
 
           <h2 className="section-title">
-            Experience built on <span>ownership, troubleshooting, and security depth</span>
+            Experience built on <span>security depth and case ownership</span>
           </h2>
 
           <p className="section-copy">
-            My current role sits at the intersection of endpoint security,
-            enterprise support, escalation handling, and investigation-driven
-            troubleshooting. It reflects the kind of work where technical depth,
-            structured analysis, and reliable execution matter most.
+            My recent experience is centered around endpoint security,
+            enterprise support, escalated issue handling, investigation-driven
+            troubleshooting, and close collaboration with engineering and
+            internal technical teams.
           </p>
         </div>
 
-        <div className="card timeline-card">
-          <div className="timeline-meta">
-            January 2023 – Present | Ahmedabad, India
-          </div>
+        <div className="stack-24">
+          {EXPERIENCE.map((item) => (
+            <div key={`${item.role}-${item.period}`} className="card timeline-card">
+              <div className="timeline-meta">{item.period}</div>
 
-          <h3>Technical Support Engineer, Endpoint Security</h3>
-          <h4>Sophos</h4>
+              <h3>{item.role}</h3>
+              <h4>{item.company}</h4>
 
-          <ul className="timeline-points">
-            {EXPERIENCE_POINTS.map((point) => (
-              <li key={point}>{point}</li>
-            ))}
-          </ul>
+              <ul className="timeline-points">
+                {item.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
     </section>

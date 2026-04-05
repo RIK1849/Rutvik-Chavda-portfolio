@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Rutvik Chavda | Endpoint Security | Technical Support | Splunk",
+  title: "Rutvik Chavda | Endpoint Security Engineer | EDR/XDR | Splunk",
   description:
-    "Rutvik Chavda is a Technical Support Engineer specializing in endpoint security, enterprise support, incident handling, Splunk, EDR/XDR investigation, and troubleshooting across Windows, macOS, Linux, and SaaS environments.",
+    "Rutvik Chavda is an Endpoint Security Engineer with 3+ years of experience across endpoint security, EDR/XDR investigations, incident response, Splunk, and advanced technical support. Currently open to opportunities.",
 };
 
 export default function RootLayout({

@@ -8,13 +8,13 @@ export default function ContactSection() {
           <p className="section-kicker">CONTACT</p>
 
           <h2 className="section-title">
-            Ready for the <span>next strong opportunity</span>
+            Open to <span>the right opportunity</span>
           </h2>
 
           <p className="section-copy">
-            I am open to roles in endpoint security, technical support,
-            incident-focused engineering, and security operations aligned
-            environments where strong troubleshooting, ownership, and clear
+            I am actively exploring opportunities in endpoint security, EDR/XDR,
+            incident response, security operations, and advanced technical
+            support roles where investigation depth, ownership, and clear
             communication matter.
           </p>
         </div>
@@ -52,12 +52,12 @@ export default function ContactSection() {
 
           <div className="card contact-card">
             <h3>Primary Focus</h3>
-            <p>Endpoint Security, L2/L3 Support, Incident Management, Splunk</p>
+            <p>Endpoint Security, EDR/XDR, Incident Response, Splunk</p>
           </div>
 
           <div className="card contact-card">
-            <h3>Current Role</h3>
-            <p>Technical Support Engineer, Endpoint Security at Sophos</p>
+            <h3>Current Status</h3>
+            <p>Open to opportunities in security engineering and security operations.</p>
           </div>
         </div>
       </div>

@@ -1,25 +1,25 @@
 const HERO_CHIPS = [
-  "3+ Years Enterprise Support",
-  "Endpoint Security Specialization",
-  "Splunk & Log Analysis",
-  "Top 10 Sophos Support FY24",
+  "Open to Opportunities",
+  "3+ Years Experience",
+  "Endpoint Security",
+  "Splunk & Investigation",
 ];
 
 const FIT_ITEMS = [
   {
     title: "Endpoint Security",
     description:
-      "Strong alignment for endpoint security engineering, EDR/XDR support, policy troubleshooting, and security-focused technical support roles.",
+      "Strong alignment for endpoint security engineering, EDR/XDR support, policy troubleshooting, and security-focused technical roles.",
   },
   {
-    title: "Incident Handling",
+    title: "Incident Response Support",
     description:
-      "Experienced in L2/L3 case ownership, structured triage, escalation management, remediation validation, and customer-facing resolution work.",
+      "Hands-on experience across escalations, structured triage, investigation workflows, remediation validation, and customer-facing resolution.",
   },
   {
     title: "Investigation Depth",
     description:
-      "Hands-on with Splunk, Windows Event Logs, Sysmon, endpoint telemetry, suspicious activity review, and evidence-based troubleshooting.",
+      "Worked with Splunk, endpoint telemetry, Windows Event Logs, Sysmon, suspicious activity review, and evidence-based troubleshooting.",
   },
 ];
 
@@ -29,7 +29,7 @@ export default function HeroSection() {
       <div className="container hero-grid">
         <div className="card hero-panel">
           <p className="hero-kicker">
-            ENDPOINT SECURITY | TECHNICAL SUPPORT | THREAT INVESTIGATION
+            OPEN TO OPPORTUNITIES | ENDPOINT SECURITY | INCIDENT RESPONSE
           </p>
 
           <h1 className="hero-title">
@@ -37,16 +37,18 @@ export default function HeroSection() {
           </h1>
 
           <p className="hero-subtitle">
-            Technical Support Engineer | Endpoint Security | Splunk | Incident
-            Management
+            Endpoint Security Engineer | EDR/XDR | Incident Response | Splunk |
+            Technical Support Engineer
           </p>
 
           <p className="hero-copy">
-            I support enterprise customers across endpoint security,
-            investigation-driven troubleshooting, and high-priority incident
-            handling. My strongest fit is where technical depth, structured
-            analysis, and customer-facing execution all matter across Windows,
-            macOS, Linux, networking, and SaaS environments.
+            I am an Endpoint Security Engineer with 3+ years of experience
+            across endpoint security, EDR/XDR investigations, incident
+            response, and advanced technical troubleshooting. My background
+            includes working across Windows, macOS, and Linux to investigate
+            suspicious activity, validate remediation, troubleshoot policy and
+            product issues, and support enterprise customers through critical
+            escalations.
           </p>
 
           <div className="hero-actions">
