@@ -1,23 +1,28 @@
-const HIGHLIGHTS = [
+type Highlight = {
+  title: string;
+  description: string;
+};
+
+const HIGHLIGHTS: Highlight[] = [
   {
-    title: "Enterprise case ownership",
+    title: "Enterprise support ownership",
     description:
-      "Handled complex P1/P2 incidents with structured triage, escalation handling, workaround validation, and customer communication.",
+      "Trusted to handle complex customer issues with structured troubleshooting, strong follow-up, and end-to-end case ownership.",
   },
   {
-    title: "Security-focused troubleshooting",
+    title: "Practical security depth",
     description:
-      "Worked across endpoint security products, policy behavior, telemetry, update failures, and protection incidents.",
+      "Hands-on across endpoint security, policy behavior, update failures, telemetry analysis, and protection-related troubleshooting.",
   },
   {
-    title: "Cross-functional execution",
+    title: "Evidence-based escalation",
     description:
-      "Partnered with Engineering, QA, Product, and SRE teams using evidence-based escalation and reproducible diagnostics.",
+      "Collaborate with Engineering, QA, Product, and internal teams using reproducible diagnostics, validated logs, and technical evidence.",
   },
   {
-    title: "Clear communication",
+    title: "Clear stakeholder communication",
     description:
-      "Translate technical findings into practical next steps for customers, internal teams, and incident stakeholders.",
+      "Translate complex technical findings into practical updates, next steps, and resolution guidance for customers and internal teams.",
   },
 ];
 
@@ -27,20 +32,23 @@ export default function AboutSection() {
       <div className="container grid-2">
         <div className="card info-card">
           <p className="section-kicker">ABOUT ME</p>
+
           <h2 className="section-title">
-            Built for <span>high-trust support and security work</span>
+            Built for <span>trust, technical depth, and execution</span>
           </h2>
+
           <p className="section-copy">
-            I come from a hands-on technical support and endpoint security
-            background where speed, clarity, and correctness matter. My work is
-            centered around investigating issues deeply, isolating root cause,
-            validating fixes, and helping enterprise customers move from problem
-            to resolution with confidence.
+            I come from a hands-on endpoint security and enterprise support
+            background where technical accuracy, ownership, and communication
+            matter every day. My work focuses on solving complex customer
+            issues, isolating root cause, validating fixes, and driving
+            resolution in a way that is both technically sound and easy for
+            stakeholders to follow.
           </p>
         </div>
 
         <div className="card info-card">
-          <h3>What I bring</h3>
+          <h3>Core strengths</h3>
 
           <div className="highlight-list">
             {HIGHLIGHTS.map((item) => (

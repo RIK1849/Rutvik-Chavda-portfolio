@@ -1,25 +1,25 @@
 const HERO_CHIPS = [
-  "3+ Years Experience",
+  "3+ Years Enterprise Support",
+  "Endpoint Security Specialization",
+  "Splunk & Log Analysis",
   "Top 10 Sophos Support FY24",
-  "Top 2 Community Contributor FY25",
-  "12 Security Certifications",
 ];
 
 const FIT_ITEMS = [
   {
     title: "Endpoint Security",
     description:
-      "Strong fit for endpoint security engineering, EDR/XDR support, and policy troubleshooting roles.",
+      "Strong alignment for endpoint security engineering, EDR/XDR support, policy troubleshooting, and security-focused technical support roles.",
   },
   {
-    title: "Technical Support Depth",
+    title: "Incident Handling",
     description:
-      "L2/L3 incident ownership, escalation handling, customer communication, and RCA-driven resolution.",
+      "Experienced in L2/L3 case ownership, structured triage, escalation management, remediation validation, and customer-facing resolution work.",
   },
   {
-    title: "SIEM / Investigation Alignment",
+    title: "Investigation Depth",
     description:
-      "Hands-on with Splunk, endpoint telemetry, Sysmon, logs, IOC/IOA review, and suspicious activity analysis.",
+      "Hands-on with Splunk, Windows Event Logs, Sysmon, endpoint telemetry, suspicious activity review, and evidence-based troubleshooting.",
   },
 ];
 
@@ -42,9 +42,11 @@ export default function HeroSection() {
           </p>
 
           <p className="hero-copy">
-            I support enterprise customers across endpoint security, production
-            incidents, investigation workflows, and complex troubleshooting
-            across Windows, macOS, Linux, networking, and SaaS environments.
+            I support enterprise customers across endpoint security,
+            investigation-driven troubleshooting, and high-priority incident
+            handling. My strongest fit is where technical depth, structured
+            analysis, and customer-facing execution all matter across Windows,
+            macOS, Linux, networking, and SaaS environments.
           </p>
 
           <div className="hero-actions">
