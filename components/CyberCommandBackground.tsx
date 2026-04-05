@@ -49,7 +49,8 @@ export default function CyberCommandBackground() {
     let blips: Blip[] = [];
     let nodes: NodePoint[] = [];
 
-    const rand = (min: number, max: number) => Math.random() * (max - min) + min;
+    const rand = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
 
     const createPacket = (): Packet => {
       const lanes = [
@@ -85,31 +86,40 @@ export default function CyberCommandBackground() {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
 
-      packets = Array.from({ length: Math.max(8, Math.floor(width / 180)) }, createPacket);
+      packets = Array.from(
+        { length: Math.max(8, Math.floor(width / 180)) },
+        createPacket
+      );
 
       const radarCenterX = width * 0.8;
       const radarCenterY = height * 0.24;
       const radarRadius = Math.min(width, height) * 0.17;
 
-      blips = Array.from({ length: Math.max(10, Math.floor(width / 160)) }, () => {
-        const angle = rand(0, Math.PI * 2);
-        const dist = rand(0, radarRadius * 0.92);
-        return {
-          x: radarCenterX + Math.cos(angle) * dist,
-          y: radarCenterY + Math.sin(angle) * dist,
-          baseR: rand(1.5, 3.2),
-          pulse: rand(0, Math.PI * 2),
-          speed: rand(0.015, 0.045),
-        };
-      });
+      blips = Array.from(
+        { length: Math.max(10, Math.floor(width / 160)) },
+        () => {
+          const angle = rand(0, Math.PI * 2);
+          const dist = rand(0, radarRadius * 0.92);
+          return {
+            x: radarCenterX + Math.cos(angle) * dist,
+            y: radarCenterY + Math.sin(angle) * dist,
+            baseR: rand(1.5, 3.2),
+            pulse: rand(0, Math.PI * 2),
+            speed: rand(0.015, 0.045),
+          };
+        }
+      );
 
-      nodes = Array.from({ length: Math.max(18, Math.floor(width / 85)) }, () => ({
-        x: rand(0, width),
-        y: rand(0, height),
-        dx: rand(-0.12, 0.12),
-        dy: rand(-0.12, 0.12),
-        r: rand(0.8, 1.8),
-      }));
+      nodes = Array.from(
+        { length: Math.max(18, Math.floor(width / 85)) },
+        () => ({
+          x: rand(0, width),
+          y: rand(0, height),
+          dx: rand(-0.12, 0.12),
+          dy: rand(-0.12, 0.12),
+          r: rand(0.8, 1.8),
+        })
+      );
     };
 
     const drawBackground = () => {
@@ -150,20 +160,20 @@ export default function CyberCommandBackground() {
     const drawHexGrid = (time: number) => {
       const size = 34;
       const hexHeight = Math.sqrt(3) * size;
-      const hexWidth = 2 * size;
       const vert = hexHeight;
       const horiz = 1.5 * size;
 
       ctx.save();
       ctx.lineWidth = 1;
 
-      for (let x = -hexWidth; x < width + hexWidth; x += horiz) {
+      for (let x = -size * 2; x < width + size * 2; x += horiz) {
         for (let y = -hexHeight; y < height + hexHeight; y += vert) {
           const offsetY = Math.round(x / horiz) % 2 === 0 ? 0 : vert / 2;
           const px = x;
           const py = y + offsetY;
 
-          const shimmer = 0.03 + 0.02 * Math.sin((x + y + time * 0.05) * 0.01);
+          const shimmer =
+            0.025 + 0.02 * Math.sin((x + y + time * 0.05) * 0.01);
           ctx.strokeStyle = `rgba(56, 189, 248, ${shimmer})`;
 
           ctx.beginPath();
@@ -305,7 +315,10 @@ export default function CyberCommandBackground() {
         blip.pulse += blip.speed;
         const pulse = (Math.sin(blip.pulse) + 1) / 2;
         const angle = Math.atan2(blip.y - cy, blip.x - cx);
-        const diff = Math.atan2(Math.sin(angle - sweep), Math.cos(angle - sweep));
+        const diff = Math.atan2(
+          Math.sin(angle - sweep),
+          Math.cos(angle - sweep)
+        );
         const active = Math.abs(diff) < 0.22;
 
         ctx.beginPath();
@@ -320,7 +333,13 @@ export default function CyberCommandBackground() {
 
         if (active) {
           ctx.beginPath();
-          ctx.arc(blip.x, blip.y, blip.baseR + 5 + pulse * 3, 0, Math.PI * 2);
+          ctx.arc(
+            blip.x,
+            blip.y,
+            blip.baseR + 5 + pulse * 3,
+            0,
+            Math.PI * 2
+          );
           ctx.strokeStyle = "rgba(0,255,157,0.18)";
           ctx.stroke();
         }
@@ -357,28 +376,24 @@ export default function CyberCommandBackground() {
       const corner = 34;
       const len = 58;
 
-      // top left
       ctx.beginPath();
       ctx.moveTo(corner, corner + len);
       ctx.lineTo(corner, corner);
       ctx.lineTo(corner + len, corner);
       ctx.stroke();
 
-      // top right
       ctx.beginPath();
       ctx.moveTo(width - corner - len, corner);
       ctx.lineTo(width - corner, corner);
       ctx.lineTo(width - corner, corner + len);
       ctx.stroke();
 
-      // bottom left
       ctx.beginPath();
       ctx.moveTo(corner, height - corner - len);
       ctx.lineTo(corner, height - corner);
       ctx.lineTo(corner + len, height - corner);
       ctx.stroke();
 
-      // bottom right
       ctx.beginPath();
       ctx.moveTo(width - corner - len, height - corner);
       ctx.lineTo(width - corner, height - corner);
@@ -429,109 +444,17 @@ export default function CyberCommandBackground() {
   }, []);
 
   return (
-    <>
-      <canvas
-        ref={canvasRef}
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          inset: 0,
-          width: "100vw",
-          height: "100vh",
-          zIndex: 0,
-          pointerEvents: "none",
-        }}
-      />
-
-      <div
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: "none",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: 20,
-            left: 22,
-            padding: "10px 14px",
-            border: "1px solid rgba(56,189,248,0.18)",
-            background: "rgba(3,12,20,0.45)",
-            color: "rgba(125,211,252,0.9)",
-            fontSize: 11,
-            letterSpacing: 2,
-            textTransform: "uppercase",
-            fontWeight: 800,
-            borderRadius: 12,
-            backdropFilter: "blur(6px)",
-          }}
-        >
-          Threat Monitoring Active
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: 20,
-            right: 22,
-            display: "grid",
-            gap: 8,
-          }}
-        >
-          {[
-            "EDR/XDR",
-            "Incident Response",
-            "Splunk",
-            "Endpoint Security",
-          ].map((item) => (
-            <div
-              key={item}
-              style={{
-                padding: "8px 12px",
-                border: "1px solid rgba(0,255,157,0.16)",
-                background: "rgba(2,14,12,0.36)",
-                color: "rgba(167,243,208,0.92)",
-                fontSize: 10,
-                letterSpacing: 1.6,
-                textTransform: "uppercase",
-                fontWeight: 800,
-                borderRadius: 999,
-                backdropFilter: "blur(6px)",
-              }}
-            >
-              {item}
-            </div>
-          ))}
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            left: 22,
-            bottom: 22,
-            padding: "12px 14px",
-            border: "1px solid rgba(56,189,248,0.16)",
-            background: "rgba(3,12,20,0.42)",
-            color: "rgba(203,213,225,0.84)",
-            fontSize: 11,
-            lineHeight: 1.7,
-            borderRadius: 14,
-            backdropFilter: "blur(6px)",
-            maxWidth: 250,
-          }}
-        >
-          <div style={{ color: "#7dd3fc", fontWeight: 800, marginBottom: 6 }}>
-            LIVE STATUS
-          </div>
-          <div>Threat Signals: Stable</div>
-          <div>Telemetry: Streaming</div>
-          <div>Profile Mode: Open to Opportunities</div>
-        </div>
-      </div>
-    </>
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      style={{
+        position: "fixed",
+        inset: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: 0,
+        pointerEvents: "none",
+      }}
+    />
   );
 }
