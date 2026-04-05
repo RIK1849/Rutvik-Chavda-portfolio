@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
-import ThreatRadarBackground from "../components/ThreatRadarBackground";
+import CyberCommandBackground from "../components/CyberCommandBackground";
 
 export const metadata: Metadata = {
   title: "Rutvik Chavda | Endpoint Security Engineer | EDR/XDR | Splunk",
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ThreatRadarBackground />
+        <CyberCommandBackground />
         <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
       </body>
     </html>
