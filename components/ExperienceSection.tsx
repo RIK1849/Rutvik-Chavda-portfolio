@@ -1,48 +1,40 @@
-import React from "react";
-
-const EXPERIENCE = [
-  {
-    role: "Technical Support Engineer",
-    company: "Sophos",
-    period: "January 2023 – Present",
-    points: [
-      "Support enterprise customers with complex endpoint security cases across Windows, macOS, and Linux environments.",
-      "Investigate malware, ransomware, suspicious processes, and policy-related issues using Sophos tooling, telemetry, and supporting endpoint data.",
-      "Perform incident triage, remediation validation, and root cause analysis for escalated support cases.",
-      "Use Splunk, Windows Event Logs, Sysmon, and Live Discover style workflows to support troubleshooting and investigation.",
-      "Collaborate with engineering teams for defect reproduction, validation, and escalation handoff.",
-      "Create and maintain technical documentation, knowledge content, and runbooks to improve case handling and repeatability.",
-    ],
-  },
+const EXPERIENCE_POINTS = [
+  "Own L2/L3 enterprise support and end-to-end resolution of complex P1/P2 endpoint security incidents across cloud, hybrid, and on-premises environments.",
+  "Troubleshoot agent health, policy behavior, update failures, connectivity issues, authentication flows, and protection incidents across Windows, macOS, and Linux.",
+  "Investigate issues using endpoint telemetry, process trees, system logs, diagnostic artifacts, Splunk, and API / JSON evidence to isolate root cause.",
+  "Reproduce complex issues in lab environments and provide reproducible diagnostics to Engineering for long-term defect tracking and resolution.",
+  "Support EDR/XDR investigations by reviewing alerts, registry activity, telemetry, and suspicious process behavior for containment and remediation guidance.",
+  "Work across TCP/IP, DNS, HTTP/HTTPS, TLS/SSL, VPN, and proxy troubleshooting when product communication or SaaS connectivity is impacted.",
+  "Collaborate with Engineering, QA, Product, and SRE teams while maintaining strong customer communication and SLA adherence.",
 ];
 
 export default function ExperienceSection() {
   return (
     <section id="experience" className="section">
-      <div className="container">
-        <p className="section-kicker">EXPERIENCE</p>
-        <h2 className="section-title">
-          Work Experience with Strong <span>Security Relevance</span>
-        </h2>
+      <div className="container stack-24">
+        <div>
+          <p className="section-kicker">EXPERIENCE</p>
+          <h2 className="section-title">
+            Current role with <span>strong enterprise support depth</span>
+          </h2>
+          <p className="section-copy">
+            My experience is strongest where endpoint security, deep technical
+            troubleshooting, escalation handling, and investigation workflows
+            intersect.
+          </p>
+        </div>
 
-        <div className="timeline">
-          {EXPERIENCE.map((item) => (
-            <article key={item.role} className="card timeline-card">
-              <div className="timeline-top">
-                <div>
-                  <h3 className="card-title">{item.role}</h3>
-                  <p className="timeline-meta">{item.company}</p>
-                </div>
-                <span className="timeline-period">{item.period}</span>
-              </div>
+        <div className="card timeline-card">
+          <div className="timeline-meta">January 2023 – Present | Ahmedabad, India</div>
 
-              <ul className="timeline-list">
-                {item.points.map((point) => (
-                  <li key={point}>{point}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
+          <h3>Technical Support Engineer, Endpoint Security</h3>
+          <h4>Sophos</h4>
+
+          <ul className="timeline-points">
+            {EXPERIENCE_POINTS.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

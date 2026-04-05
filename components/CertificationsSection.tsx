@@ -1,48 +1,23 @@
-const CERTIFICATIONS: { title: string; issuer: string }[] = [
-  {
-    title: "Sophos Central Certified Architect",
-    issuer: "Sophos",
-  },
-  {
-    title: "Sophos Central Certified Engineer",
-    issuer: "Sophos",
-  },
-  {
-    title: "Sophos Certified Endpoint Security Engineer",
-    issuer: "Sophos",
-  },
-  {
-    title: "Sophos Central Support Engineer",
-    issuer: "Sophos",
-  },
-  {
-    title: "Essentials with Azure Fundamentals",
-    issuer: "Coursera",
-  },
-  {
-    title: "Ethical Hacking From Scratch",
-    issuer: "Udemy",
-  },
-  {
-    title: "Introduction to Cyber Security",
-    issuer: "SkillUp",
-  },
-  {
-    title: "CISSP Security Assessment",
-    issuer: "SkillUp",
-  },
+type Certification = {
+  title: string;
+  issuer: string;
+};
+
+const CERTIFICATIONS: Certification[] = [
+  { title: "Sophos Central Certified Architect", issuer: "Sophos" },
+  { title: "Sophos Central Certified Engineer", issuer: "Sophos" },
+  { title: "Sophos Certified Endpoint Security Engineer", issuer: "Sophos" },
+  { title: "Sophos Central Support Engineer", issuer: "Sophos" },
+  { title: "Essentials with Azure Fundamentals", issuer: "Coursera" },
+  { title: "Ethical Hacking From Scratch", issuer: "Udemy" },
+  { title: "Introduction to Cyber Security", issuer: "SkillUp" },
+  { title: "CISSP Security Assessment", issuer: "SkillUp" },
   {
     title: "The Absolute Guide to MITRE ATT&CK",
     issuer: "Purple Academy by Picus Security",
   },
-  {
-    title: "Introduction to SIEM (Splunk)",
-    issuer: "EDUCBA",
-  },
-  {
-    title: "Splunk Administration and Advanced Topics",
-    issuer: "Coursera",
-  },
+  { title: "Introduction to SIEM (Splunk)", issuer: "EDUCBA" },
+  { title: "Splunk Administration and Advanced Topics", issuer: "Coursera" },
   {
     title: "SIEM Splunk Hands-On Guide Specialization",
     issuer: "Coursera",
@@ -52,12 +27,17 @@ const CERTIFICATIONS: { title: string; issuer: string }[] = [
 export default function CertificationsSection() {
   return (
     <section id="certifications" className="section">
-      <div className="container">
-        <p className="section-kicker">CERTIFICATIONS</p>
-
-        <h2 className="section-title">
-          Certifications That Strengthen My <span>Security Profile</span>
-        </h2>
+      <div className="container stack-24">
+        <div>
+          <p className="section-kicker">CERTIFICATIONS</p>
+          <h2 className="section-title">
+            Certifications that reinforce my <span>security profile</span>
+          </h2>
+          <p className="section-copy">
+            This section shows platform, investigation, cloud, and SIEM-related
+            learning that supports my practical experience.
+          </p>
+        </div>
 
         <div className="cert-grid">
           {CERTIFICATIONS.map((cert) => (
@@ -66,22 +46,9 @@ export default function CertificationsSection() {
                 ✓
               </span>
 
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "4px",
-                }}
-              >
+              <div>
                 <span className="cert-text">{cert.title}</span>
-                <span
-                  style={{
-                    fontSize: "0.9rem",
-                    opacity: 0.8,
-                  }}
-                >
-                  {cert.issuer}
-                </span>
+                <span className="cert-issuer">{cert.issuer}</span>
               </div>
             </div>
           ))}
