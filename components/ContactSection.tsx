@@ -1,66 +1,231 @@
-const LINKEDIN_URL = "https://www.linkedin.com/in/rutvik-chavda-584b37197/";
+"use client";
+import { useEffect, useRef, useState } from "react";
+
+const CONTACT_LINKS = [
+  { label: "Email",     value: "chavdarutvik1849@gmail.com",              href: "mailto:chavdarutvik1849@gmail.com", color:"#00ff64" },
+  { label: "LinkedIn",  value: "linkedin.com/in/rutvikchavda-584b37197",  href: "https://www.linkedin.com/in/rutvikchavda-584b37197", color:"#38bdf8" },
+  { label: "Portfolio", value: "rutvik-chavda-portfolio.vercel.app",       href: "#hero", color:"#f472b6" },
+];
 
 export default function ContactSection() {
+  const [visible, setVisible] = useState(false);
+  const [name,    setName]    = useState("");
+  const [email,   setEmail]   = useState("");
+  const [message, setMessage] = useState("");
+  const [sent,    setSent]    = useState(false);
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.1 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const mailto = `mailto:chavdarutvik1849@gmail.com?subject=Portfolio Enquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(message + "\n\nFrom: " + email)}`;
+    window.location.href = mailto;
+    setSent(true);
+    setTimeout(() => setSent(false), 4000);
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width:"100%",
+    background:"rgba(0,255,100,0.03)",
+    border:"1px solid rgba(0,255,100,0.18)",
+    borderRadius:6,
+    padding:"0.75rem 1rem",
+    color:"#f0fff4",
+    fontFamily:"'Rajdhani',sans-serif",
+    fontSize:"0.95rem",
+    outline:"none",
+    transition:"border-color 0.25s",
+  };
+
   return (
-    <section id="contact" className="section">
-      <div className="container stack-24">
-        <div>
-          <p className="section-kicker">CONTACT</p>
+    <section ref={ref} id="contact" className="section" style={{ background:"#000", borderTop:"1px solid rgba(0,255,100,0.06)" }}>
+      <div className="container">
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"4rem", alignItems:"start" }}>
 
-          <h2 className="section-title">
-            Open to <span>the right opportunity</span>
-          </h2>
-
-          <p className="section-copy">
-            I am actively exploring opportunities in endpoint security, EDR/XDR,
-            incident response, security operations, and advanced technical
-            support roles where investigation depth, ownership, and clear
-            communication matter.
-          </p>
-        </div>
-
-        <div className="contact-grid">
-          <div className="card contact-card">
-            <h3>Email</h3>
-            <p>
-              <a href="mailto:chavdarutvik1849@gmail.com">
-                chavdarutvik1849@gmail.com
-              </a>
+          {/* Left */}
+          <div
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? "none" : "translateX(-20px)",
+              transition:"all 0.7s ease",
+            }}
+          >
+            <p className="section-kicker">Contact</p>
+            <h2 className="section-title">
+              Let&apos;s talk <span>security</span>
+            </h2>
+            <p style={{
+              fontFamily:"'Rajdhani',sans-serif",
+              fontSize:"1rem", color:"rgba(240,255,244,0.58)",
+              lineHeight:1.78, marginBottom:"2.5rem",
+            }}>
+              I&apos;m actively looking for roles in Endpoint Security, Threat Detection, and Security Operations.
+              If you&apos;re hiring for L2/L3 security engineering, SOC, or threat hunting — I&apos;d like to hear from you.
+              Response within 24 hours.
             </p>
+
+            <div style={{ display:"flex", flexDirection:"column", gap:"1.1rem" }}>
+              {CONTACT_LINKS.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target={link.href.startsWith("http") ? "_blank" : undefined}
+                  rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  style={{
+                    display:"flex", alignItems:"center", gap:"1rem",
+                    padding:"0.9rem 1.2rem",
+                    background:"rgba(0,255,100,0.025)",
+                    border:`1px solid rgba(0,255,100,0.1)`,
+                    borderRadius:8, textDecoration:"none",
+                    transition:"all 0.25s",
+                  }}
+                  onMouseEnter={(e)=>{ const el=e.currentTarget as HTMLElement; el.style.background=`${link.color}0d`; el.style.borderColor=`${link.color}40`; }}
+                  onMouseLeave={(e)=>{ const el=e.currentTarget as HTMLElement; el.style.background="rgba(0,255,100,0.025)"; el.style.borderColor="rgba(0,255,100,0.1)"; }}
+                >
+                  <div style={{ width:2, height:36, background:link.color, borderRadius:2, flexShrink:0 }}/>
+                  <div>
+                    <span style={{
+                      fontFamily:"'Share Tech Mono',monospace",
+                      fontSize:"0.62rem", color:link.color,
+                      opacity:0.7, display:"block",
+                      letterSpacing:"0.1em", textTransform:"uppercase",
+                      marginBottom:3,
+                    }}>
+                      {link.label}
+                    </span>
+                    <span style={{
+                      fontFamily:"'Rajdhani',sans-serif",
+                      fontSize:"0.88rem", color:"rgba(240,255,244,0.72)",
+                      fontWeight:500,
+                    }}>
+                      {link.value}
+                    </span>
+                  </div>
+                  <span style={{ marginLeft:"auto", color:link.color, opacity:0.5, fontFamily:"'Share Tech Mono',monospace", fontSize:"0.8rem" }}>↗</span>
+                </a>
+              ))}
+            </div>
           </div>
 
-          <div className="card contact-card">
-            <h3>Phone</h3>
-            <p>
-              <a href="tel:+917226894089">+91 7226894089</a>
-            </p>
-          </div>
+          {/* Right: form */}
+          <div
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? "none" : "translateX(20px)",
+              transition:"all 0.7s ease 0.15s",
+            }}
+          >
+            <div style={{
+              background:"rgba(0,255,100,0.025)",
+              border:"1px solid rgba(0,255,100,0.12)",
+              borderRadius:12,
+              overflow:"hidden",
+            }}>
+              {/* Terminal header */}
+              <div style={{
+                display:"flex", alignItems:"center", gap:8,
+                padding:"0.7rem 1rem",
+                borderBottom:"1px solid rgba(0,255,100,0.08)",
+                background:"rgba(0,255,100,0.03)",
+              }}>
+                {["#ff5f56","#ffbd2e","#27c93f"].map((col, i) => (
+                  <span key={i} style={{ width:9, height:9, borderRadius:"50%", background:col, opacity:0.75 }}/>
+                ))}
+                <span style={{ fontFamily:"'Share Tech Mono',monospace", fontSize:"0.65rem", color:"rgba(0,255,100,0.45)", marginLeft:8, letterSpacing:"0.08em" }}>
+                  new-message.sh
+                </span>
+              </div>
 
-          <div className="card contact-card">
-            <h3>Location</h3>
-            <p>Ahmedabad, Gujarat, India</p>
-          </div>
+              <form onSubmit={handleSubmit} style={{ padding:"1.6rem", display:"flex", flexDirection:"column", gap:"1.1rem" }}>
+                <div>
+                  <label style={{
+                    fontFamily:"'Share Tech Mono',monospace",
+                    fontSize:"0.65rem", color:"rgba(0,255,100,0.55)",
+                    letterSpacing:"0.1em", textTransform:"uppercase",
+                    display:"block", marginBottom:6,
+                  }}>
+                    $ Your Name
+                  </label>
+                  <input
+                    type="text" required
+                    value={name} onChange={(e) => setName(e.target.value)}
+                    placeholder="Jane Smith"
+                    style={inputStyle}
+                    onFocus={(e)=>{ (e.target as HTMLInputElement).style.borderColor="rgba(0,255,100,0.5)"; }}
+                    onBlur={(e)=>{ (e.target as HTMLInputElement).style.borderColor="rgba(0,255,100,0.18)"; }}
+                  />
+                </div>
 
-          <div className="card contact-card">
-            <h3>LinkedIn</h3>
-            <p>
-              <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
-                View LinkedIn Profile
-              </a>
-            </p>
-          </div>
+                <div>
+                  <label style={{
+                    fontFamily:"'Share Tech Mono',monospace",
+                    fontSize:"0.65rem", color:"rgba(0,255,100,0.55)",
+                    letterSpacing:"0.1em", textTransform:"uppercase",
+                    display:"block", marginBottom:6,
+                  }}>
+                    $ Email Address
+                  </label>
+                  <input
+                    type="email" required
+                    value={email} onChange={(e) => setEmail(e.target.value)}
+                    placeholder="jane@company.com"
+                    style={inputStyle}
+                    onFocus={(e)=>{ (e.target as HTMLInputElement).style.borderColor="rgba(0,255,100,0.5)"; }}
+                    onBlur={(e)=>{ (e.target as HTMLInputElement).style.borderColor="rgba(0,255,100,0.18)"; }}
+                  />
+                </div>
 
-          <div className="card contact-card">
-            <h3>Primary Focus</h3>
-            <p>Endpoint Security, EDR/XDR, Incident Response, Splunk</p>
-          </div>
+                <div>
+                  <label style={{
+                    fontFamily:"'Share Tech Mono',monospace",
+                    fontSize:"0.65rem", color:"rgba(0,255,100,0.55)",
+                    letterSpacing:"0.1em", textTransform:"uppercase",
+                    display:"block", marginBottom:6,
+                  }}>
+                    $ Message
+                  </label>
+                  <textarea
+                    required rows={5}
+                    value={message} onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Tell me about the role or opportunity..."
+                    style={{ ...inputStyle, resize:"vertical", minHeight:120 }}
+                    onFocus={(e)=>{ (e.target as HTMLTextAreaElement).style.borderColor="rgba(0,255,100,0.5)"; }}
+                    onBlur={(e)=>{ (e.target as HTMLTextAreaElement).style.borderColor="rgba(0,255,100,0.18)"; }}
+                  />
+                </div>
 
-          <div className="card contact-card">
-            <h3>Current Status</h3>
-            <p>Open to opportunities in security engineering and security operations.</p>
+                <button
+                  type="submit"
+                  style={{
+                    fontFamily:"'Share Tech Mono',monospace",
+                    fontSize:"0.75rem", letterSpacing:"0.12em",
+                    color:"#000", background: sent ? "#00cc50" : "#00ff64",
+                    border:"none", padding:"0.85rem 1.5rem",
+                    borderRadius:6, cursor:"pointer",
+                    fontWeight:700, textTransform:"uppercase",
+                    transition:"background 0.2s, transform 0.15s",
+                  }}
+                  onMouseEnter={(e)=>{ (e.currentTarget as HTMLElement).style.transform="translateY(-1px)"; }}
+                  onMouseLeave={(e)=>{ (e.currentTarget as HTMLElement).style.transform="translateY(0)"; }}
+                >
+                  {sent ? "✓ Opening Email Client..." : "$ Send Message →"}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          #contact .container > div { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+        }
+      `}</style>
     </section>
   );
 }

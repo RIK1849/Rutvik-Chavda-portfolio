@@ -1,205 +1,204 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const NAV_LINKS = [
+const LINKS = [
   { label: "About",    href: "#about"         },
+  { label: "Skills",   href: "#skills"        },
   { label: "Experience", href: "#experience"  },
   { label: "Projects", href: "#projects"      },
-  { label: "Skills",   href: "#skills"        },
   { label: "Certs",    href: "#certifications"},
   { label: "Awards",   href: "#awards"        },
   { label: "Contact",  href: "#contact"       },
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [active, setActive]     = useState("");
-  const [open, setOpen]         = useState(false);
+  const [scrolled, setScrolled]   = useState(false);
+  const [active,   setActive]     = useState("");
+  const [open,     setOpen]       = useState(false);
+  const [glitch,   setGlitch]     = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      const sections = LINKS.map((l) => l.href.slice(1));
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i]);
+        if (el && window.scrollY >= el.offsetTop - 120) {
+          setActive(sections[i]);
+          break;
+        }
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // Random glitch trigger
+    const interval = setInterval(() => {
+      setGlitch(true);
+      setTimeout(() => setGlitch(false), 320);
+    }, 6000 + Math.random() * 4000);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
     <nav
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
-        transition: "all 0.3s ease",
+        top: 0, left: 0, right: 0,
+        zIndex: 9000,
+        height: 64,
+        display: "flex",
+        alignItems: "center",
+        padding: "0 clamp(1.2rem, 5vw, 3.5rem)",
         background: scrolled
-          ? "rgba(0,0,0,0.85)"
+          ? "rgba(0,8,3,0.92)"
           : "transparent",
-        backdropFilter: scrolled ? "blur(12px)" : "none",
-        borderBottom: scrolled
-          ? "1px solid rgba(0,255,100,0.1)"
-          : "1px solid transparent",
-        padding: "0 2rem",
+        backdropFilter: scrolled ? "blur(18px)" : "none",
+        borderBottom: scrolled ? "1px solid rgba(0,255,100,0.1)" : "1px solid transparent",
+        transition: "all 0.4s ease",
       }}
     >
-      <div
+      {/* Logo */}
+      <a
+        href="#hero"
         style={{
-          maxWidth: 1100,
-          margin: "0 auto",
-          height: 64,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          fontFamily: "'Orbitron', sans-serif",
+          fontWeight: 800,
+          fontSize: "1.05rem",
+          color: "#00ff64",
+          textDecoration: "none",
+          letterSpacing: "0.06em",
+          position: "relative",
+          flex: "0 0 auto",
         }}
       >
-        {/* Logo */}
-        <a
-          href="#hero"
-          style={{
-            fontFamily: "monospace",
-            fontWeight: 700,
-            fontSize: "0.9rem",
-            color: "#00ff64",
-            textDecoration: "none",
-            letterSpacing: "0.1em",
-          }}
-        >
-          RC<span style={{ color: "rgba(255,255,255,0.3)" }}>.security</span>
-        </a>
+        <span style={{ position: "relative" }}>
+          RC
+          {glitch && (
+            <>
+              <span style={{
+                position:"absolute", left:0, top:0,
+                color:"#00e5ff", animation:"glitch1 0.3s steps(1) forwards",
+                pointerEvents:"none",
+              }}>RC</span>
+              <span style={{
+                position:"absolute", left:0, top:0,
+                color:"#ff2244", animation:"glitch2 0.3s steps(1) forwards",
+                pointerEvents:"none",
+              }}>RC</span>
+            </>
+          )}
+        </span>
+        <span style={{ color:"rgba(0,255,100,0.4)", fontWeight:400, fontSize:"0.7rem", marginLeft:6, fontFamily:"'Share Tech Mono',monospace", letterSpacing:"0.14em" }}>
+          _SEC
+        </span>
+      </a>
 
-        {/* Desktop links */}
-        <div
-          style={{
-            display: "flex",
-            gap: "0.25rem",
-            alignItems: "center",
-          }}
-          className="nav-desktop"
-        >
-          {NAV_LINKS.map((l) => (
+      {/* Desktop links */}
+      <div style={{ display:"flex", gap:"2rem", marginLeft:"auto", alignItems:"center" }}>
+        {LINKS.map((l) => {
+          const isActive = active === l.href.slice(1);
+          return (
             <a
-              key={l.label}
+              key={l.href}
               href={l.href}
-              onClick={() => setActive(l.href)}
               style={{
-                padding: "6px 12px",
-                borderRadius: 4,
-                fontSize: "0.78rem",
-                fontFamily: "monospace",
-                letterSpacing: "0.06em",
-                color: active === l.href ? "#00ff64" : "rgba(255,255,255,0.5)",
+                fontFamily: "'Rajdhani', sans-serif",
+                fontWeight: 600,
+                fontSize: "0.82rem",
+                letterSpacing: "0.1em",
+                color: isActive ? "#00ff64" : "rgba(240,255,244,0.5)",
                 textDecoration: "none",
-                transition: "color 0.2s, background 0.2s",
-                background: active === l.href ? "rgba(0,255,100,0.08)" : "transparent",
+                textTransform: "uppercase",
+                transition: "color 0.25s",
+                position: "relative",
+                paddingBottom: 4,
               }}
-              onMouseEnter={(e) => {
-                if (active !== l.href) {
-                  (e.currentTarget as HTMLAnchorElement).style.color = "#fff";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (active !== l.href) {
-                  (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.5)";
-                }
-              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#00ff64"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = isActive ? "#00ff64" : "rgba(240,255,244,0.5)"; }}
             >
               {l.label}
+              {isActive && (
+                <span style={{
+                  position:"absolute", bottom:0, left:0,
+                  width:"100%", height:1,
+                  background:"linear-gradient(90deg, #00ff64, transparent)",
+                }} />
+              )}
             </a>
-          ))}
+          );
+        })}
 
-          <a
-            href="#contact"
-            style={{
-              marginLeft: "0.5rem",
-              padding: "7px 16px",
-              borderRadius: 4,
-              fontSize: "0.78rem",
-              fontFamily: "monospace",
-              letterSpacing: "0.08em",
-              color: "#000",
-              background: "#00ff64",
-              textDecoration: "none",
-              fontWeight: 700,
-              transition: "opacity 0.2s",
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = "0.85"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = "1"; }}
-          >
-            HIRE ME
-          </a>
-        </div>
-
-        {/* Mobile burger */}
-        <button
-          onClick={() => setOpen((o) => !o)}
+        <a
+          href="mailto:chavdarutvik1849@gmail.com"
           style={{
-            display: "none",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: 4,
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: "0.72rem",
+            letterSpacing: "0.1em",
+            color: "#000",
+            background: "#00ff64",
+            padding: "0.4rem 1.1rem",
+            borderRadius: 4,
+            textDecoration: "none",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            transition: "background 0.25s, transform 0.2s",
           }}
-          className="nav-burger"
-          aria-label="Toggle menu"
+          onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.background="#00cc50"; el.style.transform="translateY(-1px)"; }}
+          onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.background="#00ff64"; el.style.transform="translateY(0)"; }}
         >
-          <div style={{ width: 22, display: "flex", flexDirection: "column", gap: 5 }}>
-            {[0, 1, 2].map((i) => (
-              <span
-                key={i}
-                style={{
-                  display: "block",
-                  height: 1.5,
-                  background: "#00ff64",
-                  borderRadius: 1,
-                  transition: "transform 0.3s, opacity 0.3s",
-                  transformOrigin: "center",
-                  transform:
-                    open && i === 0 ? "rotate(45deg) translateY(6.5px)" :
-                    open && i === 1 ? "scaleX(0)" :
-                    open && i === 2 ? "rotate(-45deg) translateY(-6.5px)" :
-                    "none",
-                  opacity: open && i === 1 ? 0 : 1,
-                }}
-              />
-            ))}
-          </div>
-        </button>
+          Hire Me
+        </a>
       </div>
+
+      {/* Mobile toggle */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-label="Toggle menu"
+        style={{
+          display:"none",
+          background:"none", border:"none",
+          color:"#00ff64", cursor:"pointer",
+          padding:"0.5rem", marginLeft:"auto",
+          fontFamily:"'Share Tech Mono',monospace",
+          fontSize:"1.2rem",
+        }}
+        className="mobile-nav-toggle"
+      >
+        {open ? "✕" : "≡"}
+      </button>
 
       {/* Mobile drawer */}
       {open && (
-        <div
-          style={{
-            background: "rgba(0,0,0,0.95)",
-            borderTop: "1px solid rgba(0,255,100,0.1)",
-            padding: "1rem 2rem 1.5rem",
-          }}
-        >
-          {NAV_LINKS.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              onClick={() => { setActive(l.href); setOpen(false); }}
+        <div style={{
+          position:"fixed", top:64, left:0, right:0,
+          background:"rgba(0,8,3,0.97)",
+          borderBottom:"1px solid rgba(0,255,100,0.15)",
+          padding:"1.5rem clamp(1.2rem,5vw,3rem)",
+          display:"flex", flexDirection:"column", gap:"1.2rem",
+          backdropFilter:"blur(20px)",
+          zIndex:8999,
+        }}>
+          {LINKS.map((l) => (
+            <a key={l.href} href={l.href} onClick={() => setOpen(false)}
               style={{
-                display: "block",
-                padding: "10px 0",
-                fontSize: "0.9rem",
-                fontFamily: "monospace",
-                color: "rgba(255,255,255,0.6)",
-                textDecoration: "none",
-                borderBottom: "1px solid rgba(255,255,255,0.04)",
-                letterSpacing: "0.06em",
+                fontFamily:"'Rajdhani',sans-serif",
+                fontWeight:600, fontSize:"1rem",
+                letterSpacing:"0.12em", textTransform:"uppercase",
+                color:"rgba(240,255,244,0.75)", textDecoration:"none",
               }}
-            >
-              {l.label}
-            </a>
+            >{l.label}</a>
           ))}
         </div>
       )}
 
       <style>{`
         @media (max-width: 768px) {
-          .nav-desktop { display: none !important; }
-          .nav-burger   { display: block !important; }
+          .mobile-nav-toggle { display: block !important; }
+          nav > div:not(.mobile-nav-toggle) { display: none !important; }
         }
       `}</style>
     </nav>
