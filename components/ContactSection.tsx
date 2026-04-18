@@ -2,9 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 
 const CONTACT_LINKS = [
-  { label: "Email",     value: "chavdarutvik1849@gmail.com",             href: "mailto:chavdarutvik1849@gmail.com",                 color: "#00ff64" },
-  { label: "LinkedIn",  value: "linkedin.com/in/rutvikchavda-584b37197", href: "https://www.linkedin.com/in/rutvik-chavda-584b37197/", color: "#38bdf8" },
-  { label: "Location",  value: "Ahmedabad, Gujarat, India",              href: "#hero",                                             color: "#f472b6" },
+  { label: "Email",     value: "chavdarutvik1849@gmail.com",            href: "mailto:chavdarutvik1849@gmail.com",                color: "#00ff64" },
+  { label: "LinkedIn",  value: "linkedin.com/in/rutvik-chavda-584b37197", href: "https://www.linkedin.com/in/rutvik-chavda-584b37197/", color: "#38bdf8" },
+  { label: "Location",  value: "Ahmedabad, Gujarat, India",             href: "#hero",                                             color: "#f472b6" },
 ];
 
 export default function ContactSection() {
@@ -12,7 +12,7 @@ export default function ContactSection() {
   const [name,    setName]    = useState("");
   const [email,   setEmail]   = useState("");
   const [message, setMessage] = useState("");
-  const [sent,    setSent]    = useState(false);
+  const [status,  setStatus]  = useState<"idle" | "submitting" | "sent">("idle");
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -24,12 +24,39 @@ export default function ContactSection() {
     return () => obs.disconnect();
   }, []);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const mailto = `mailto:chavdarutvik1849@gmail.com?subject=Portfolio Enquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(message + "\n\nFrom: " + email)}`;
-    window.location.href = mailto;
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
+    setStatus("submitting");
+
+    const formData = new FormData();
+    formData.append("access_key", "9f72abfd-a57b-4428-96e0-0f935d46f6b1"); 
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("message", message);
+    formData.append("subject", `New Portfolio Enquiry from ${name}`);
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        setStatus("sent");
+        setName("");
+        setEmail("");
+        setMessage("");
+        
+        // Reset the button state after 4 seconds
+        setTimeout(() => setStatus("idle"), 4000);
+      } else {
+        console.error("Failed to send message");
+        setStatus("idle");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setStatus("idle");
+    }
   }
 
   const inputStyle: React.CSSProperties = {
@@ -49,6 +76,8 @@ export default function ContactSection() {
     <section ref={ref} id="contact" className="section" style={{ borderTop: "1px solid rgba(0,255,100,0.06)" }}>
       <div className="container">
         <div className="contact-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "start" }}>
+          
+          {/* Left Column - Contact Info */}
           <div style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateX(-20px)", transition: "all 0.7s ease" }}>
             <p className="section-kicker">Contact</p>
             <h2 className="section-title">Let&apos;s talk <span>security</span></h2>
@@ -91,6 +120,7 @@ export default function ContactSection() {
             </div>
           </div>
 
+          {/* Right Column - Form */}
           <div style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateX(20px)", transition: "all 0.7s ease 0.15s" }}>
             <div style={{
               background: "rgba(0,10,5,0.7)",
@@ -119,6 +149,7 @@ export default function ContactSection() {
                     style={inputStyle}
                     onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "rgba(0,255,100,0.55)"; }}
                     onBlur={(e)  => { (e.target as HTMLInputElement).style.borderColor = "rgba(0,255,100,0.2)"; }}
+                    disabled={status === "submitting"}
                   />
                 </div>
 
@@ -133,6 +164,7 @@ export default function ContactSection() {
                     style={inputStyle}
                     onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "rgba(0,255,100,0.55)"; }}
                     onBlur={(e)  => { (e.target as HTMLInputElement).style.borderColor = "rgba(0,255,100,0.2)"; }}
+                    disabled={status === "submitting"}
                   />
                 </div>
 
@@ -147,24 +179,28 @@ export default function ContactSection() {
                     style={{ ...inputStyle, resize: "vertical", minHeight: 120 }}
                     onFocus={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = "rgba(0,255,100,0.55)"; }}
                     onBlur={(e)  => { (e.target as HTMLTextAreaElement).style.borderColor = "rgba(0,255,100,0.2)"; }}
+                    disabled={status === "submitting"}
                   />
                 </div>
 
                 <button
                   type="submit"
+                  disabled={status === "submitting" || status === "sent"}
                   style={{
                     fontFamily: "'Share Tech Mono',monospace",
                     fontSize: "0.75rem", letterSpacing: "0.12em",
-                    color: "#000", background: sent ? "#00cc50" : "#00ff64",
+                    color: "#000", 
+                    background: status === "sent" ? "#00cc50" : (status === "submitting" ? "#00aa44" : "#00ff64"),
                     border: "none", padding: "0.9rem 1.5rem",
-                    borderRadius: 6, cursor: "pointer",
+                    borderRadius: 6, cursor: (status === "idle" ? "pointer" : "default"),
                     fontWeight: 700, textTransform: "uppercase",
                     transition: "background 0.2s, transform 0.15s",
+                    opacity: status === "submitting" ? 0.7 : 1
                   }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
+                  onMouseEnter={(e) => { if(status === "idle") (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; }}
+                  onMouseLeave={(e) => { if(status === "idle") (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
                 >
-                  {sent ? "✓ Opening Email Client..." : "$ Send Message →"}
+                  {status === "submitting" ? "Sending..." : status === "sent" ? "✓ Message Sent!" : "$ Send Message →"}
                 </button>
               </form>
             </div>
