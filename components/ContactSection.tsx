@@ -40,10 +40,11 @@ export default function ContactSection() {
     e.preventDefault();
     setStatus("submitting");
 
+    // FIX: Grab the form element immediately before any 'await' happens
+    const form = e.currentTarget;
+
     try {
-      const formData = new FormData(e.currentTarget);
-      
-      // Explicitly append the key just to be absolutely certain
+      const formData = new FormData(form);
       formData.append("access_key", "9f72abfd-a57b-4428-96e0-0f935d46f6b1");
 
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -55,10 +56,10 @@ export default function ContactSection() {
 
       if (data.success) {
         setStatus("sent");
-        e.currentTarget.reset(); 
+        // FIX: Tell our saved form variable to clear all its inputs
+        form.reset(); 
         setTimeout(() => setStatus("idle"), 4000);
       } else {
-        // THIS WILL POP UP AND TELL YOU EXACTLY WHAT IS WRONG
         alert("Web3Forms Error: " + data.message);
         setStatus("error");
         setTimeout(() => setStatus("idle"), 4000);
