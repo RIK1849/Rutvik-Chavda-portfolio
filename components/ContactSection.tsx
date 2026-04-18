@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 const CONTACT_LINKS = [
   { label: "Email",     value: "chavdarutvik1849@gmail.com",            href: "mailto:chavdarutvik1849@gmail.com",                color: "#00ff64" },
-  { label: "LinkedIn",  value: "linkedin.com/in/rutvik-chavda-584b37197", href: "https://www.linkedin.com/in/rutvik-chavda-584b37197/", color: "#38bdf8" },
+  { label: "LinkedIn",  value: "https://www.linkedin.com/in/rutvik-chavda-584b37197/", href: "https://www.linkedin.com/in/rutvik-chavda-584b37197/", color: "#38bdf8" },
   { label: "Location",  value: "Ahmedabad, Gujarat, India",             href: "#hero",                                             color: "#f472b6" },
 ];
 
