@@ -2,20 +2,18 @@
 import { useEffect, useRef, useState } from "react";
 
 const CORE_SKILLS = [
-  "EDR / XDR", "Sophos Intercept X", "Sophos Central",
-  "Incident Response", "Threat Hunting", "Root Cause Analysis",
-  "MITRE ATT&CK", "Live Discover", "Malware Analysis",
-  "Windows Event Logs", "Sysmon", "PowerShell",
-  "Splunk SIEM", "SQL Telemetry", "Linux Forensics",
-  "Ransomware Containment", "Attack Timeline", "AWS Cloud",
+  "L2/L3 Support", "Incident Management", "Sophos EDR/XDR",
+  "Splunk & SIEM", "Root Cause Analysis", "Live Discover (SQL)",
+  "Windows Event Logs", "Linux & macOS", "Network Protocols",
+  "MITRE ATT&CK", "REST APIs / JSON", "PowerShell & Python",
 ];
 
 const QUICK_FACTS = [
   { label: "LOCATION",  value: "Ahmedabad, Gujarat, India" },
-  { label: "ROLE",      value: "Endpoint Security Engineer" },
-  { label: "FOCUS",     value: "EDR/XDR · IR · Threat Hunting" },
+  { label: "ROLE",      value: "Technical Support Engineer" },
+  { label: "FOCUS",     value: "Endpoint Security · L2/L3 Support" },
   { label: "EDUCATION", value: "B.Tech Computer Engineering" },
-  { label: "OPEN TO",   value: "SOC · Threat Detection · Security Ops" },
+  { label: "OPEN TO",   value: "L2/L3 Security · Product Support" },
 ];
 
 export default function AboutSection() {
@@ -47,18 +45,13 @@ export default function AboutSection() {
 
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: 520 }}>
               <p style={{ color: "rgba(240,255,244,0.7)", lineHeight: 1.8, fontFamily: "'Rajdhani',sans-serif", fontSize: "1rem" }}>
-                I&apos;m Rutvik Chavda — an Endpoint Security Engineer who spent 3+ years at Sophos handling the most complex
-                escalations enterprise customers throw at EDR/XDR platforms. My work lives in the gap between
-                &quot;the alert fired&quot; and &quot;here&apos;s exactly what happened and how to stop it happening again.&quot;
+                I&apos;m Rutvik Chavda — a Technical Support Engineer specializing in Endpoint Security, with 3+ years handling complex P1/P2 escalations for enterprise customers. My work lives in the gap between an alert firing and delivering a definitive root cause analysis.
               </p>
               <p style={{ color: "rgba(240,255,244,0.58)", lineHeight: 1.8, fontFamily: "'Rajdhani',sans-serif", fontSize: "1rem" }}>
-                I reconstruct attack timelines, trace lateral movement through Windows Event Logs and Sysmon telemetry,
-                write Live Discover SQL queries to hunt across Sophos Data Lake, and collaborate directly with engineering
-                on defect reproduction. I don&apos;t just raise tickets — I own them end-to-end.
+                I reconstruct attack timelines using Splunk and SIEM correlation, trace lateral movement through Windows Event Logs and Sysmon telemetry, and write Live Discover SQL queries to hunt across data lakes. I collaborate directly with engineering on defect reproduction, meaning I don&apos;t just raise tickets — I own them end-to-end.
               </p>
               <p style={{ color: "rgba(240,255,244,0.58)", lineHeight: 1.8, fontFamily: "'Rajdhani',sans-serif", fontSize: "1rem" }}>
-                Outside casework I contribute to the global Sophos Staff Community — earning five recognition
-                awards in CY25 including Top Contributor for the full year.
+                Beyond casework, I am a recognized Top 10 Support Engineer globally at Sophos (FY24) and a Top 2 Staff Contributor on the Sophos Community (FY25), dedicated to sharing technical runbooks and deep product expertise.
               </p>
             </div>
 
@@ -130,7 +123,7 @@ export default function AboutSection() {
 
             <div style={{ marginTop: "1.4rem", display: "flex", gap: "1rem", flexWrap: "wrap" }}>
               <a
-                href="https://www.linkedin.com/in/rutvikchavda-584b37197"
+                href="https://www.linkedin.com/in/rutvik-chavda-584b37197"
                 target="_blank" rel="noopener noreferrer"
                 style={{
                   fontFamily: "'Share Tech Mono',monospace",
