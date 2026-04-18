@@ -41,7 +41,6 @@ export default function ContactSection() {
     setStatus("submitting");
 
     try {
-      // Grabs all the data directly from the HTML form elements
       const formData = new FormData(e.currentTarget);
 
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -53,7 +52,7 @@ export default function ContactSection() {
 
       if (data.success) {
         setStatus("sent");
-        e.currentTarget.reset(); // Clears the form fields automatically
+        e.currentTarget.reset(); 
         setTimeout(() => setStatus("idle"), 4000);
       } else {
         console.error("Web3Forms API Error:", data.message);
@@ -85,7 +84,6 @@ export default function ContactSection() {
       <div className="container">
         <div className="contact-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "start" }}>
           
-          {/* Left Column - Contact Info */}
           <div style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateX(-20px)", transition: "all 0.7s ease" }}>
             <p className="section-kicker">Contact</p>
             <h2 className="section-title">Let&apos;s talk <span>security</span></h2>
@@ -128,7 +126,6 @@ export default function ContactSection() {
             </div>
           </div>
 
-          {/* Right Column - Form */}
           <div style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateX(20px)", transition: "all 0.7s ease 0.15s" }}>
             <div style={{
               background: "rgba(0,10,5,0.7)",
@@ -147,14 +144,9 @@ export default function ContactSection() {
 
               <form onSubmit={handleSubmit} style={{ padding: "1.6rem", display: "flex", flexDirection: "column", gap: "1.1rem" }}>
                 
-                {/* REQUIRED: Access Key */}
                 <input type="hidden" name="access_key" value="9f72abfd-a57b-4428-96e0-0f935d46f6b1" />
-                
-                {/* REQUIRED: Subject Line Customization */}
                 <input type="hidden" name="subject" value="New Portfolio Enquiry" />
                 <input type="hidden" name="from_name" value="Portfolio Notification" />
-
-                {/* Web3Forms Honeypot (Spam Prevention) */}
                 <input type="checkbox" name="botcheck" style={{ display: 'none' }} />
 
                 <div>
