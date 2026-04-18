@@ -2,9 +2,24 @@
 import { useEffect, useRef, useState } from "react";
 
 const CONTACT_LINKS = [
-  { label: "Email",     value: "chavdarutvik1849@gmail.com",            href: "mailto:chavdarutvik1849@gmail.com",                color: "#00ff64" },
-  { label: "LinkedIn",  value: "https://www.linkedin.com/in/rutvik-chavda-584b37197/", href: "https://www.linkedin.com/in/rutvik-chavda-584b37197/", color: "#38bdf8" },
-  { label: "Location",  value: "Ahmedabad, Gujarat, India",             href: "#hero",                                             color: "#f472b6" },
+  { 
+    label: "Email",     
+    value: "chavdarutvik1849@gmail.com",            
+    href: "mailto:chavdarutvik1849@gmail.com",                
+    color: "#00ff64" 
+  },
+  { 
+    label: "LinkedIn",  
+    value: "linkedin.com/in/rutvik-chavda-584b37197", 
+    href: "https://www.linkedin.com/in/rutvik-chavda-584b37197/", 
+    color: "#38bdf8" 
+  },
+  { 
+    label: "Location",  
+    value: "Ahmedabad, Gujarat, India",             
+    href: "#hero",                                             
+    color: "#f472b6" 
+  },
 ];
 
 export default function ContactSection() {
@@ -12,7 +27,7 @@ export default function ContactSection() {
   const [name,    setName]    = useState("");
   const [email,   setEmail]   = useState("");
   const [message, setMessage] = useState("");
-  const [status,  setStatus]  = useState<"idle" | "submitting" | "sent">("idle");
+  const [status,  setStatus]  = useState<"idle" | "submitting" | "sent" | "error">("idle");
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -50,12 +65,12 @@ export default function ContactSection() {
         // Reset the button state after 4 seconds
         setTimeout(() => setStatus("idle"), 4000);
       } else {
-        console.error("Failed to send message");
-        setStatus("idle");
+        setStatus("error");
+        setTimeout(() => setStatus("idle"), 4000);
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      setStatus("idle");
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 4000);
     }
   }
 
@@ -190,7 +205,7 @@ export default function ContactSection() {
                     fontFamily: "'Share Tech Mono',monospace",
                     fontSize: "0.75rem", letterSpacing: "0.12em",
                     color: "#000", 
-                    background: status === "sent" ? "#00cc50" : (status === "submitting" ? "#00aa44" : "#00ff64"),
+                    background: status === "sent" ? "#00cc50" : status === "error" ? "#ff5f56" : status === "submitting" ? "#00aa44" : "#00ff64",
                     border: "none", padding: "0.9rem 1.5rem",
                     borderRadius: 6, cursor: (status === "idle" ? "pointer" : "default"),
                     fontWeight: 700, textTransform: "uppercase",
@@ -200,7 +215,7 @@ export default function ContactSection() {
                   onMouseEnter={(e) => { if(status === "idle") (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; }}
                   onMouseLeave={(e) => { if(status === "idle") (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
                 >
-                  {status === "submitting" ? "Sending..." : status === "sent" ? "✓ Message Sent!" : "$ Send Message →"}
+                  {status === "submitting" ? "Sending..." : status === "sent" ? "✓ Message Sent!" : status === "error" ? "✖ Error - Try Again" : "$ Send Message →"}
                 </button>
               </form>
             </div>
