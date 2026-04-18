@@ -255,7 +255,8 @@ export default function ExperienceSection() {
               marginBottom: "0.75rem",
             }}
           >
-            // EXPERIENCE
+            {/* EXPERIENCE */}
+            EXPERIENCE
           </p>
           <h2
             style={{

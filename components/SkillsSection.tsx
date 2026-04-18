@@ -177,7 +177,7 @@ export default function SkillsSection() {
               marginBottom: "0.75rem",
             }}
           >
-            // TECHNICAL SKILLS
+            TECHNICAL SKILLS
           </p>
           <h2
             style={{
