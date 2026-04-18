@@ -24,9 +24,6 @@ const CONTACT_LINKS = [
 
 export default function ContactSection() {
   const [visible, setVisible] = useState(false);
-  const [name,    setName]    = useState("");
-  const [email,   setEmail]   = useState("");
-  const [message, setMessage] = useState("");
   const [status,  setStatus]  = useState<"idle" | "submitting" | "sent" | "error">("idle");
   const ref = useRef<HTMLElement>(null);
 
@@ -39,36 +36,32 @@ export default function ContactSection() {
     return () => obs.disconnect();
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("submitting");
 
-    const formData = new FormData();
-    formData.append("access_key", "9f72abfd-a57b-4428-96e0-0f935d46f6b1"); 
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("message", message);
-    formData.append("subject", `New Portfolio Enquiry from ${name}`);
-
     try {
+      // Grabs all the data directly from the HTML form elements
+      const formData = new FormData(e.currentTarget);
+
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         body: formData,
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (data.success) {
         setStatus("sent");
-        setName("");
-        setEmail("");
-        setMessage("");
-        
-        // Reset the button state after 4 seconds
+        e.currentTarget.reset(); // Clears the form fields automatically
         setTimeout(() => setStatus("idle"), 4000);
       } else {
+        console.error("Web3Forms API Error:", data.message);
         setStatus("error");
         setTimeout(() => setStatus("idle"), 4000);
       }
     } catch (error) {
+      console.error("Network or Fetch Error:", error);
       setStatus("error");
       setTimeout(() => setStatus("idle"), 4000);
     }
@@ -153,13 +146,25 @@ export default function ContactSection() {
               </div>
 
               <form onSubmit={handleSubmit} style={{ padding: "1.6rem", display: "flex", flexDirection: "column", gap: "1.1rem" }}>
+                
+                {/* REQUIRED: Access Key */}
+                <input type="hidden" name="access_key" value="9f72abfd-a57b-4428-96e0-0f935d46f6b1" />
+                
+                {/* REQUIRED: Subject Line Customization */}
+                <input type="hidden" name="subject" value="New Portfolio Enquiry" />
+                <input type="hidden" name="from_name" value="Portfolio Notification" />
+
+                {/* Web3Forms Honeypot (Spam Prevention) */}
+                <input type="checkbox" name="botcheck" style={{ display: 'none' }} />
+
                 <div>
                   <label style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "0.65rem", color: "rgba(0,255,100,0.6)", letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: 6, fontWeight: 700 }}>
                     $ Your Name
                   </label>
                   <input
-                    type="text" required
-                    value={name} onChange={(e) => setName(e.target.value)}
+                    type="text" 
+                    name="name"
+                    required
                     placeholder="Jane Smith"
                     style={inputStyle}
                     onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "rgba(0,255,100,0.55)"; }}
@@ -173,8 +178,9 @@ export default function ContactSection() {
                     $ Email Address
                   </label>
                   <input
-                    type="email" required
-                    value={email} onChange={(e) => setEmail(e.target.value)}
+                    type="email" 
+                    name="email"
+                    required
                     placeholder="jane@company.com"
                     style={inputStyle}
                     onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "rgba(0,255,100,0.55)"; }}
@@ -188,8 +194,8 @@ export default function ContactSection() {
                     $ Message
                   </label>
                   <textarea
+                    name="message"
                     required rows={5}
-                    value={message} onChange={(e) => setMessage(e.target.value)}
                     placeholder="Tell me about the role..."
                     style={{ ...inputStyle, resize: "vertical", minHeight: 120 }}
                     onFocus={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = "rgba(0,255,100,0.55)"; }}
