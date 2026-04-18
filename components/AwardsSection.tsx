@@ -24,7 +24,7 @@ const AWARDS = [
     color: "#38bdf8",
     icon: "◈",
     description:
-      "Recognised as a top community staff contributor for Q2 CY25 — acknowledged for detailed, technically precise, and consistently valuable engagement that directly supported enterprise customers and partners with complex Sophos product queries.",
+      "Recognised as a top community staff contributor for Q2 CY25 — acknowledged for detailed, technically precise, and consistently valuable engagement that directly supported enterprise customers and partners.",
   },
   {
     title: "Top Sophos Staff Community Contributor — CY25 Q3",
@@ -40,7 +40,7 @@ const AWARDS = [
     color: "#38bdf8",
     icon: "◈",
     description:
-      "Recognised as a top community staff contributor for Q4 CY25 — sustaining high-quality technical output and consistent community engagement through the close of the calendar year, demonstrating year-long reliability and depth.",
+      "Recognised as a top community staff contributor for Q4 CY25 — sustaining high-quality technical output and consistent community engagement through the close of the calendar year.",
   },
 ];
 
@@ -49,111 +49,69 @@ export default function AwardsSection() {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.08 });
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setVisible(true); },
+      { threshold: 0.08 }
+    );
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
   }, []);
 
   return (
-    <section ref={ref} id="awards" className="section" style={{ background:"#020805", borderTop:"1px solid rgba(0,255,100,0.06)" }}>
+    <section ref={ref} id="awards" className="section" style={{ background: "#020805", borderTop: "1px solid rgba(0,255,100,0.06)" }}>
       <div className="container">
-        <div
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? "none" : "translateY(16px)",
-            transition:"all 0.7s ease",
-          }}
-        >
+        <div style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(16px)", transition: "all 0.7s ease" }}>
           <p className="section-kicker">Awards & Recognition</p>
-          <h2 className="section-title">
-            Recognition that adds <span>credibility and proof</span>
-          </h2>
+          <h2 className="section-title">Recognition that adds <span>credibility and proof</span></h2>
           <p className="section-copy">
             Five awards in a single calendar year — four consecutive quarterly recognitions and the full-year top
-            contributor title. These aren&apos;t participation trophies; they&apos;re global rankings inside a company with
-            thousands of technical staff worldwide.
+            contributor title. Global rankings inside a company with thousands of technical staff worldwide.
           </p>
         </div>
 
-        {/* Top award — featured */}
-        <div
-          style={{
-            background:"rgba(0,255,100,0.038)",
-            border:"1px solid rgba(0,255,100,0.25)",
-            borderRadius:12,
-            padding:"2rem 2.2rem",
-            marginBottom:"1.4rem",
-            position:"relative",
-            overflow:"hidden",
-            opacity: visible ? 1 : 0,
-            transform: visible ? "none" : "translateY(18px)",
-            transition:"all 0.7s ease 0.1s",
-            animation:"borderPulse 5s ease infinite",
-          }}
-        >
-          <div style={{
-            position:"absolute", top:0, left:0, right:0, height:2,
-            background:"linear-gradient(90deg, #00ff64, transparent)",
-          }}/>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:"1rem" }}>
+        {/* Featured top award */}
+        <div style={{
+          background: "rgba(0,255,100,0.038)",
+          border: "1px solid rgba(0,255,100,0.25)",
+          borderRadius: 12,
+          padding: "2rem 2.2rem",
+          marginBottom: "1.4rem",
+          position: "relative",
+          overflow: "hidden",
+          opacity: visible ? 1 : 0,
+          transform: visible ? "none" : "translateY(18px)",
+          transition: "all 0.7s ease 0.1s",
+        }}>
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, #00ff64, transparent)" }} />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
             <div>
-              <span style={{
-                fontFamily:"'Share Tech Mono',monospace",
-                fontSize:"0.65rem", color:"#00ff64",
-                opacity:0.6, letterSpacing:"0.12em",
-                display:"block", marginBottom:8,
-              }}>GLOBAL RANKING — TOP 10</span>
-              <h3 style={{
-                fontFamily:"'Orbitron',sans-serif",
-                fontSize:"1.1rem", fontWeight:700,
-                color:"#00ff64", lineHeight:1.35,
-                marginBottom:"0.8rem",
-              }}>
+              <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "0.65rem", color: "#00ff64", opacity: 0.6, letterSpacing: "0.12em", display: "block", marginBottom: 8 }}>
+                GLOBAL RANKING — TOP 10
+              </span>
+              <h3 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.1rem", fontWeight: 700, color: "#00ff64", lineHeight: 1.35, marginBottom: "0.8rem" }}>
                 {AWARDS[0].title}
               </h3>
-              <p style={{
-                fontFamily:"'Rajdhani',sans-serif",
-                fontSize:"0.95rem", color:"rgba(240,255,244,0.62)",
-                lineHeight:1.7, maxWidth:620,
-              }}>
+              <p style={{ fontFamily: "'Rajdhani',sans-serif", fontSize: "0.95rem", color: "rgba(240,255,244,0.62)", lineHeight: 1.7, maxWidth: 620 }}>
                 {AWARDS[0].description}
               </p>
             </div>
-            <div style={{
-              fontFamily:"'Orbitron',sans-serif",
-              fontSize:"2.8rem", color:"rgba(0,255,100,0.15)",
-              flexShrink:0,
-            }}>
-              ◆
-            </div>
+            <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "2.8rem", color: "rgba(0,255,100,0.15)", flexShrink: 0 }}>◆</div>
           </div>
         </div>
 
-        {/* CY25 awards grid */}
-        <div
-          style={{
-            background:"rgba(0,0,0,0.3)",
-            border:"1px solid rgba(0,255,100,0.08)",
-            borderRadius:12,
-            padding:"1.6rem",
-            marginBottom:"0",
-            opacity: visible ? 1 : 0,
-            transform: visible ? "none" : "translateY(18px)",
-            transition:"all 0.7s ease 0.2s",
-          }}
-        >
-          <div style={{
-            display:"flex", alignItems:"center", gap:10,
-            marginBottom:"1.4rem",
-            borderBottom:"1px solid rgba(0,255,100,0.08)",
-            paddingBottom:"0.9rem",
-          }}>
-            <div style={{ width:2, height:16, background:"#38bdf8", borderRadius:2 }}/>
-            <span style={{
-              fontFamily:"'Share Tech Mono',monospace",
-              fontSize:"0.72rem", color:"#38bdf8",
-              letterSpacing:"0.1em", opacity:0.85,
-            }}>
+        {/* CY25 quarterly grid */}
+        <div style={{
+          background: "rgba(0,0,0,0.3)",
+          border: "1px solid rgba(0,255,100,0.08)",
+          borderRadius: 12,
+          padding: "1.6rem",
+          opacity: visible ? 1 : 0,
+          transform: visible ? "none" : "translateY(18px)",
+          transition: "all 0.7s ease 0.2s",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1.4rem", borderBottom: "1px solid rgba(0,255,100,0.08)", paddingBottom: "0.9rem" }}>
+            <div style={{ width: 2, height: 16, background: "#38bdf8", borderRadius: 2 }} />
+            <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "0.72rem", color: "#38bdf8", letterSpacing: "0.1em", opacity: 0.85 }}>
               SOPHOS STAFF COMMUNITY — CY25 RECOGNITION STREAK
             </span>
           </div>
@@ -166,21 +124,17 @@ export default function AwardsSection() {
                 style={{
                   opacity: visible ? 1 : 0,
                   transform: visible ? "none" : "translateY(14px)",
-                  transition:`all 0.6s ease ${0.28 + i*0.1}s`,
-                  borderLeft:`2px solid ${award.color}40`,
+                  transition: `all 0.6s ease ${0.28 + i * 0.1}s`,
+                  borderLeft: `2px solid ${award.color}40`,
                 }}
               >
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:"0.7rem" }}>
-                  <span style={{
-                    fontFamily:"'Share Tech Mono',monospace",
-                    fontSize:"0.62rem", color:award.color,
-                    opacity:0.65, letterSpacing:"0.1em",
-                  }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.7rem" }}>
+                  <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "0.62rem", color: award.color, opacity: 0.65, letterSpacing: "0.1em" }}>
                     {award.period}
                   </span>
-                  <span style={{ color:award.color, opacity:0.5, fontSize:"0.8rem" }}>{award.icon}</span>
+                  <span style={{ color: award.color, opacity: 0.5, fontSize: "0.8rem" }}>{award.icon}</span>
                 </div>
-                <h3 style={{ color:award.color, marginBottom:"0.6rem" }}>{award.title}</h3>
+                <h3 style={{ color: award.color, marginBottom: "0.6rem" }}>{award.title}</h3>
                 <p>{award.description}</p>
               </div>
             ))}
