@@ -42,6 +42,9 @@ export default function ContactSection() {
 
     try {
       const formData = new FormData(e.currentTarget);
+      
+      // Explicitly append the key just to be absolutely certain
+      formData.append("access_key", "9f72abfd-a57b-4428-96e0-0f935d46f6b1");
 
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
@@ -55,12 +58,13 @@ export default function ContactSection() {
         e.currentTarget.reset(); 
         setTimeout(() => setStatus("idle"), 4000);
       } else {
-        console.error("Web3Forms API Error:", data.message);
+        // THIS WILL POP UP AND TELL YOU EXACTLY WHAT IS WRONG
+        alert("Web3Forms Error: " + data.message);
         setStatus("error");
         setTimeout(() => setStatus("idle"), 4000);
       }
     } catch (error) {
-      console.error("Network or Fetch Error:", error);
+      alert("Network Error: Could not reach Web3Forms. Turn off your ad-blocker if you have one running.");
       setStatus("error");
       setTimeout(() => setStatus("idle"), 4000);
     }
@@ -144,7 +148,6 @@ export default function ContactSection() {
 
               <form onSubmit={handleSubmit} style={{ padding: "1.6rem", display: "flex", flexDirection: "column", gap: "1.1rem" }}>
                 
-                <input type="hidden" name="access_key" value="9f72abfd-a57b-4428-96e0-0f935d46f6b1" />
                 <input type="hidden" name="subject" value="New Portfolio Enquiry" />
                 <input type="hidden" name="from_name" value="Portfolio Notification" />
                 <input type="checkbox" name="botcheck" style={{ display: 'none' }} />
