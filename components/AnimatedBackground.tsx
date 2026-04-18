@@ -3,561 +3,485 @@
 import { useEffect, useRef } from "react";
 
 export default function AnimatedBackground() {
-  const mountRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const hudRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const mount = mountRef.current;
-    if (!mount) return;
+    const canvas = canvasRef.current;
+    const hud = hudRef.current;
+    if (!canvas || !hud) return;
 
-    // ── Dynamically load Three.js from CDN ──────────────────────────────────
-    const script = document.createElement("script");
-    script.src =
-      "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
-    script.async = true;
-    document.head.appendChild(script);
+    const ctx = canvas.getContext("2d");
+    const hctx = hud.getContext("2d");
+    if (!ctx || !hctx) return;
 
-    script.onload = () => {
-      const THREE = (window as any).THREE;
-      if (!THREE) return;
+    // ── Sizing ────────────────────────────────────────────────────────────────
+    let W = window.innerWidth;
+    let H = window.innerHeight;
 
-      // ── Renderer ──────────────────────────────────────────────────────────
-      const W = window.innerWidth;
-      const H = window.innerHeight;
+    // ── Math helpers ──────────────────────────────────────────────────────────
+    const PI2 = Math.PI * 2;
+    const DEG = Math.PI / 180;
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setSize(W, H);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setClearColor(0x000000, 0);
-      renderer.domElement.style.cssText =
-        "position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;";
-      mount.appendChild(renderer.domElement);
+    function ll3d(
+      lat: number,
+      lon: number,
+      r: number,
+      cx: number,
+      cy: number,
+      radius: number,
+      rotY: number,
+      tiltX: number
+    ): [number, number, number] {
+      const phi = (90 - lat) * DEG;
+      const theta = lon * DEG + rotY;
+      const x3 = r * Math.sin(phi) * Math.cos(theta) * radius;
+      const y3raw = r * Math.cos(phi) * radius;
+      const z3 = r * Math.sin(phi) * Math.sin(theta) * radius;
+      const y3 = y3raw * Math.cos(tiltX) - z3 * Math.sin(tiltX);
+      const z3t = y3raw * Math.sin(tiltX) + z3 * Math.cos(tiltX);
+      return [cx + x3, cy - y3, z3t];
+    }
 
-      // ── Scene & Camera ────────────────────────────────────────────────────
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 2000);
-      camera.position.set(0, 0, 4.2);
+    // ── Scene data ────────────────────────────────────────────────────────────
+    // [lat, lon, severity]  0=critical 1=warning 2=clean
+    const NODES: [number, number, number][] = [
+      [51.5, -0.1, 2],
+      [40.7, -74.0, 0],
+      [35.7, 139.7, 2],
+      [48.9, 2.3, 1],
+      [55.7, 37.6, 0],
+      [39.9, 116.4, 0],
+      [28.6, 77.2, 2],
+      [-33.9, 151.2, 2],
+      [37.8, -122.4, 2],
+      [1.3, 103.8, 1],
+      [19.4, -99.1, 1],
+      [52.5, 13.4, 2],
+      [25.2, 55.3, 1],
+      [43.7, -79.4, 2],
+      [59.9, 30.3, 0],
+      [31.2, 121.5, 1],
+      [6.5, 3.4, 1],
+      [-23.5, -46.6, 2],
+      [30.0, 31.2, 1],
+      [34.0, -118.2, 2],
+    ];
 
-      // ── Master group that rotates the globe ───────────────────────────────
-      const GLOBE = new THREE.Group();
-      scene.add(GLOBE);
+    const ARC_PAIRS: [number, number][] = [
+      [1, 4], [4, 5], [5, 14], [1, 0], [0, 3],
+      [9, 5], [8, 1], [11, 0], [6, 9], [2, 9],
+      [15, 5], [16, 3], [17, 1], [18, 3], [10, 8],
+      [12, 0],
+    ];
 
-      // ── Starfield ─────────────────────────────────────────────────────────
-      const starCount = 1800;
-      const starPos = new Float32Array(starCount * 3);
-      for (let i = 0; i < starCount; i++) {
-        const r = 18 + Math.random() * 22;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        starPos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-        starPos[i * 3 + 1] = r * Math.cos(phi);
-        starPos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-      }
-      const starGeo = new THREE.BufferGeometry();
-      starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
-      const starMat = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.04,
-        transparent: true,
-        opacity: 0.55,
+    const LOGS = [
+      ">> BLOCK  178.93.12.4   ENDPOINT-UK-04",
+      ">> ALLOW  10.0.8.22    SOPHOS-CENTRAL",
+      ">> BLOCK  91.215.4.17  ENDPOINT-RU-11",
+      ">> SCAN   XDR-QUERY    LIVE-DISCOVER OK",
+      ">> ALERT  RANSOMWARE   CONTAINED #3821",
+      ">> SYNC   POLICY-V9    PUSH COMPLETE",
+      ">> BLOCK  45.142.12.8  ENDPOINT-CN-03",
+      ">> DETECT LATERAL-MOV  ENDPOINT-SG-02",
+      ">> BLOCK  103.21.5.9   ENDPOINT-IN-07",
+      ">> CLEAN  QUARANTINE   FILE REMOVED",
+    ];
+
+    // ── Scene objects ─────────────────────────────────────────────────────────
+    type Star = { x: number; y: number; size: number; opacity: number };
+    type Packet = { arcIdx: number; t: number; speed: number };
+
+    let stars: Star[] = [];
+    let nodePhases: number[] = [];
+    let packets: Packet[] = [];
+
+    function buildScene() {
+      stars = Array.from({ length: 280 }, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        size: Math.random() * 1.1 + 0.2,
+        opacity: Math.random() * 0.5 + 0.1,
+      }));
+      nodePhases = NODES.map(() => Math.random() * PI2);
+      packets = ARC_PAIRS.slice(0, 10).map((_, i) => ({
+        arcIdx: i,
+        t: Math.random(),
+        speed: 0.0018 + Math.random() * 0.0025,
+      }));
+    }
+
+    // ── Bezier point ──────────────────────────────────────────────────────────
+    function bezierPt(
+      t: number,
+      ax: number, ay: number,
+      mx: number, my: number,
+      bx: number, by: number
+    ): [number, number] {
+      const mt = 1 - t;
+      return [
+        mt * mt * ax + 2 * mt * t * mx + t * t * bx,
+        mt * mt * ay + 2 * mt * t * my + t * t * by,
+      ];
+    }
+
+    // ── Node colour helper ────────────────────────────────────────────────────
+    function nodeRGBA(sev: number, alpha: number): string {
+      if (sev === 0) return `rgba(255,34,34,${alpha})`;
+      if (sev === 1) return `rgba(255,136,0,${alpha})`;
+      return `rgba(0,255,100,${alpha})`;
+    }
+
+    // ── Mouse parallax ────────────────────────────────────────────────────────
+    let mouseX = 0;
+    let mouseY = 0;
+    const onMouse = (e: MouseEvent) => {
+      mouseX = (e.clientX / W - 0.5) * 2;
+      mouseY = (e.clientY / H - 0.5) * 2;
+    };
+    window.addEventListener("mousemove", onMouse);
+
+    // ── Resize ────────────────────────────────────────────────────────────────
+    function resize() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas!.width = W;
+      canvas!.height = H;
+      hud!.width = W;
+      hud!.height = H;
+      buildScene();
+    }
+    window.addEventListener("resize", resize);
+
+    // ── Animation state ───────────────────────────────────────────────────────
+    let rotY = 0;
+    let tiltX = 0;
+    let rafId = 0;
+    const startTime = performance.now();
+    const FONT = "'Courier New', monospace";
+    const BP = 24; // border padding
+
+    // ── Render ────────────────────────────────────────────────────────────────
+    function render(now: number) {
+      rafId = requestAnimationFrame(render);
+
+      const elapsed = (now - startTime) / 1000;
+      const cx = W * 0.5;
+      const cy = H * 0.5;
+      const radius = Math.min(W, H) * 0.29;
+
+      rotY += 0.0022;
+      tiltX += (mouseY * 0.18 - tiltX) * 0.04;
+
+      // ── Background ──────────────────────────────────────────────────────────
+      ctx.clearRect(0, 0, W, H);
+      const bg = ctx.createRadialGradient(W * 0.6, H * 0.35, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.75);
+      bg.addColorStop(0, "#011a0c");
+      bg.addColorStop(0.5, "#000d05");
+      bg.addColorStop(1, "#000000");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // ── Stars ────────────────────────────────────────────────────────────────
+      stars.forEach((s) => {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, PI2);
+        ctx.fillStyle = `rgba(255,255,255,${s.opacity})`;
+        ctx.fill();
       });
-      scene.add(new THREE.Points(starGeo, starMat));
 
-      // ── Deep space ambient particles (green) ──────────────────────────────
-      const ambCount = 900;
-      const ambPos = new Float32Array(ambCount * 3);
-      for (let i = 0; i < ambCount; i++) {
-        const r = 2.2 + Math.random() * 3.5;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        ambPos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-        ambPos[i * 3 + 1] = r * Math.cos(phi);
-        ambPos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-      }
-      const ambGeo = new THREE.BufferGeometry();
-      ambGeo.setAttribute("position", new THREE.BufferAttribute(ambPos, 3));
-      const ambMat = new THREE.PointsMaterial({
-        color: 0x00ff64,
-        size: 0.018,
-        transparent: true,
-        opacity: 0.4,
-      });
-      const ambParticles = new THREE.Points(ambGeo, ambMat);
-      scene.add(ambParticles);
+      // ── Globe core ───────────────────────────────────────────────────────────
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, PI2);
+      const coreFill = ctx.createRadialGradient(
+        cx - radius * 0.28, cy - radius * 0.22, 0,
+        cx, cy, radius
+      );
+      coreFill.addColorStop(0, "#011f0a");
+      coreFill.addColorStop(1, "#000a04");
+      ctx.fillStyle = coreFill;
+      ctx.fill();
 
-      // ── Globe core (dark fill) ─────────────────────────────────────────────
-      const coreGeo = new THREE.SphereGeometry(0.995, 48, 48);
-      const coreMat = new THREE.MeshBasicMaterial({ color: 0x010f07 });
-      GLOBE.add(new THREE.Mesh(coreGeo, coreMat));
+      // ── Grid lines ───────────────────────────────────────────────────────────
+      ctx.save();
+      ctx.strokeStyle = "rgba(0,255,100,0.09)";
+      ctx.lineWidth = 0.7;
 
-      // ── Lat/lon wireframe grid ─────────────────────────────────────────────
-      const gridMat = new THREE.LineBasicMaterial({
-        color: 0x00ff64,
-        transparent: true,
-        opacity: 0.1,
-      });
-
-      for (let lat = -80; lat <= 80; lat += 15) {
-        const pts: any[] = [];
-        const phi = THREE.MathUtils.degToRad(90 - lat);
-        for (let lon = 0; lon <= 360; lon += 3) {
-          const theta = THREE.MathUtils.degToRad(lon);
-          pts.push(
-            new THREE.Vector3(
-              Math.sin(phi) * Math.cos(theta),
-              Math.cos(phi),
-              Math.sin(phi) * Math.sin(theta)
-            )
-          );
+      for (let lat = -75; lat <= 75; lat += 15) {
+        ctx.beginPath();
+        let first = true;
+        for (let lon = 0; lon <= 360; lon += 4) {
+          const [px, py, pz] = ll3d(lat, lon, 1, cx, cy, radius, rotY, tiltX);
+          if (pz < 0) { first = true; continue; }
+          first ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+          first = false;
         }
-        GLOBE.add(
-          new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), gridMat)
-        );
+        ctx.stroke();
       }
 
       for (let lon = 0; lon < 360; lon += 15) {
-        const pts: any[] = [];
-        const theta = THREE.MathUtils.degToRad(lon);
+        ctx.beginPath();
+        let first = true;
         for (let lat = -90; lat <= 90; lat += 3) {
-          const phi = THREE.MathUtils.degToRad(90 - lat);
-          pts.push(
-            new THREE.Vector3(
-              Math.sin(phi) * Math.cos(theta),
-              Math.cos(phi),
-              Math.sin(phi) * Math.sin(theta)
-            )
-          );
+          const [px, py, pz] = ll3d(lat, lon, 1, cx, cy, radius, rotY, tiltX);
+          if (pz < 0) { first = true; continue; }
+          first ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+          first = false;
         }
-        GLOBE.add(
-          new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), gridMat)
-        );
+        ctx.stroke();
       }
+      ctx.restore();
 
-      // ── Equator highlight ring ────────────────────────────────────────────
-      const eqGeo = new THREE.RingGeometry(0.998, 1.008, 128);
-      const eqMat = new THREE.MeshBasicMaterial({
-        color: 0x00ff64,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.35,
-      });
-      GLOBE.add(new THREE.Mesh(eqGeo, eqMat));
+      // ── Globe edge ───────────────────────────────────────────────────────────
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, PI2);
+      ctx.strokeStyle = "rgba(0,255,100,0.18)";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
 
-      // ── Outer atmosphere shell ────────────────────────────────────────────
-      const atmosGeo = new THREE.SphereGeometry(1.06, 48, 48);
-      const atmosMat = new THREE.MeshBasicMaterial({
-        color: 0x00ff64,
-        transparent: true,
-        opacity: 0.025,
-        side: THREE.FrontSide,
-      });
-      GLOBE.add(new THREE.Mesh(atmosGeo, atmosMat));
+      // ── Atmosphere halo ──────────────────────────────────────────────────────
+      const halo = ctx.createRadialGradient(cx, cy, radius * 0.95, cx, cy, radius * 1.12);
+      halo.addColorStop(0, "rgba(0,255,100,0.07)");
+      halo.addColorStop(1, "rgba(0,255,100,0)");
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 1.12, 0, PI2);
+      ctx.fillStyle = halo;
+      ctx.fill();
 
-      // ── Helper: lat/lon → 3D position ─────────────────────────────────────
-      function ll3d(lat: number, lon: number, r = 1.01): THREE.Vector3 {
-        const phi = THREE.MathUtils.degToRad(90 - lat);
-        const theta = THREE.MathUtils.degToRad(lon);
-        return new THREE.Vector3(
-          r * Math.sin(phi) * Math.cos(theta),
-          r * Math.cos(phi),
-          r * Math.sin(phi) * Math.sin(theta)
-        );
-      }
+      // ── Arcs ─────────────────────────────────────────────────────────────────
+      ARC_PAIRS.forEach(([a, b], i) => {
+        const [ax, ay, az] = ll3d(NODES[a][0], NODES[a][1], 1.01, cx, cy, radius, rotY, tiltX);
+        const [bx, by, bz] = ll3d(NODES[b][0], NODES[b][1], 1.01, cx, cy, radius, rotY, tiltX);
+        if (az < 0 && bz < 0) return;
 
-      // ── Threat node data [lat, lon, severity] ─────────────────────────────
-      // severity: 0=critical(red), 1=warning(orange), 2=monitored(green)
-      const NODES: [number, number, number][] = [
-        [51.5, -0.1, 2],    // London
-        [40.7, -74.0, 0],   // New York
-        [35.7, 139.7, 2],   // Tokyo
-        [48.9, 2.3, 1],     // Paris
-        [55.7, 37.6, 0],    // Moscow
-        [39.9, 116.4, 0],   // Beijing
-        [28.6, 77.2, 2],    // New Delhi
-        [-33.9, 151.2, 2],  // Sydney
-        [37.8, -122.4, 2],  // San Francisco
-        [1.3, 103.8, 1],    // Singapore
-        [19.4, -99.1, 1],   // Mexico City
-        [52.5, 13.4, 2],    // Berlin
-        [25.2, 55.3, 1],    // Dubai
-        [43.7, -79.4, 2],   // Toronto
-        [59.9, 30.3, 0],    // St Petersburg
-        [31.2, 121.5, 1],   // Shanghai
-        [6.5, 3.4, 1],      // Lagos
-        [-23.5, -46.6, 2],  // São Paulo
-        [30.0, 31.2, 1],    // Cairo
-        [34.0, -118.2, 2],  // Los Angeles
-      ];
+        const dist = Math.hypot(bx - ax, by - ay);
+        const mpx = (ax + bx) / 2;
+        const mpy = Math.min(ay, by) - dist * 0.42;
+        const pulse = 0.07 + 0.22 * Math.abs(Math.sin(elapsed * (0.55 + i * 0.07) + i));
 
-      const NODE_COLORS = [0xff2222, 0xff8800, 0x00ff64];
-      const nodeMeshes: {
-        dot: THREE.Mesh;
-        ring: THREE.Mesh;
-        ringMat: THREE.MeshBasicMaterial;
-        phase: number;
-        col: number;
-      }[] = [];
-
-      NODES.forEach(([lat, lon, sev]) => {
-        const col = NODE_COLORS[sev];
-        const pos = ll3d(lat, lon, 1.012);
-
-        // Core dot
-        const dot = new THREE.Mesh(
-          new THREE.SphereGeometry(0.022, 10, 10),
-          new THREE.MeshBasicMaterial({ color: col })
-        );
-        dot.position.copy(pos);
-        GLOBE.add(dot);
-
-        // Pulse ring
-        const ringGeo = new THREE.RingGeometry(0.028, 0.045, 24);
-        const ringMat = new THREE.MeshBasicMaterial({
-          color: col,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.6,
-        });
-        const ring = new THREE.Mesh(ringGeo, ringMat);
-        ring.position.copy(pos);
-        ring.lookAt(new THREE.Vector3(0, 0, 0));
-        GLOBE.add(ring);
-
-        nodeMeshes.push({ dot, ring, ringMat, phase: Math.random() * Math.PI * 2, col });
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.quadraticCurveTo(mpx, mpy, bx, by);
+        ctx.strokeStyle = `rgba(0,255,100,${pulse})`;
+        ctx.lineWidth = 0.85;
+        ctx.stroke();
       });
 
-      // ── Attack arc connections ─────────────────────────────────────────────
-      const ARC_PAIRS: [number, number][] = [
-        [1, 4],  // NY → Moscow   (critical)
-        [4, 5],  // Moscow → Beijing
-        [5, 14], // Beijing → StPete
-        [1, 0],  // NY → London
-        [0, 3],  // London → Paris
-        [9, 5],  // Singapore → Beijing
-        [8, 1],  // SF → NY
-        [11, 0], // Berlin → London
-        [6, 9],  // Delhi → Singapore
-        [2, 9],  // Tokyo → Singapore
-        [15, 5], // Shanghai → Beijing
-        [16, 3], // Lagos → Paris
-        [17, 1], // SãoPaulo → NY
-        [18, 3], // Cairo → Paris
-        [10, 8], // MexCity → SF
-        [12, 0], // Dubai → London
-      ];
+      // ── Packets ───────────────────────────────────────────────────────────────
+      packets.forEach((pkt) => {
+        pkt.t += pkt.speed;
+        if (pkt.t > 1) pkt.t -= 1;
+        const [a, b] = ARC_PAIRS[pkt.arcIdx];
+        const [ax, ay, az] = ll3d(NODES[a][0], NODES[a][1], 1.01, cx, cy, radius, rotY, tiltX);
+        const [bx, by, bz] = ll3d(NODES[b][0], NODES[b][1], 1.01, cx, cy, radius, rotY, tiltX);
+        if (az < 0 && bz < 0) return;
+        const dist = Math.hypot(bx - ax, by - ay);
+        const mpx = (ax + bx) / 2;
+        const mpy = Math.min(ay, by) - dist * 0.42;
+        const [px, py] = bezierPt(pkt.t, ax, ay, mpx, mpy, bx, by);
 
-      const arcObjects: {
-        line: THREE.Line;
-        mat: THREE.LineBasicMaterial;
-        phase: number;
-        speed: number;
-      }[] = [];
-
-      ARC_PAIRS.forEach(([a, b]) => {
-        const posA = ll3d(...(NODES[a].slice(0, 2) as [number, number]), 1.012);
-        const posB = ll3d(...(NODES[b].slice(0, 2) as [number, number]), 1.012);
-        const mid = posA.clone().add(posB).multiplyScalar(0.5).normalize().multiplyScalar(1.55);
-
-        const curve = new THREE.QuadraticBezierCurve3(posA, mid, posB);
-        const pts = curve.getPoints(60);
-        const geo = new THREE.BufferGeometry().setFromPoints(pts);
-        const mat = new THREE.LineBasicMaterial({
-          color: 0x00ff64,
-          transparent: true,
-          opacity: 0.0,
-        });
-        const line = new THREE.Line(geo, mat);
-        GLOBE.add(line);
-        arcObjects.push({ line, mat, phase: Math.random() * Math.PI * 2, speed: 0.6 + Math.random() * 0.8 });
+        ctx.beginPath();
+        ctx.arc(px, py, 2.6, 0, PI2);
+        ctx.fillStyle = "rgba(255,255,255,0.92)";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(px, py, 5, 0, PI2);
+        ctx.fillStyle = "rgba(255,255,255,0.16)";
+        ctx.fill();
       });
 
-      // ── Data packet tracers on arcs ───────────────────────────────────────
-      const packetMeshes: {
-        mesh: THREE.Mesh;
-        curve: THREE.QuadraticBezierCurve3;
-        t: number;
-        speed: number;
-      }[] = [];
+      // ── Threat nodes ──────────────────────────────────────────────────────────
+      NODES.forEach(([lat, lon, sev], i) => {
+        nodePhases[i] += 0.038;
+        const [px, py, pz] = ll3d(lat, lon, 1.012, cx, cy, radius, rotY, tiltX);
+        if (pz < 0) return;
 
-      ARC_PAIRS.slice(0, 8).forEach(([a, b]) => {
-        const posA = ll3d(...(NODES[a].slice(0, 2) as [number, number]), 1.012);
-        const posB = ll3d(...(NODES[b].slice(0, 2) as [number, number]), 1.012);
-        const mid = posA.clone().add(posB).multiplyScalar(0.5).normalize().multiplyScalar(1.55);
-        const curve = new THREE.QuadraticBezierCurve3(posA, mid, posB);
+        const pulse = Math.abs(Math.sin(nodePhases[i]));
 
-        const mesh = new THREE.Mesh(
-          new THREE.SphereGeometry(0.016, 6, 6),
-          new THREE.MeshBasicMaterial({ color: 0xffffff })
-        );
-        GLOBE.add(mesh);
-        packetMeshes.push({ mesh, curve, t: Math.random(), speed: 0.0025 + Math.random() * 0.003 });
+        ctx.beginPath();
+        ctx.arc(px, py, 7 + 6 * pulse, 0, PI2);
+        ctx.strokeStyle = nodeRGBA(sev, 0.5 - 0.38 * pulse);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(px, py, 3.5 + 1.4 * pulse, 0, PI2);
+        ctx.fillStyle = nodeRGBA(sev, 0.95);
+        ctx.fill();
       });
 
-      // ── Rotating scan ring ────────────────────────────────────────────────
-      const scanGeo = new THREE.RingGeometry(1.0, 1.015, 128);
-      const scanMat = new THREE.MeshBasicMaterial({
-        color: 0x00ff64,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.55,
-      });
-      const scanRing = new THREE.Mesh(scanGeo, scanMat);
-      GLOBE.add(scanRing);
+      // ── Scan rings ────────────────────────────────────────────────────────────
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(elapsed * 0.55);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, radius * 1.002, radius * 0.18, 0, 0, PI2);
+      ctx.strokeStyle = `rgba(0,255,100,${0.28 + 0.2 * Math.sin(elapsed * 2.1)})`;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.restore();
 
-      // Second scan ring (tilted)
-      const scan2Geo = new THREE.RingGeometry(1.0, 1.012, 128);
-      const scan2Mat = new THREE.MeshBasicMaterial({
-        color: 0x00ccff,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.3,
-      });
-      const scanRing2 = new THREE.Mesh(scan2Geo, scan2Mat);
-      scanRing2.rotation.z = Math.PI / 3;
-      GLOBE.add(scanRing2);
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(elapsed * 0.34 + 1.05);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, radius * 0.998, radius * 0.24, 0.4, 0, PI2);
+      ctx.strokeStyle = `rgba(0,200,255,${0.13 + 0.1 * Math.cos(elapsed * 1.7)})`;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+      ctx.restore();
 
-      // ── HUD Canvas overlay (2D) ───────────────────────────────────────────
-      const hud = document.createElement("canvas");
-      hud.style.cssText =
-        "position:fixed;inset:0;width:100vw;height:100vh;z-index:1;pointer-events:none;";
-      hud.width = W;
-      hud.height = H;
-      mount.appendChild(hud);
-      const hctx = hud.getContext("2d")!;
+      // ── Horizontal sweep ──────────────────────────────────────────────────────
+      const scanY = ((elapsed * 55) % (H + 60)) - 30;
+      const scanG = ctx.createLinearGradient(0, scanY - 14, 0, scanY + 14);
+      scanG.addColorStop(0, "rgba(0,255,100,0)");
+      scanG.addColorStop(0.5, "rgba(0,255,100,0.046)");
+      scanG.addColorStop(1, "rgba(0,255,100,0)");
+      ctx.fillStyle = scanG;
+      ctx.fillRect(0, scanY - 14, W, 28);
 
-      const FONT_MONO = "'Courier New', monospace";
+      // ── Vignette ──────────────────────────────────────────────────────────────
+      const vig = ctx.createRadialGradient(cx, cy, H * 0.18, cx, cy, Math.max(W, H) * 0.78);
+      vig.addColorStop(0, "rgba(0,0,0,0)");
+      vig.addColorStop(1, "rgba(0,0,0,0.62)");
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, W, H);
 
-      function drawHUD(time: number) {
-        hctx.clearRect(0, 0, W, H);
+      // ── HUD ───────────────────────────────────────────────────────────────────
+      hctx.clearRect(0, 0, W, H);
 
-        // Corner bracket — top left
-        hctx.strokeStyle = "rgba(0,255,100,0.55)";
-        hctx.lineWidth = 1.2;
-        hctx.beginPath(); hctx.moveTo(24, 52); hctx.lineTo(24, 24); hctx.lineTo(52, 24); hctx.stroke();
-        hctx.beginPath(); hctx.moveTo(W - 24, 52); hctx.lineTo(W - 24, 24); hctx.lineTo(W - 52, 24); hctx.stroke();
-        hctx.beginPath(); hctx.moveTo(24, H - 52); hctx.lineTo(24, H - 24); hctx.lineTo(52, H - 24); hctx.stroke();
-        hctx.beginPath(); hctx.moveTo(W - 24, H - 52); hctx.lineTo(W - 24, H - 24); hctx.lineTo(W - 52, H - 24); hctx.stroke();
-
-        // ── Top-left panel ────────────────────────────────────────────────
-        hctx.font = `bold 11px ${FONT_MONO}`;
-        hctx.fillStyle = "rgba(0,255,100,0.9)";
-        hctx.fillText("◈  ENDPOINT THREAT MONITOR", 36, 52);
-
-        hctx.font = `10px ${FONT_MONO}`;
-        hctx.fillStyle = "rgba(0,255,100,0.55)";
-        hctx.fillText("SOPHOS XDR  ·  INTERCEPT X  ·  LIVE DISCOVER", 36, 68);
-
-        // Animated status lines
-        const statuses = [
-          { label: "ACTIVE SENSORS", val: "20 / 20", col: "rgba(0,255,100,0.8)" },
-          { label: "THREATS BLOCKED", val: String(847 + Math.floor(Math.sin(time * 0.4) * 3)), col: "rgba(255,50,50,0.85)" },
-          { label: "ARCS TRACKED", val: "16", col: "rgba(0,255,100,0.7)" },
-          { label: "DATA PACKETS", val: String(9412 + Math.floor(time * 2.3)), col: "rgba(0,200,255,0.8)" },
-        ];
-
-        statuses.forEach((s, i) => {
-          hctx.font = `9px ${FONT_MONO}`;
-          hctx.fillStyle = "rgba(0,255,100,0.35)";
-          hctx.fillText(s.label, 36, 88 + i * 17);
-          hctx.font = `bold 9px ${FONT_MONO}`;
-          hctx.fillStyle = s.col;
-          hctx.fillText(s.val, 180, 88 + i * 17);
-        });
-
-        // ── Top-right panel ───────────────────────────────────────────────
-        const uptime = Math.floor(time);
-        const mm = Math.floor(uptime / 60).toString().padStart(2, "0");
-        const ss = (uptime % 60).toString().padStart(2, "0");
-
-        hctx.font = `bold 11px ${FONT_MONO}`;
-        hctx.fillStyle = "rgba(0,255,100,0.9)";
-        hctx.textAlign = "right";
-        hctx.fillText("SYSTEM STATUS  ◈", W - 36, 52);
-
-        hctx.font = `10px ${FONT_MONO}`;
-        hctx.fillStyle = "rgba(0,255,100,0.55)";
-        hctx.fillText(`UPTIME  ${mm}:${ss}`, W - 36, 68);
-
-        const right = [
-          { label: "EDR ENGINE", val: "ONLINE", col: "rgba(0,255,100,0.9)" },
-          { label: "MITRE ATT&CK", val: "ACTIVE", col: "rgba(0,255,100,0.9)" },
-          { label: "ROOT CAUSE", val: "ARMED", col: "rgba(255,150,0,0.9)" },
-          { label: "POLICY SYNC", val: "OK", col: "rgba(0,255,100,0.9)" },
-        ];
-
-        right.forEach((r, i) => {
-          hctx.font = `9px ${FONT_MONO}`;
-          hctx.fillStyle = "rgba(0,255,100,0.35)";
-          hctx.fillText(r.label, W - 36, 88 + i * 17);
-          hctx.font = `bold 9px ${FONT_MONO}`;
-          hctx.fillStyle = r.col;
-          hctx.fillText(r.val, W - 170, 88 + i * 17);
-        });
-
-        hctx.textAlign = "left";
-
-        // ── Bottom-left legend ────────────────────────────────────────────
-        const legend = [
-          { label: "CRITICAL NODE", col: "#ff2222" },
-          { label: "WARNING NODE", col: "#ff8800" },
-          { label: "MONITORED NODE", col: "#00ff64" },
-        ];
-
-        legend.forEach((l, i) => {
-          hctx.fillStyle = l.col;
+      // Corner brackets
+      hctx.strokeStyle = "rgba(0,255,100,0.5)";
+      hctx.lineWidth = 1.2;
+      const BS = 22;
+      [[BP, BP, 1, 1], [W - BP, BP, -1, 1], [BP, H - BP, 1, -1], [W - BP, H - BP, -1, -1]].forEach(
+        ([x, y, dx, dy]) => {
           hctx.beginPath();
-          hctx.arc(40, H - 46 + i * 16, 4, 0, Math.PI * 2);
-          hctx.fill();
-          hctx.font = `9px ${FONT_MONO}`;
-          hctx.fillStyle = "rgba(255,255,255,0.45)";
-          hctx.fillText(l.label, 52, H - 42 + i * 16);
-        });
-
-        // ── Bottom-right: scrolling telemetry log ─────────────────────────
-        const logs = [
-          ">> BLOCK  178.93.12.4  → ENDPOINT-UK-04",
-          ">> ALLOW  10.0.8.22   → SOPHOS-CENTRAL",
-          ">> BLOCK  91.215.4.17 → ENDPOINT-RU-11",
-          ">> SCAN   XDR-QUERY   LIVE-DISCOVER OK",
-          ">> ALERT  RANSOMWARE  CONTAINED #3821",
-          ">> SYNC   POLICY-V9   PUSH COMPLETE",
-          ">> BLOCK  45.142.12.8 → ENDPOINT-CN-03",
-        ];
-        const logIdx = Math.floor(time * 0.6) % logs.length;
-        hctx.textAlign = "right";
-        for (let i = 0; i < 5; i++) {
-          const idx = (logIdx + i) % logs.length;
-          const alpha = 0.15 + (i / 5) * 0.55;
-          hctx.font = `9px ${FONT_MONO}`;
-          hctx.fillStyle = `rgba(0,255,100,${alpha})`;
-          hctx.fillText(logs[idx], W - 36, H - 42 + i * 14);
+          hctx.moveTo(x, y + dy * BS);
+          hctx.lineTo(x, y);
+          hctx.lineTo(x + dx * BS, y);
+          hctx.stroke();
         }
-        hctx.textAlign = "left";
+      );
 
-        // ── Horizontal scan line (global sweep) ───────────────────────────
-        const scanY = ((time * 55) % (H + 60)) - 30;
-        const grad = hctx.createLinearGradient(0, scanY - 12, 0, scanY + 12);
-        grad.addColorStop(0, "rgba(0,255,100,0)");
-        grad.addColorStop(0.5, "rgba(0,255,100,0.055)");
-        grad.addColorStop(1, "rgba(0,255,100,0)");
-        hctx.fillStyle = grad;
-        hctx.fillRect(0, scanY - 12, W, 24);
+      // Top-left panel
+      hctx.textAlign = "left";
+      hctx.font = `bold 11px ${FONT}`;
+      hctx.fillStyle = "rgba(0,255,100,0.9)";
+      hctx.fillText("◈  ENDPOINT THREAT MONITOR", BP + 4, BP + 28);
+      hctx.font = `10px ${FONT}`;
+      hctx.fillStyle = "rgba(0,255,100,0.42)";
+      hctx.fillText("SOPHOS XDR  ·  INTERCEPT X  ·  LIVE DISCOVER", BP + 4, BP + 44);
+
+      const stats: [string, string, string][] = [
+        ["ACTIVE SENSORS", "20 / 20", "rgba(0,255,100,0.85)"],
+        ["THREATS BLOCKED", String(847 + Math.floor(Math.sin(elapsed * 0.4) * 3)), "rgba(255,50,50,0.9)"],
+        ["ARCS TRACKED", "16", "rgba(0,255,100,0.75)"],
+        ["DATA PACKETS", String(9412 + Math.floor(elapsed * 2.3)), "rgba(0,200,255,0.85)"],
+      ];
+      stats.forEach(([label, val, col], i) => {
+        hctx.font = `9px ${FONT}`;
+        hctx.fillStyle = "rgba(0,255,100,0.28)";
+        hctx.fillText(label, BP + 4, BP + 64 + i * 17);
+        hctx.font = `bold 9px ${FONT}`;
+        hctx.fillStyle = col;
+        hctx.fillText(val, BP + 160, BP + 64 + i * 17);
+      });
+
+      // Top-right panel
+      const mm = Math.floor(Math.floor(elapsed) / 60).toString().padStart(2, "0");
+      const ss = (Math.floor(elapsed) % 60).toString().padStart(2, "0");
+      hctx.textAlign = "right";
+      hctx.font = `bold 11px ${FONT}`;
+      hctx.fillStyle = "rgba(0,255,100,0.9)";
+      hctx.fillText("SYSTEM STATUS  ◈", W - BP - 4, BP + 28);
+      hctx.font = `10px ${FONT}`;
+      hctx.fillStyle = "rgba(0,255,100,0.42)";
+      hctx.fillText(`UPTIME  ${mm}:${ss}`, W - BP - 4, BP + 44);
+
+      const sys: [string, string, string][] = [
+        ["EDR ENGINE", "ONLINE", "rgba(0,255,100,0.9)"],
+        ["MITRE ATT&CK", "ACTIVE", "rgba(0,255,100,0.9)"],
+        ["ROOT CAUSE", "ARMED", "rgba(255,150,0,0.9)"],
+        ["POLICY SYNC", "OK", "rgba(0,255,100,0.9)"],
+      ];
+      sys.forEach(([label, val, col], i) => {
+        hctx.font = `9px ${FONT}`;
+        hctx.fillStyle = "rgba(0,255,100,0.28)";
+        hctx.fillText(label, W - BP - 4, BP + 64 + i * 17);
+        hctx.font = `bold 9px ${FONT}`;
+        hctx.fillStyle = col;
+        hctx.fillText(val, W - BP - 152, BP + 64 + i * 17);
+      });
+
+      // Bottom-left legend
+      hctx.textAlign = "left";
+      ([
+        ["CRITICAL", "rgba(255,34,34,0.9)"],
+        ["WARNING", "rgba(255,136,0,0.9)"],
+        ["MONITORED", "rgba(0,255,100,0.9)"],
+      ] as [string, string][]).forEach(([label, col], i) => {
+        hctx.beginPath();
+        hctx.arc(BP + 8, H - BP - 38 + i * 16, 4, 0, PI2);
+        hctx.fillStyle = col;
+        hctx.fill();
+        hctx.font = `9px ${FONT}`;
+        hctx.fillStyle = "rgba(255,255,255,0.4)";
+        hctx.fillText(label, BP + 20, H - BP - 34 + i * 16);
+      });
+
+      // Bottom-right telemetry scroll
+      hctx.textAlign = "right";
+      const logIdx = Math.floor(elapsed * 0.55) % LOGS.length;
+      for (let i = 0; i < 5; i++) {
+        const idx = (logIdx + i) % LOGS.length;
+        hctx.font = `9px ${FONT}`;
+        hctx.fillStyle = `rgba(0,255,100,${0.13 + (i / 5) * 0.55})`;
+        hctx.fillText(LOGS[idx], W - BP - 4, H - BP - 38 + i * 14);
       }
+      hctx.textAlign = "left";
+    }
 
-      // ── Resize handler ────────────────────────────────────────────────────
-      function onResize() {
-        const nW = window.innerWidth;
-        const nH = window.innerHeight;
-        camera.aspect = nW / nH;
-        camera.updateProjectionMatrix();
-        renderer.setSize(nW, nH);
-        hud.width = nW;
-        hud.height = nH;
-      }
-      window.addEventListener("resize", onResize);
-
-      // ── Mouse parallax ────────────────────────────────────────────────────
-      let mouseX = 0;
-      let mouseY = 0;
-      function onMouse(e: MouseEvent) {
-        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-      }
-      window.addEventListener("mousemove", onMouse);
-
-      // ── Animation loop ────────────────────────────────────────────────────
-      let rafId: number;
-      const clock = new THREE.Clock();
-      let elapsed = 0;
-
-      function animate() {
-        rafId = requestAnimationFrame(animate);
-        const delta = clock.getDelta();
-        elapsed += delta;
-
-        // Globe slow auto-rotate + mouse parallax tilt
-        GLOBE.rotation.y += 0.0022;
-        GLOBE.rotation.x += (mouseY * 0.18 - GLOBE.rotation.x) * 0.04;
-        GLOBE.rotation.z += (-mouseX * 0.06 - GLOBE.rotation.z) * 0.04;
-
-        // Camera subtle drift
-        camera.position.x += (mouseX * 0.12 - camera.position.x) * 0.03;
-        camera.position.y += (-mouseY * 0.08 - camera.position.y) * 0.03;
-        camera.lookAt(scene.position);
-
-        // Ambient particles drift
-        ambParticles.rotation.y += 0.0008;
-        ambParticles.rotation.x += 0.0003;
-
-        // Scan rings
-        scanRing.rotation.x = elapsed * 0.55;
-        scanMat.opacity = 0.3 + 0.25 * Math.sin(elapsed * 2.1);
-        scanRing2.rotation.y = elapsed * 0.38;
-        scan2Mat.opacity = 0.15 + 0.15 * Math.cos(elapsed * 1.7);
-
-        // Pulse arcs
-        arcObjects.forEach((a) => {
-          a.mat.opacity =
-            0.08 + 0.28 * Math.abs(Math.sin(elapsed * a.speed + a.phase));
-        });
-
-        // Pulse nodes
-        nodeMeshes.forEach((n) => {
-          n.phase += 0.04;
-          const s = 1 + 0.45 * Math.abs(Math.sin(n.phase));
-          n.ring.scale.setScalar(s);
-          n.ringMat.opacity = 0.6 - 0.3 * Math.abs(Math.sin(n.phase));
-          n.dot.scale.setScalar(0.85 + 0.15 * Math.abs(Math.sin(n.phase * 0.7)));
-        });
-
-        // Move data packets along arcs
-        packetMeshes.forEach((p) => {
-          p.t += p.speed;
-          if (p.t > 1) p.t -= 1;
-          const pos = p.curve.getPoint(p.t);
-          p.mesh.position.copy(pos);
-        });
-
-        drawHUD(elapsed);
-        renderer.render(scene, camera);
-      }
-
-      animate();
-
-      // ── Cleanup ───────────────────────────────────────────────────────────
-      (mount as any)._cleanup = () => {
-        cancelAnimationFrame(rafId);
-        window.removeEventListener("resize", onResize);
-        window.removeEventListener("mousemove", onMouse);
-        renderer.dispose();
-        if (renderer.domElement.parentNode) {
-          renderer.domElement.parentNode.removeChild(renderer.domElement);
-        }
-        if (hud.parentNode) hud.parentNode.removeChild(hud);
-      };
-    };
+    // ── Start ─────────────────────────────────────────────────────────────────
+    resize();
+    rafId = requestAnimationFrame(render);
 
     return () => {
-      if ((mount as any)._cleanup) (mount as any)._cleanup();
-      if (script.parentNode) script.parentNode.removeChild(script);
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMouse);
     };
   }, []);
 
   return (
-    <div
-      ref={mountRef}
-      aria-hidden="true"
-      style={{
-        position: "fixed",
-        inset: 0,
-        width: "100vw",
-        height: "100vh",
-        zIndex: 0,
-        pointerEvents: "none",
-        background: "radial-gradient(ellipse at 60% 40%, #011a0c 0%, #000d05 55%, #000000 100%)",
-      }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          inset: 0,
+          width: "100vw",
+          height: "100vh",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
+      <canvas
+        ref={hudRef}
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          inset: 0,
+          width: "100vw",
+          height: "100vh",
+          zIndex: 1,
+          pointerEvents: "none",
+        }}
+      />
+    </>
   );
 }
