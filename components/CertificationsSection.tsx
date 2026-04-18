@@ -22,6 +22,8 @@ const CERTIFICATIONS: Certification[] = [
     title: "SIEM Splunk Hands-On Guide Specialization",
     issuer: "Coursera",
   },
+  { title: "AWS Cloud Technical Essentials", issuer: "AWS" },
+  { title: "Practical Windows PowerShell Scripting: Unit 1", issuer: "Sophos" },
 ];
 
 export default function CertificationsSection() {
