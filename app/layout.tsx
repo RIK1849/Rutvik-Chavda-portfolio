@@ -1,57 +1,41 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import "./globals.css";
-import CyberCommandBackground from "../components/CyberCommandBackground";
 
 export const metadata: Metadata = {
-  title: "Rutvik Chavda | Endpoint Security Engineer | EDR/XDR | Splunk",
+  title: "Rutvik Chavda — Endpoint Security Engineer | EDR/XDR · Incident Response · Threat Hunting",
   description:
-    "Rutvik Chavda is an Endpoint Security Engineer with 3+ years of experience across endpoint security, EDR/XDR investigations, incident response, Splunk, and advanced technical support. Currently open to opportunities.",
+    "Rutvik Chavda — L2/L3 Endpoint Security Engineer with 3+ years at Sophos specialising in EDR/XDR, Incident Response, and Threat Hunting across Windows, macOS, and Linux. Ranked Top 10 globally FY25. Expertise in Sophos Intercept X, Sophos Central, Live Discover, MITRE ATT&CK, Splunk SIEM, and Windows forensics.",
+  keywords: [
+    "Endpoint Security Engineer", "EDR", "XDR", "Sophos Intercept X", "Sophos Central",
+    "Incident Response", "Threat Hunting", "MITRE ATT&CK", "Live Discover",
+    "Splunk SIEM", "Windows Event Logs", "Sysmon", "Malware Analysis",
+    "Ransomware Response", "Root Cause Analysis", "PowerShell", "Python",
+    "AWS", "Azure", "Security Operations", "SOC", "Threat Detection",
+    "Rutvik Chavda", "Ahmedabad", "Cybersecurity Engineer",
+  ].join(", "),
+  authors: [{ name: "Rutvik Chavda" }],
+  creator: "Rutvik Chavda",
+  openGraph: {
+    title: "Rutvik Chavda — Endpoint Security Engineer",
+    description: "L2/L3 Endpoint Security Engineer · EDR/XDR · Incident Response · Threat Hunting · Sophos Top 10 FY25",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rutvik Chavda — Endpoint Security Engineer",
+    description: "EDR/XDR · Incident Response · Threat Hunting · Top 10 Globally FY25",
+  },
+  robots: {
+    index: true, follow: true,
+    googleBot: { index: true, follow: true },
+  },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: ReactNode }>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <CyberCommandBackground />
-
-        <div
-          aria-hidden="true"
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 0,
-            pointerEvents: "none",
-            background: `
-              radial-gradient(circle at 15% 18%, rgba(56,189,248,0.10), transparent 28%),
-              radial-gradient(circle at 82% 20%, rgba(0,255,157,0.08), transparent 22%),
-              radial-gradient(circle at 50% 100%, rgba(56,189,248,0.05), transparent 30%)
-            `,
-          }}
-        />
-
-        <div
-          aria-hidden="true"
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 0,
-            pointerEvents: "none",
-            opacity: 0.08,
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)",
-            backgroundSize: "120px 120px",
-            maskImage:
-              "radial-gradient(circle at center, black 35%, transparent 100%)",
-            WebkitMaskImage:
-              "radial-gradient(circle at center, black 35%, transparent 100%)",
-          }}
-        />
-
-        <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

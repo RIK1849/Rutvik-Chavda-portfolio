@@ -5,9 +5,10 @@ export default function Footer() {
   return (
     <footer
       style={{
-        borderTop: "1px solid rgba(0,255,100,0.08)",
+        borderTop: "1px solid rgba(0,255,100,0.1)",
         padding: "2rem clamp(1.2rem, 5vw, 3.5rem)",
-        background: "#000",
+        background: "rgba(0,5,2,0.85)",
+        backdropFilter: "blur(8px)",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -27,7 +28,7 @@ export default function Footer() {
         </span>
         <span style={{
           fontFamily: "'Share Tech Mono', monospace",
-          fontSize: "0.65rem", color: "rgba(0,255,100,0.38)",
+          fontSize: "0.65rem", color: "rgba(0,255,100,0.42)",
           letterSpacing: "0.08em",
         }}>
           Rutvik Chavda — Endpoint Security Engineer
@@ -47,12 +48,12 @@ export default function Footer() {
             style={{
               fontFamily: "'Share Tech Mono', monospace",
               fontSize: "0.68rem", letterSpacing: "0.1em",
-              color: "rgba(240,255,244,0.38)",
+              color: "rgba(240,255,244,0.42)",
               textDecoration: "none", textTransform: "uppercase",
               transition: "color 0.2s",
             }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#00ff64"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "rgba(240,255,244,0.38)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "rgba(240,255,244,0.42)"; }}
           >
             {l.label}
           </a>
@@ -61,7 +62,7 @@ export default function Footer() {
 
       <span style={{
         fontFamily: "'Share Tech Mono', monospace",
-        fontSize: "0.62rem", color: "rgba(240,255,244,0.22)",
+        fontSize: "0.62rem", color: "rgba(240,255,244,0.25)",
         letterSpacing: "0.06em",
       }}>
         © {year} — All rights reserved

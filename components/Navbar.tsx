@@ -2,20 +2,19 @@
 import { useEffect, useState } from "react";
 
 const LINKS = [
-  { label: "About",    href: "#about"         },
-  { label: "Skills",   href: "#skills"        },
-  { label: "Experience", href: "#experience"  },
-  { label: "Projects", href: "#projects"      },
-  { label: "Certs",    href: "#certifications"},
-  { label: "Awards",   href: "#awards"        },
-  { label: "Contact",  href: "#contact"       },
+  { label: "About",       href: "#about" },
+  { label: "Skills",      href: "#skills" },
+  { label: "Experience",  href: "#experience" },
+  { label: "Projects",    href: "#projects" },
+  { label: "Certs",       href: "#certifications" },
+  { label: "Awards",      href: "#awards" },
+  { label: "Contact",     href: "#contact" },
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled]   = useState(false);
-  const [active,   setActive]     = useState("");
-  const [open,     setOpen]       = useState(false);
-  const [glitch,   setGlitch]     = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [active,   setActive]   = useState("");
+  const [open,     setOpen]     = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -30,17 +29,7 @@ export default function Navbar() {
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-
-    // Random glitch trigger
-    const interval = setInterval(() => {
-      setGlitch(true);
-      setTimeout(() => setGlitch(false), 320);
-    }, 6000 + Math.random() * 4000);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      clearInterval(interval);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -53,15 +42,12 @@ export default function Navbar() {
         display: "flex",
         alignItems: "center",
         padding: "0 clamp(1.2rem, 5vw, 3.5rem)",
-        background: scrolled
-          ? "rgba(0,8,3,0.92)"
-          : "transparent",
+        background: scrolled ? "rgba(0,8,3,0.88)" : "transparent",
         backdropFilter: scrolled ? "blur(18px)" : "none",
         borderBottom: scrolled ? "1px solid rgba(0,255,100,0.1)" : "1px solid transparent",
         transition: "all 0.4s ease",
       }}
     >
-      {/* Logo */}
       <a
         href="#hero"
         style={{
@@ -71,34 +57,16 @@ export default function Navbar() {
           color: "#00ff64",
           textDecoration: "none",
           letterSpacing: "0.06em",
-          position: "relative",
           flex: "0 0 auto",
         }}
       >
-        <span style={{ position: "relative" }}>
-          RC
-          {glitch && (
-            <>
-              <span style={{
-                position:"absolute", left:0, top:0,
-                color:"#00e5ff", animation:"glitch1 0.3s steps(1) forwards",
-                pointerEvents:"none",
-              }}>RC</span>
-              <span style={{
-                position:"absolute", left:0, top:0,
-                color:"#ff2244", animation:"glitch2 0.3s steps(1) forwards",
-                pointerEvents:"none",
-              }}>RC</span>
-            </>
-          )}
-        </span>
-        <span style={{ color:"rgba(0,255,100,0.4)", fontWeight:400, fontSize:"0.7rem", marginLeft:6, fontFamily:"'Share Tech Mono',monospace", letterSpacing:"0.14em" }}>
+        RC
+        <span style={{ color: "rgba(0,255,100,0.4)", fontWeight: 400, fontSize: "0.7rem", marginLeft: 6, fontFamily: "'Share Tech Mono',monospace", letterSpacing: "0.14em" }}>
           _SEC
         </span>
       </a>
 
-      {/* Desktop links */}
-      <div style={{ display:"flex", gap:"2rem", marginLeft:"auto", alignItems:"center" }}>
+      <div className="desktop-links" style={{ display: "flex", gap: "1.8rem", marginLeft: "auto", alignItems: "center" }}>
         {LINKS.map((l) => {
           const isActive = active === l.href.slice(1);
           return (
@@ -122,11 +90,7 @@ export default function Navbar() {
             >
               {l.label}
               {isActive && (
-                <span style={{
-                  position:"absolute", bottom:0, left:0,
-                  width:"100%", height:1,
-                  background:"linear-gradient(90deg, #00ff64, transparent)",
-                }} />
+                <span style={{ position: "absolute", bottom: 0, left: 0, width: "100%", height: 1, background: "linear-gradient(90deg, #00ff64, transparent)" }} />
               )}
             </a>
           );
@@ -147,48 +111,46 @@ export default function Navbar() {
             textTransform: "uppercase",
             transition: "background 0.25s, transform 0.2s",
           }}
-          onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.background="#00cc50"; el.style.transform="translateY(-1px)"; }}
-          onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.background="#00ff64"; el.style.transform="translateY(0)"; }}
+          onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.background = "#00cc50"; el.style.transform = "translateY(-1px)"; }}
+          onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.background = "#00ff64"; el.style.transform = "translateY(0)"; }}
         >
           Hire Me
         </a>
       </div>
 
-      {/* Mobile toggle */}
       <button
+        className="mobile-toggle"
         onClick={() => setOpen((o) => !o)}
         aria-label="Toggle menu"
         style={{
-          display:"none",
-          background:"none", border:"none",
-          color:"#00ff64", cursor:"pointer",
-          padding:"0.5rem", marginLeft:"auto",
-          fontFamily:"'Share Tech Mono',monospace",
-          fontSize:"1.2rem",
+          display: "none",
+          background: "none", border: "none",
+          color: "#00ff64", cursor: "pointer",
+          padding: "0.5rem", marginLeft: "auto",
+          fontFamily: "'Share Tech Mono',monospace",
+          fontSize: "1.3rem",
         }}
-        className="mobile-nav-toggle"
       >
         {open ? "✕" : "≡"}
       </button>
 
-      {/* Mobile drawer */}
       {open && (
         <div style={{
-          position:"fixed", top:64, left:0, right:0,
-          background:"rgba(0,8,3,0.97)",
-          borderBottom:"1px solid rgba(0,255,100,0.15)",
-          padding:"1.5rem clamp(1.2rem,5vw,3rem)",
-          display:"flex", flexDirection:"column", gap:"1.2rem",
-          backdropFilter:"blur(20px)",
-          zIndex:8999,
+          position: "fixed", top: 64, left: 0, right: 0,
+          background: "rgba(0,8,3,0.97)",
+          borderBottom: "1px solid rgba(0,255,100,0.15)",
+          padding: "1.5rem clamp(1.2rem,5vw,3rem)",
+          display: "flex", flexDirection: "column", gap: "1.2rem",
+          backdropFilter: "blur(20px)",
+          zIndex: 8999,
         }}>
           {LINKS.map((l) => (
             <a key={l.href} href={l.href} onClick={() => setOpen(false)}
               style={{
-                fontFamily:"'Rajdhani',sans-serif",
-                fontWeight:600, fontSize:"1rem",
-                letterSpacing:"0.12em", textTransform:"uppercase",
-                color:"rgba(240,255,244,0.75)", textDecoration:"none",
+                fontFamily: "'Rajdhani',sans-serif",
+                fontWeight: 600, fontSize: "1rem",
+                letterSpacing: "0.12em", textTransform: "uppercase",
+                color: "rgba(240,255,244,0.75)", textDecoration: "none",
               }}
             >{l.label}</a>
           ))}
@@ -196,9 +158,9 @@ export default function Navbar() {
       )}
 
       <style>{`
-        @media (max-width: 768px) {
-          .mobile-nav-toggle { display: block !important; }
-          nav > div:not(.mobile-nav-toggle) { display: none !important; }
+        @media (max-width: 900px) {
+          .mobile-toggle { display: block !important; }
+          .desktop-links { display: none !important; }
         }
       `}</style>
     </nav>
