@@ -105,7 +105,8 @@ export default function AnimatedBackground() {
       buildScene();
     }
 
-    const onMouse = (e: MouseEvent) => {
+    // FIX: Explictly mapped to globalThis.MouseEvent to avoid React typing conflicts
+    const onMouse = (e: globalThis.MouseEvent) => {
       mouseX = (e.clientX / W - 0.5) * 2;
       mouseY = (e.clientY / H - 0.5) * 2;
     };
@@ -121,7 +122,7 @@ export default function AnimatedBackground() {
       { t: 4.1, txt: "  INCIDENTS RESOLVED: 500+   RANK: TOP 10 FY25",    col: "rgba(255,34,68,0.9)"   },
       { t: 4.9, txt: "  CY25 AWARDS: 5x COMMUNITY + GLOBAL EXCELLENCE",   col: "rgba(0,255,100,0.85)"  },
       { t: 5.7, txt: "> Identity: RUTVIK CHAVDA — L2/L3 Security Eng",    col: "rgba(0,229,255,0.95)"  },
-      { t: 6.5, txt: "> Session established. Portfolio online.",           col: "rgba(0,255,100,0.95)"  },
+      { t: 6.5, txt: "> Session established. Portfolio online.",          col: "rgba(0,255,100,0.95)"  },
     ];
 
     function project(x: number, y: number, z: number, cx: number, cy: number, radius: number): [number, number, number] {
@@ -138,8 +139,12 @@ export default function AnimatedBackground() {
       CTX.beginPath();
       for (let i = 0; i < 6; i++) {
         const a = i * 60 * DEG;
-        i === 0 ? CTX.moveTo(x + Math.cos(a)*r, y + Math.sin(a)*r)
-                : CTX.lineTo(x + Math.cos(a)*r, y + Math.sin(a)*r);
+        // FIX: Replaced ternary with if/else to satisfy ESLint's no-unused-expressions
+        if (i === 0) {
+          CTX.moveTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+        } else {
+          CTX.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+        }
       }
       CTX.closePath();
       CTX.strokeStyle = strokeStyle;
@@ -283,8 +288,9 @@ export default function AnimatedBackground() {
       });
 
       // Nodes
+      // FIX: Removed unused 'i' variable here to satisfy ESLint
       const sortedNodes = nodes
-        .map((n, i) => { const [x, y, z] = project(n.x, n.y, n.z, cx, cy, radius * 0.7); return { n, i, x, y, z }; })
+        .map((n) => { const [x, y, z] = project(n.x, n.y, n.z, cx, cy, radius * 0.7); return { n, x, y, z }; })
         .sort((a, b) => a.z - b.z);
 
       sortedNodes.forEach(({ n, x, y, z }) => {
@@ -403,7 +409,7 @@ export default function AnimatedBackground() {
         HCTX.fillStyle = "rgba(0,255,100,0.38)";
         HCTX.fillText("SOPHOS XDR · INTERCEPT X · LIVE DISCOVER", BP + 6, BP + 37);
         const stats: [string, string, string][] = [
-          ["NODES",   "22/22",                                          "rgba(0,255,100,0.85)"],
+          ["NODES",   "22/22",                                               "rgba(0,255,100,0.85)"],
           ["BLOCKED", String(847 + Math.floor(Math.sin(elapsed*0.4)*3)),"rgba(255,50,50,0.9)"],
           ["PACKETS", String(9412 + Math.floor(elapsed * 2.3)),         "rgba(0,229,255,0.85)"],
           ["SWEEP",   "ACTIVE",                                         "rgba(0,255,100,0.75)"],
@@ -494,9 +500,9 @@ export default function AnimatedBackground() {
   return (
     <>
       <canvas ref={canvasRef} aria-hidden="true"
-        style={{ position:"fixed", inset:0, width:"100vw", height:"100vh", zIndex:0, pointerEvents:"none" }}/>
+        style={{ position:"fixed", top: 0, left: 0, width:"100vw", height:"100vh", zIndex:0, pointerEvents:"none" }}/>
       <canvas ref={hudRef} aria-hidden="true"
-        style={{ position:"fixed", inset:0, width:"100vw", height:"100vh", zIndex:1, pointerEvents:"none" }}/>
+        style={{ position:"fixed", top: 0, left: 0, width:"100vw", height:"100vh", zIndex:1, pointerEvents:"none" }}/>
     </>
   );
 }
