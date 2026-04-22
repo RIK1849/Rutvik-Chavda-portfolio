@@ -28,8 +28,8 @@ const SKILL_CATEGORIES = [
     title: 'PLATFORMS & OS',
     color: '#f5c842',
     skills: [
-      { name: 'Windows (All Enterprise Versions)', level: 97 },
-      { name: 'macOS (Launch Agents/Daemons)', level: 88 },
+      { name: 'Windows (All Enterprise)', level: 97 },
+      { name: 'macOS (Launch Agents)', level: 88 },
       { name: 'Linux (systemd / kernel)', level: 85 },
       { name: 'Registry / WMI / Event Logs', level: 93 },
       { name: 'Sophos Data Lake', level: 91 },
@@ -57,28 +57,32 @@ const RADAR_SKILLS = [
   { name: 'COMM', score: 94 },
 ]
 
-function RadarChart({ skills, color }: { skills: typeof RADAR_SKILLS, color: string }) {
+function RadarChart() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [animated, setAnimated] = useState(false)
-  const animRef = useRef(0)
+  const animRef = useRef<number>(0)
+  const startedRef = useRef(false)
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    const W = canvas.width, H = canvas.height
-    const cx = W / 2, cy = H / 2
-    const R = Math.min(W, H) / 2 - 32
-    const N = skills.length
+
+    const W = 300
+    const H = 300
+    const cx = W / 2
+    const cy = H / 2
+    const R = 100
+    const N = RADAR_SKILLS.length
     let progress = 0
+
+    const getPoint = (i: number, r: number) => {
+      const angle = (i / N) * Math.PI * 2 - Math.PI / 2
+      return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) }
+    }
 
     const draw = (p: number) => {
       ctx.clearRect(0, 0, W, H)
-      const getPoint = (i: number, r: number) => {
-        const angle = (i / N) * Math.PI * 2 - Math.PI / 2
-        return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) }
-      }
 
       // Grid rings
       for (let ring = 1; ring <= 5; ring++) {
@@ -86,10 +90,11 @@ function RadarChart({ skills, color }: { skills: typeof RADAR_SKILLS, color: str
         ctx.beginPath()
         for (let i = 0; i < N; i++) {
           const pt = getPoint(i, r)
-          i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y)
+          if (i === 0) ctx.moveTo(pt.x, pt.y)
+          else ctx.lineTo(pt.x, pt.y)
         }
         ctx.closePath()
-        ctx.strokeStyle = `rgba(0,255,136,${ring === 5 ? 0.2 : 0.06})`
+        ctx.strokeStyle = ring === 5 ? 'rgba(0,255,136,0.25)' : 'rgba(0,255,136,0.07)'
         ctx.lineWidth = ring === 5 ? 1 : 0.5
         ctx.stroke()
       }
@@ -97,80 +102,103 @@ function RadarChart({ skills, color }: { skills: typeof RADAR_SKILLS, color: str
       // Axis lines
       for (let i = 0; i < N; i++) {
         const pt = getPoint(i, R)
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(pt.x, pt.y)
-        ctx.strokeStyle = 'rgba(0,255,136,0.1)'; ctx.lineWidth = 0.5; ctx.stroke()
+        ctx.beginPath()
+        ctx.moveTo(cx, cy)
+        ctx.lineTo(pt.x, pt.y)
+        ctx.strokeStyle = 'rgba(0,255,136,0.12)'
+        ctx.lineWidth = 0.5
+        ctx.stroke()
       }
 
-      // Data polygon
+      // Data fill
       ctx.beginPath()
-      skills.forEach((s, i) => {
+      RADAR_SKILLS.forEach((s, i) => {
         const r = (s.score / 100) * R * p
         const pt = getPoint(i, r)
-        i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y)
+        if (i === 0) ctx.moveTo(pt.x, pt.y)
+        else ctx.lineTo(pt.x, pt.y)
       })
       ctx.closePath()
-      ctx.fillStyle = 'rgba(0,255,136,0.08)'
+      ctx.fillStyle = 'rgba(0,255,136,0.1)'
       ctx.fill()
       ctx.strokeStyle = '#00ff88'
       ctx.lineWidth = 2
       ctx.shadowColor = '#00ff88'
-      ctx.shadowBlur = 10
+      ctx.shadowBlur = 8
       ctx.stroke()
       ctx.shadowBlur = 0
 
-      // Dots & labels
-      skills.forEach((s, i) => {
+      // Dots
+      RADAR_SKILLS.forEach((s, i) => {
         const r = (s.score / 100) * R * p
         const pt = getPoint(i, r)
-        ctx.beginPath(); ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2)
-        ctx.fillStyle = '#00ff88'; ctx.fill()
-        ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 8
-        ctx.fill(); ctx.shadowBlur = 0
+        ctx.beginPath()
+        ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2)
+        ctx.fillStyle = '#00ff88'
+        ctx.shadowColor = '#00ff88'
+        ctx.shadowBlur = 6
+        ctx.fill()
+        ctx.shadowBlur = 0
+      })
 
-        const lpt = getPoint(i, R + 22)
-        ctx.fillStyle = 'rgba(0,255,136,0.7)'
-        ctx.font = '9px "Share Tech Mono"'
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+      // Labels
+      RADAR_SKILLS.forEach((s, i) => {
+        const lpt = getPoint(i, R + 18)
+        ctx.fillStyle = 'rgba(0,255,136,0.65)'
+        ctx.font = '8px "Share Tech Mono", monospace'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
         ctx.fillText(s.name, lpt.x, lpt.y)
 
-        const spt = getPoint(i, R + 34)
+        const spt = getPoint(i, R + 30)
         ctx.fillStyle = '#00ff88'
-        ctx.font = 'bold 10px "Share Tech Mono"'
+        ctx.font = 'bold 9px "Share Tech Mono", monospace'
         ctx.fillText(`${Math.round(s.score * p)}%`, spt.x, spt.y)
       })
     }
 
     const animate = () => {
-      progress = Math.min(1, progress + 0.025)
+      progress = Math.min(1, progress + 0.03)
       draw(progress)
-      if (progress < 1) animRef.current = requestAnimationFrame(animate)
+      if (progress < 1) {
+        animRef.current = requestAnimationFrame(animate)
+      }
     }
 
     const obs = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && !animated) {
-        setAnimated(true)
+      if (entries[0].isIntersecting && !startedRef.current) {
+        startedRef.current = true
         animate()
       }
     }, { threshold: 0.3 })
+
     obs.observe(canvas)
-    return () => { obs.disconnect(); cancelAnimationFrame(animRef.current) }
+
+    return () => {
+      obs.disconnect()
+      cancelAnimationFrame(animRef.current)
+    }
   }, [])
 
-  return <canvas ref={canvasRef} width={320} height={320} style={{ width: '100%', maxWidth: 320 }} />
+  return (
+    <canvas
+      ref={canvasRef}
+      width={300}
+      height={300}
+      style={{ width: '100%', maxWidth: 300, display: 'block' }}
+    />
+  )
 }
 
 export default function SkillsSection() {
   const sectionRef = useRef<HTMLElement>(null)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const obs = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting) {
-        entries[0].target.querySelectorAll('[data-anim]').forEach((el, i) => {
-          setTimeout(() => {
-            (el as HTMLElement).style.opacity = '1'
-            ;(el as HTMLElement).style.transform = 'translateY(0)'
-          }, i * 80)
-        })
+        setVisible(true)
+        obs.disconnect()
       }
     }, { threshold: 0.05 })
     if (sectionRef.current) obs.observe(sectionRef.current)
@@ -178,12 +206,23 @@ export default function SkillsSection() {
   }, [])
 
   return (
-    <section id="skills" ref={sectionRef} style={{ background: '#000008', padding: '120px 0', position: 'relative', overflow: 'hidden' }}>
+    <section id="skills" ref={sectionRef} style={{
+      background: '#000008',
+      padding: '120px 0',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg, transparent, #00ff8833, transparent)' }} />
 
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px' }}>
+
         {/* Header */}
-        <div data-anim style={{ opacity: 0, transform: 'translateY(20px)', transition: 'all 0.6s ease', marginBottom: 64 }}>
+        <div style={{
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'all 0.6s ease',
+          marginBottom: 64,
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
             <div style={{ width: 40, height: 1, background: '#00d4ff' }} />
             <span style={{ fontFamily: 'Share Tech Mono', fontSize: 11, color: '#00d4ff', letterSpacing: 4 }}>02 · CAPABILITIES</span>
@@ -194,24 +233,38 @@ export default function SkillsSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 64, alignItems: 'start' }}>
+
           {/* Skill bars */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
             {SKILL_CATEGORIES.map((cat, ci) => (
-              <div key={cat.title} data-anim style={{ opacity: 0, transform: 'translateY(20px)', transition: `all 0.6s ease ${ci * 0.1}s` }}>
-                <div style={{ fontFamily: 'Share Tech Mono', fontSize: 10, color: cat.color, letterSpacing: 3, marginBottom: 20 }}>{cat.title}</div>
+              <div key={cat.title} style={{
+                opacity: visible ? 1 : 0,
+                transform: visible ? 'translateY(0)' : 'translateY(20px)',
+                transition: `all 0.6s ease ${ci * 0.1}s`,
+              }}>
+                <div style={{
+                  fontFamily: 'Share Tech Mono', fontSize: 10,
+                  color: cat.color, letterSpacing: 3, marginBottom: 20,
+                }}>{cat.title}</div>
+
                 {cat.skills.map((skill, si) => (
                   <div key={skill.name} style={{ marginBottom: 14 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                      <span style={{ fontFamily: 'Rajdhani', fontSize: 13, color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>{skill.name}</span>
-                      <span style={{ fontFamily: 'Share Tech Mono', fontSize: 10, color: cat.color }}>{skill.level}%</span>
+                      <span style={{ fontFamily: 'Rajdhani', fontSize: 13, color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
+                        {skill.name}
+                      </span>
+                      <span style={{ fontFamily: 'Share Tech Mono', fontSize: 10, color: cat.color }}>
+                        {skill.level}%
+                      </span>
                     </div>
                     <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
                       <div style={{
-                        height: '100%', borderRadius: 2,
+                        height: '100%',
+                        borderRadius: 2,
                         background: `linear-gradient(90deg, ${cat.color}, ${cat.color}88)`,
-                        width: `${skill.level}%`,
+                        width: visible ? `${skill.level}%` : '0%',
                         boxShadow: `0 0 8px ${cat.color}66`,
-                        transition: `width 1s ease ${0.3 + si * 0.1}s`
+                        transition: `width 1.2s ease ${0.4 + si * 0.1}s`,
                       }} />
                     </div>
                   </div>
@@ -220,10 +273,24 @@ export default function SkillsSection() {
             ))}
           </div>
 
-          {/* Radar chart */}
-          <div data-anim style={{ opacity: 0, transform: 'translateY(20px)', transition: 'all 0.6s ease 0.4s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
-            <div style={{ fontFamily: 'Share Tech Mono', fontSize: 10, color: '#00ff88', letterSpacing: 3 }}>COMPETENCY RADAR</div>
-            <RadarChart skills={RADAR_SKILLS} color="#00ff88" />
+          {/* Radar */}
+          <div style={{
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'all 0.6s ease 0.4s',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16,
+          }}>
+            <div style={{ fontFamily: 'Share Tech Mono', fontSize: 10, color: '#00ff88', letterSpacing: 3 }}>
+              COMPETENCY RADAR
+            </div>
+            <div style={{
+              border: '1px solid rgba(0,255,136,0.15)',
+              background: 'rgba(0,255,136,0.03)',
+              borderRadius: 4, padding: 20,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <RadarChart />
+            </div>
             <div style={{ fontFamily: 'Share Tech Mono', fontSize: 9, color: 'rgba(0,255,136,0.35)', letterSpacing: 2, textAlign: 'center' }}>
               OVERALL THREAT RESPONSE CAPABILITY
             </div>
