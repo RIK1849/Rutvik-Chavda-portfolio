@@ -653,7 +653,7 @@ function Contact() {
   }
 
   const LINKS = [
-    { l: 'LinkedIn', v: 'linkedin.com/in/rutvik-chavda', h: 'https://linkedin.com/in/rutvik-chavda', c: '#00d4ff', i: '◈' },
+    { l: 'LinkedIn', v: 'Rutvik Chavda — View Profile', h: 'https://www.linkedin.com/in/rutvik-chavda-584b37197/', c: '#00d4ff', i: '◈' },
     { l: 'GitHub', v: 'github.com/RIK1849', h: 'https://github.com/RIK1849', c: '#a855f7', i: '◉' },
     { l: 'Sophos Community', v: 'community.sophos.com', h: 'https://community.sophos.com', c: '#00ff88', i: '◎' },
   ]
