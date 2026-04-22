@@ -1,651 +1,600 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
 
-const FEATURED_AWARDS = [
+const AWARDS = [
   {
+    id: 1,
+    category: "GLOBAL EXCELLENCE · SOPHOS SUPPORT",
+    date: "May 2025",
     title: "Global Support Services Excellence Award (2024)",
-    badge: "◈ GLOBAL EXCELLENCE — SOPHOS SUPPORT",
-    period: "May 2025",
-    color: "#fbbf24",
     description:
-      "Recognised with the Global Support Services Excellence Award 2024 at Sophos for outstanding performance in Endpoint Security and Technical Support. Resolved complex L2/L3 issues across Windows environments, including EDR (Sophos Intercept X) and malware incidents. Improved resolution times, performed root cause analysis, and delivered high customer satisfaction through effective incident response and log analysis.",
+      "Recognised with the Global Support Services Excellence Award 2024 at Sophos for outstanding performance in Endpoint Security and Technical Support. Resolved complex L2/L3 issues across Windows environments, including EDR (Sophos Intercept X) and XDR telemetry analysis.",
+    tag: "GLOBAL EXCELLENCE",
+    color: "#f5c842",
+    emissive: 0xf5a800,
+    icon: "◈",
   },
   {
+    id: 2,
+    category: "GLOBAL RANKING · TOP 10 WORLDWIDE",
+    date: "Nov 2023",
     title: "Sophos Support Team Top 10 — FY25",
-    badge: "◈ GLOBAL RANKING — TOP 10 WORLDWIDE",
-    period: "Nov 2023",
-    color: "#00ff64",
     description:
       "Ranked among the top 10 support engineers globally at Sophos for FY25 — recognised for outstanding case quality, consistent SLA adherence, customer satisfaction scores, and internal knowledge contribution across the endpoint security portfolio.",
+    tag: "TOP 10 WORLDWIDE",
+    color: "#00ff88",
+    emissive: 0x00cc66,
+    icon: "◉",
+  },
+  {
+    id: 3,
+    category: "COMMUNITY · QUARTERLY RECOGNITION",
+    date: "Q1 2024",
+    title: "Top Community Contributor — Q1 2024",
+    description:
+      "Awarded Top Community Contributor for Q1 2024 in recognition of consistent, high-quality technical contributions to the Sophos community forums, documentation improvements, and peer knowledge sharing across security domains.",
+    tag: "COMMUNITY CONTRIBUTOR",
+    color: "#00cfff",
+    emissive: 0x0099cc,
+    icon: "◎",
+  },
+  {
+    id: 4,
+    category: "COMMUNITY · QUARTERLY RECOGNITION",
+    date: "Q2 2024",
+    title: "Top Community Contributor — Q2 2024",
+    description:
+      "Consecutive quarterly recognition for sustained technical excellence and community leadership within the Sophos ecosystem, demonstrating deep specialisation in endpoint security, threat hunting, and XDR workflows.",
+    tag: "COMMUNITY CONTRIBUTOR",
+    color: "#a855f7",
+    emissive: 0x7c22cc,
+    icon: "◎",
+  },
+  {
+    id: 5,
+    category: "COMMUNITY · QUARTERLY RECOGNITION",
+    date: "Q3 2024",
+    title: "Top Community Contributor — Q3 2024",
+    description:
+      "Third consecutive quarterly award, underlining consistent excellence and long-term impact on the Sophos community — from advanced troubleshooting guides to forensic triage methodologies shared with the global technical community.",
+    tag: "COMMUNITY CONTRIBUTOR",
+    color: "#ff6b6b",
+    emissive: 0xcc3333,
+    icon: "◎",
+  },
+  {
+    id: 6,
+    category: "ANNUAL · TOP CONTRIBUTOR",
+    date: "2024",
+    title: "Full-Year Top Contributor 2024",
+    description:
+      "Awarded the Full-Year Top Contributor title for 2024 — the highest community recognition at Sophos, granted to engineers demonstrating sustained excellence across all four quarters in case resolution, knowledge creation, and community impact.",
+    tag: "TOP CONTRIBUTOR",
+    color: "#ff9500",
+    emissive: 0xcc7000,
+    icon: "★",
   },
 ];
 
-const COMMUNITY_AWARDS = [
-  {
-    title: "Top Sophos Staff Community Contributor — CY25 Q2",
-    period: "CY25 Q2",
-    color: "#38bdf8",
-    description:
-      "Recognised as a top community staff contributor for Q2 CY25 — acknowledged for detailed, technically precise, and consistently valuable engagement supporting enterprise customers.",
-  },
-  {
-    title: "Top Sophos Staff Community Contributor — CY25 Q3",
-    period: "CY25 Q3",
-    color: "#38bdf8",
-    description:
-      "Recognised as a top community staff contributor for Q3 CY25 — maintaining exceptional contribution quality and strong technical presence in the global Sophos community.",
-  },
-  {
-    title: "Top Sophos Staff Community Contributor — CY25 Q4",
-    period: "CY25 Q4",
-    color: "#38bdf8",
-    description:
-      "Recognised as a top community staff contributor for Q4 CY25 — sustaining high-quality technical output and consistent community engagement through the close of the calendar year.",
-  },
-  {
-    title: "Top Sophos Staff Community Contributor — CY25 Overall",
-    period: "CY25 Full Year",
-    color: "#a78bfa",
-    description:
-      "Ranked as the top community staff contributor globally for the entire CY25 calendar year — recognised for the highest sustained volume of technically accurate, deeply detailed support content across the Sophos partner and customer community.",
-  },
-];
-
-const TOTAL_AWARDS = FEATURED_AWARDS.length + COMMUNITY_AWARDS.length;
-
-const MEDAL_DATA = [
-  { color: "#fbbf24", label: "GLOBAL\nEXCELLENCE", sub: "2024",  sizeMul: 1.0,  featured: true  },
-  { color: "#00ff64", label: "TOP 10\nWORLDWIDE",  sub: "FY25",  sizeMul: 0.9,  featured: true  },
-  { color: "#38bdf8", label: "COMMUNITY\nCONTRIBUTOR", sub: "Q2", sizeMul: 0.72, featured: false },
-  { color: "#38bdf8", label: "COMMUNITY\nCONTRIBUTOR", sub: "Q3", sizeMul: 0.72, featured: false },
-  { color: "#38bdf8", label: "COMMUNITY\nCONTRIBUTOR", sub: "Q4", sizeMul: 0.72, featured: false },
-  { color: "#a78bfa", label: "TOP\nCONTRIBUTOR",   sub: "CY25", sizeMul: 0.78, featured: false },
-];
-
-function AwardsCanvas3D() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef  = useRef({ x: 0.5, y: 0.5 });
-  const rafRef    = useRef(0);
-
+// ─── Three.js Hook ────────────────────────────────────────────────────────────
+function useThreeScene(canvasRef, setActiveIndex, activeIndexRef) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
 
-    let W = 0, H = 0;
-    const PI2 = Math.PI * 2;
-    const DEG = Math.PI / 180;
+    const W = canvas.clientWidth || 900;
+    const H = canvas.clientHeight || 480;
 
-    type Vec3 = { x: number; y: number; z: number };
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
 
-    type Medal = {
-      pos: Vec3;
-      rot: Vec3;
-      rotVel: Vec3;
-      orbitR: number;
-      orbitSpeed: number;
-      orbitAngle: number;
-      orbitTilt: number;
-      floatPhase: number;
-      floatAmp: number;
-      size: number;
-      color: string;
-      label: string;
-      sub: string;
-      featured: boolean;
-      hoverScale: number;
-      hovered: boolean;
+    // Scene & Camera
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000008, 0.028);
+    const camera = new THREE.PerspectiveCamera(52, W / H, 0.1, 200);
+    camera.position.set(0, 2.5, 15);
+    camera.lookAt(0, 0, 0);
+
+    // ── Lighting ──────────────────────────────────────────────────────────────
+    scene.add(new THREE.AmbientLight(0x080818, 3));
+    const rim = new THREE.DirectionalLight(0x00ffaa, 2);
+    rim.position.set(-8, 6, -4);
+    scene.add(rim);
+    const fill = new THREE.DirectionalLight(0x0033ff, 1);
+    fill.position.set(8, -4, 4);
+    scene.add(fill);
+
+    // ── Grid ──────────────────────────────────────────────────────────────────
+    const grid = new THREE.GridHelper(80, 80, 0x003322, 0x001510);
+    grid.position.y = -5;
+    grid.material.opacity = 0.35;
+    grid.material.transparent = true;
+    scene.add(grid);
+
+    // ── Star Particles ────────────────────────────────────────────────────────
+    const PC = 2000;
+    const pGeo = new THREE.BufferGeometry();
+    const pPos = new Float32Array(PC * 3);
+    const pCol = new Float32Array(PC * 3);
+    const pSpd = new Float32Array(PC);
+    const palette = AWARDS.map((a) => new THREE.Color(a.color));
+
+    for (let i = 0; i < PC; i++) {
+      pPos[i * 3] = (Math.random() - 0.5) * 100;
+      pPos[i * 3 + 1] = (Math.random() - 0.5) * 60;
+      pPos[i * 3 + 2] = (Math.random() - 0.5) * 100;
+      const c = palette[i % palette.length];
+      pCol[i * 3] = c.r; pCol[i * 3 + 1] = c.g; pCol[i * 3 + 2] = c.b;
+      pSpd[i] = 0.002 + Math.random() * 0.006;
+    }
+    pGeo.setAttribute("position", new THREE.BufferAttribute(pPos, 3));
+    pGeo.setAttribute("color", new THREE.BufferAttribute(pCol, 3));
+    const pMat = new THREE.PointsMaterial({ size: 0.1, vertexColors: true, transparent: true, opacity: 0.65, sizeAttenuation: true });
+    const particles = new THREE.Points(pGeo, pMat);
+    scene.add(particles);
+
+    // ── Orbs ──────────────────────────────────────────────────────────────────
+    const TOTAL = AWARDS.length;
+    const RADIUS = 7.5;
+    const orbData = [];
+
+    AWARDS.forEach((award, i) => {
+      const angle = (i / TOTAL) * Math.PI * 2;
+      const grp = new THREE.Group();
+      grp.position.set(Math.sin(angle) * RADIUS, 0, Math.cos(angle) * RADIUS);
+
+      const col = new THREE.Color(award.color);
+
+      // Core gem
+      const cGeo = new THREE.IcosahedronGeometry(0.95, 1);
+      const cMat = new THREE.MeshPhysicalMaterial({
+        color: col,
+        emissive: new THREE.Color(award.emissive),
+        emissiveIntensity: 0.8,
+        metalness: 0.1,
+        roughness: 0.04,
+        transmission: 0.65,
+        thickness: 2,
+        transparent: true,
+        opacity: 0.93,
+      });
+      const core = new THREE.Mesh(cGeo, cMat);
+      grp.add(core);
+
+      // Wireframe shell
+      const wGeo = new THREE.IcosahedronGeometry(1.3, 1);
+      const wMat = new THREE.MeshBasicMaterial({ color: col, wireframe: true, transparent: true, opacity: 0.14 });
+      const wire = new THREE.Mesh(wGeo, wMat);
+      grp.add(wire);
+
+      // Equatorial ring
+      const rGeo = new THREE.TorusGeometry(1.65, 0.022, 8, 100);
+      const rMat = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.55 });
+      const ring = new THREE.Mesh(rGeo, rMat);
+      ring.rotation.x = Math.PI / 2;
+      grp.add(ring);
+
+      // Glow billboard
+      const gc = document.createElement("canvas");
+      gc.width = 128; gc.height = 128;
+      const gctx = gc.getContext("2d");
+      const gr = gctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+      gr.addColorStop(0, award.color + "bb");
+      gr.addColorStop(0.45, award.color + "33");
+      gr.addColorStop(1, "transparent");
+      gctx.fillStyle = gr; gctx.fillRect(0, 0, 128, 128);
+      const glowTex = new THREE.CanvasTexture(gc);
+      const gMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(4.5, 4.5),
+        new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide })
+      );
+      gMesh.renderOrder = 1;
+      grp.add(gMesh);
+
+      // Point light
+      const pl = new THREE.PointLight(col, 0, 7);
+      grp.add(pl);
+
+      scene.add(grp);
+      orbData.push({ grp, core, wire, ring, gMesh, pl, baseAngle: angle, index: i });
+    });
+
+    // ── Central beacon ────────────────────────────────────────────────────────
+    const beaconGrp = new THREE.Group();
+    const bCore = new THREE.Mesh(
+      new THREE.OctahedronGeometry(1.3, 0),
+      new THREE.MeshPhysicalMaterial({ color: 0xffffff, emissive: 0x44ffaa, emissiveIntensity: 1.4, metalness: 0.9, roughness: 0, transparent: true, opacity: 0.88 })
+    );
+    const bWire = new THREE.Mesh(
+      new THREE.OctahedronGeometry(1.9, 0),
+      new THREE.MeshBasicMaterial({ color: 0x00ff88, wireframe: true, transparent: true, opacity: 0.2 })
+    );
+    beaconGrp.add(bCore, bWire);
+    scene.add(beaconGrp);
+    const beaconLight = new THREE.PointLight(0x00ff88, 3, 16);
+    scene.add(beaconLight);
+
+    // Orbit ring
+    const oRing = new THREE.Mesh(
+      new THREE.TorusGeometry(RADIUS, 0.014, 6, 240),
+      new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.1 })
+    );
+    oRing.rotation.x = Math.PI / 2;
+    scene.add(oRing);
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    let targetRot = 0;
+    let currentRot = 0;
+    let dragging = false;
+    let dragX0 = 0;
+    let dragRot0 = 0;
+
+    const snap = () => {
+      const step = (Math.PI * 2) / TOTAL;
+      targetRot = Math.round(targetRot / step) * step;
+      const idx = ((Math.round(-targetRot / step) % TOTAL) + TOTAL) % TOTAL;
+      activeIndexRef.current = idx;
+      setActiveIndex(idx);
     };
 
-    let medals: Medal[] = [];
-    let sceneRotX = 0, sceneRotY = 0;
-    let targetRotX = 0, targetRotY = 0;
-    let manualRotX = 0, manualRotY = 0;
-    let isDragging = false;
-    let lastMouse = { x: 0, y: 0 };
-    let time = 0;
+    const onMouseDown = (e) => { dragging = true; dragX0 = e.clientX; dragRot0 = targetRot; };
+    const onMouseMove = (e) => {
+      if (!dragging) return;
+      targetRot = dragRot0 + ((e.clientX - dragX0) / (canvas.clientWidth || W)) * Math.PI * 2;
+    };
+    const onMouseUp = () => { if (dragging) { dragging = false; snap(); } };
 
-    function buildMedals() {
-      const base = Math.min(W, H) * 0.13;
-      medals = MEDAL_DATA.map((m, i) => {
-        const angle = (i / MEDAL_DATA.length) * PI2;
-        return {
-          pos: { x: 0, y: 0, z: 0 },
-          rot: { x: Math.random() * PI2, y: Math.random() * PI2, z: 0 },
-          rotVel: {
-            x: (Math.random() - 0.5) * 0.007,
-            y: (Math.random() - 0.5) * 0.011,
-            z: 0,
-          },
-          orbitR: i < 2 ? Math.min(W, H) * 0.19 : Math.min(W, H) * 0.28,
-          orbitSpeed: (i < 2 ? 0.0035 : 0.006) * (i % 2 === 0 ? 1 : -1),
-          orbitAngle: angle,
-          orbitTilt: (i * 28 * DEG) % (Math.PI * 0.55),
-          floatPhase: Math.random() * PI2,
-          floatAmp: Math.min(W, H) * 0.022,
-          size: base * m.sizeMul,
-          color: m.color,
-          label: m.label,
-          sub: m.sub,
-          featured: m.featured,
-          hoverScale: 1,
-          hovered: false,
-        };
-      });
-    }
+    const onTouchStart = (e) => { dragging = true; dragX0 = e.touches[0].clientX; dragRot0 = targetRot; };
+    const onTouchMove = (e) => {
+      if (!dragging) return;
+      targetRot = dragRot0 + ((e.touches[0].clientX - dragX0) / (canvas.clientWidth || W)) * Math.PI * 2;
+    };
+    const onTouchEnd = () => { if (dragging) { dragging = false; snap(); } };
 
-    function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = canvas!.offsetWidth;
-      H = canvas!.offsetHeight;
-      canvas!.width  = W * dpr;
-      canvas!.height = H * dpr;
-      ctx!.scale(dpr, dpr);
-      buildMedals();
-    }
-
-    function rotatePoint(p: Vec3, rx: number, ry: number): Vec3 {
-      const cosY = Math.cos(ry), sinY = Math.sin(ry);
-      const x1 =  p.x * cosY + p.z * sinY;
-      const z1 = -p.x * sinY + p.z * cosY;
-      const cosX = Math.cos(rx), sinX = Math.sin(rx);
-      const y2 =  p.y * cosX - z1 * sinX;
-      const z2 =  p.y * sinX + z1 * cosX;
-      return { x: x1, y: y2, z: z2 };
-    }
-
-    function project(p: Vec3, fov: number) {
-      const cx = W / 2, cy = H / 2;
-      const z = p.z + fov;
-      const scale = fov / Math.max(z, 1);
-      return { sx: cx + p.x * scale, sy: cy + p.y * scale, scale };
-    }
-
-    function hexPath(cx: number, cy: number, r: number, rot = 0) {
-      ctx!.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const a = rot + i * 60 * DEG;
-        i === 0
-          ? ctx!.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r)
-          : ctx!.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
-      }
-      ctx!.closePath();
-    }
-
-    function drawMedal(
-      mx: number, my: number,
-      radius: number,
-      color: string,
-      label: string,
-      sub: string,
-      featured: boolean,
-      depth: number,
-      rotX: number,
-      rotY: number,
-      hoverScale: number,
-    ) {
-      ctx!.save();
-      ctx!.translate(mx, my);
-      ctx!.scale(hoverScale, hoverScale);
-
-      const alpha = Math.max(0.25, Math.min(1, 0.25 + depth * 0.75));
-      const r = radius;
-
-      // Outer glow halo
-      const glowR = r * 2.5;
-      const glow = ctx!.createRadialGradient(0, 0, r * 0.2, 0, 0, glowR);
-      glow.addColorStop(0,   color + (featured ? "60" : "35"));
-      glow.addColorStop(0.4, color + "15");
-      glow.addColorStop(1,   "transparent");
-      ctx!.globalAlpha = alpha * 0.9;
-      ctx!.fillStyle = glow;
-      ctx!.beginPath();
-      ctx!.arc(0, 0, glowR, 0, PI2);
-      ctx!.fill();
-
-      // 3D perspective skew
-      ctx!.save();
-      const skX = Math.sin(rotY) * 0.4;
-      const skY = Math.sin(rotX) * 0.22;
-      ctx!.transform(
-        1 - Math.abs(skX) * 0.18, skY,
-        skX, 1 - Math.abs(skY) * 0.12,
-        0, 0,
+    const onClick = (e) => {
+      if (Math.abs(e.clientX - dragX0) > 6) return;
+      const rect = canvas.getBoundingClientRect();
+      const mouse = new THREE.Vector2(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1
       );
-
-      ctx!.globalAlpha = alpha;
-
-      // Drop shadow
-      ctx!.save();
-      ctx!.globalAlpha = alpha * 0.45;
-      ctx!.translate(r * 0.14, r * 0.2);
-      hexPath(0, 0, r, 30 * DEG);
-      ctx!.fillStyle = "rgba(0,0,0,0.85)";
-      ctx!.fill();
-      ctx!.restore();
-
-      ctx!.globalAlpha = alpha;
-
-      // Hex face
-      hexPath(0, 0, r, 30 * DEG);
-      const face = ctx!.createRadialGradient(-r * 0.22, -r * 0.26, 0, r * 0.08, r * 0.08, r * 1.15);
-      face.addColorStop(0,   "#0d2018");
-      face.addColorStop(0.55,"#040f08");
-      face.addColorStop(1,   "#000");
-      ctx!.fillStyle = face;
-      ctx!.fill();
-
-      // Border
-      hexPath(0, 0, r, 30 * DEG);
-      ctx!.strokeStyle = color + (featured ? "dd" : "90");
-      ctx!.lineWidth = featured ? 2.5 : 1.8;
-      ctx!.stroke();
-
-      // Inner rings
-      hexPath(0, 0, r * 0.84, 30 * DEG);
-      ctx!.strokeStyle = color + "35";
-      ctx!.lineWidth = 0.9;
-      ctx!.stroke();
-
-      hexPath(0, 0, r * 0.62, 30 * DEG);
-      ctx!.strokeStyle = color + "22";
-      ctx!.lineWidth = 0.6;
-      ctx!.stroke();
-
-      // Catch light top-left
-      const hl = ctx!.createRadialGradient(-r * 0.32, -r * 0.32, 0, -r * 0.1, -r * 0.1, r * 0.9);
-      hl.addColorStop(0,   "rgba(255,255,255,0.15)");
-      hl.addColorStop(0.5, "rgba(255,255,255,0.04)");
-      hl.addColorStop(1,   "transparent");
-      hexPath(0, 0, r, 30 * DEG);
-      ctx!.fillStyle = hl;
-      ctx!.fill();
-
-      // Color tint
-      const tint = ctx!.createRadialGradient(0, 0, 0, 0, 0, r);
-      tint.addColorStop(0,   color + "22");
-      tint.addColorStop(0.7, color + "0a");
-      tint.addColorStop(1,   "transparent");
-      hexPath(0, 0, r, 30 * DEG);
-      ctx!.fillStyle = tint;
-      ctx!.fill();
-
-      // Edge rim light (bottom right)
-      hexPath(0, 0, r, 30 * DEG);
-      const rim = ctx!.createLinearGradient(-r, -r, r, r);
-      rim.addColorStop(0,   "transparent");
-      rim.addColorStop(0.7, "transparent");
-      rim.addColorStop(1,   color + "30");
-      ctx!.strokeStyle = rim;
-      ctx!.lineWidth = 3;
-      ctx!.stroke();
-
-      ctx!.restore(); // end skew
-
-      // Center orb
-      ctx!.globalAlpha = alpha;
-      const orbR = r * 0.2;
-      const orbG = ctx!.createRadialGradient(-orbR * 0.35, -orbR * 0.35, 0, 0, 0, orbR * 1.3);
-      orbG.addColorStop(0,   "#ffffff");
-      orbG.addColorStop(0.25, color);
-      orbG.addColorStop(1,   color + "40");
-      ctx!.beginPath();
-      ctx!.arc(0, 0, orbR, 0, PI2);
-      ctx!.fillStyle = orbG;
-      ctx!.fill();
-
-      // Orb rings
-      [1.8, 2.6, 3.6].forEach((mul, ri) => {
-        ctx!.beginPath();
-        ctx!.arc(0, 0, orbR * mul, 0, PI2);
-        ctx!.strokeStyle = color + ["55","30","15"][ri];
-        ctx!.lineWidth = [1.2, 0.8, 0.5][ri];
-        ctx!.stroke();
-      });
-
-      // Label
-      ctx!.globalAlpha = alpha;
-      const lSize = Math.max(10, r * 0.162);
-      ctx!.font = `700 ${lSize}px 'Share Tech Mono', monospace`;
-      ctx!.fillStyle = color;
-      ctx!.textAlign = "center";
-      ctx!.textBaseline = "middle";
-      const lines = label.split("\n");
-      const lH = lSize * 1.32;
-      const lTop = r * 0.54;
-      lines.forEach((line, li) => {
-        ctx!.fillText(line, 0, lTop + (li - (lines.length - 1) / 2) * lH);
-      });
-
-      // Sub
-      const sSize = Math.max(8, r * 0.125);
-      ctx!.font = `${sSize}px 'Share Tech Mono', monospace`;
-      ctx!.fillStyle = color + "65";
-      ctx!.fillText(sub, 0, lTop + (lines.length / 2) * lH + sSize * 1.3);
-
-      // Hover pulse ring
-      if (hoverScale > 1.04) {
-        ctx!.globalAlpha = (hoverScale - 1) * 3 * alpha;
-        ctx!.beginPath();
-        ctx!.arc(0, 0, r * 1.22, 0, PI2);
-        ctx!.strokeStyle = color;
-        ctx!.lineWidth = 1.8;
-        ctx!.stroke();
-        ctx!.beginPath();
-        ctx!.arc(0, 0, r * 1.38, 0, PI2);
-        ctx!.strokeStyle = color + "40";
-        ctx!.lineWidth = 0.8;
-        ctx!.stroke();
-      }
-
-      ctx!.restore();
-    }
-
-    function drawBG(t: number) {
-      ctx!.clearRect(0, 0, W, H);
-
-      // Radial dark bg
-      const bg = ctx!.createRadialGradient(W/2, H*0.42, 0, W/2, H/2, Math.max(W,H)*0.75);
-      bg.addColorStop(0,   "#021a0d");
-      bg.addColorStop(0.38,"#010d06");
-      bg.addColorStop(1,   "#000000");
-      ctx!.fillStyle = bg;
-      ctx!.fillRect(0, 0, W, H);
-
-      // Perspective grid floor
-      ctx!.save();
-      ctx!.globalAlpha = 0.09;
-      const vx = W / 2, vy = H * 0.35;
-      const gridY = H;
-      const cols = 14;
-      for (let i = 0; i <= cols; i++) {
-        const x = (i / cols) * W;
-        ctx!.beginPath();
-        ctx!.moveTo(vx + (x - vx) * 0.08, vy + (gridY - vy) * 0.08);
-        ctx!.lineTo(x, gridY);
-        ctx!.strokeStyle = "#00ff64";
-        ctx!.lineWidth = 0.6;
-        ctx!.stroke();
-      }
-      for (let j = 0; j <= 8; j++) {
-        const p = j / 8;
-        const yy = vy + (gridY - vy) * (0.08 + p * 0.92);
-        const xl = vx + (0 - vx) * (0.08 + p * 0.92);
-        const xr = vx + (W - vx) * (0.08 + p * 0.92);
-        ctx!.beginPath();
-        ctx!.moveTo(xl, yy);
-        ctx!.lineTo(xr, yy);
-        ctx!.strokeStyle = "#00ff64";
-        ctx!.lineWidth = 0.4;
-        ctx!.stroke();
-      }
-      ctx!.restore();
-
-      // Stars
-      ctx!.save();
-      for (let i = 0; i < 80; i++) {
-        const sx = ((i * 139.7 + t * 4) % W);
-        const sy = ((i * 78.3 + Math.sin(t * 0.5 + i) * 20) % H);
-        const sa = 0.08 + 0.22 * Math.abs(Math.sin(t * 0.9 + i * 0.8));
-        const sr = 0.4 + (i % 4) * 0.35;
-        ctx!.beginPath();
-        ctx!.arc(sx, sy, sr, 0, PI2);
-        ctx!.fillStyle = `rgba(255,255,255,${sa})`;
-        ctx!.fill();
-      }
-      ctx!.restore();
-
-      // Ambient nebula
-      ctx!.save();
-      ctx!.globalAlpha = 0.055 + 0.015 * Math.sin(t * 0.4);
-      const neb = ctx!.createRadialGradient(W * 0.5, H * 0.38, 0, W * 0.5, H * 0.38, H * 0.6);
-      neb.addColorStop(0, "#00ff64");
-      neb.addColorStop(1, "transparent");
-      ctx!.fillStyle = neb;
-      ctx!.fillRect(0, 0, W, H);
-      ctx!.restore();
-    }
-
-    function drawHUD(t: number) {
-      ctx!.save();
-
-      // Labels
-      ctx!.font = `700 10px 'Share Tech Mono', monospace`;
-      ctx!.textAlign = "left";
-      ctx!.fillStyle = "rgba(0,255,100,0.38)";
-      ctx!.fillText("◈  AWARDS MATRIX  ·  HOVER OR DRAG TO ROTATE", 14, 22);
-      ctx!.textAlign = "right";
-      ctx!.fillStyle = "rgba(0,255,100,0.38)";
-      ctx!.fillText(`${TOTAL_AWARDS} AWARDS`, W - 14, 22);
-
-      // Corner brackets
-      const bp = 12, bs = 20;
-      ctx!.strokeStyle = "rgba(0,255,100,0.35)";
-      ctx!.lineWidth = 1;
-      ([[bp,bp,1,1],[W-bp,bp,-1,1],[bp,H-bp,1,-1],[W-bp,H-bp,-1,-1]] as const).forEach(([x,y,dx,dy]) => {
-        ctx!.beginPath();
-        ctx!.moveTo(x, y + dy * bs); ctx!.lineTo(x, y); ctx!.lineTo(x + dx * bs, y);
-        ctx!.stroke();
-      });
-
-      // Horizontal scan
-      const scanX = ((t * 55) % (W + 60)) - 30;
-      const sg = ctx!.createLinearGradient(scanX - 40, 0, scanX + 40, 0);
-      sg.addColorStop(0,   "transparent");
-      sg.addColorStop(0.5, "rgba(0,255,100,0.055)");
-      sg.addColorStop(1,   "transparent");
-      ctx!.fillStyle = sg;
-      ctx!.fillRect(scanX - 40, 0, 80, H);
-
-      ctx!.restore();
-    }
-
-    const FOV = 580;
-
-    function render(now: number) {
-      rafRef.current = requestAnimationFrame(render);
-      time = now * 0.001;
-
-      targetRotX = (mouseRef.current.y - 0.5) * 0.6;
-      targetRotY = (mouseRef.current.x - 0.5) * 1.0;
-      sceneRotX += (targetRotX + manualRotX - sceneRotX) * 0.042;
-      sceneRotY += (targetRotY + manualRotY - sceneRotY) * 0.042;
-
-      drawBG(time);
-
-      // Update positions
-      medals.forEach((m) => {
-        m.orbitAngle += m.orbitSpeed;
-        const ox = Math.cos(m.orbitAngle) * m.orbitR;
-        const oz = Math.sin(m.orbitAngle) * m.orbitR * 0.5;
-        const oy = oz * Math.sin(m.orbitTilt) + Math.sin(time * 0.65 + m.floatPhase) * m.floatAmp;
-        const oz2 = oz * Math.cos(m.orbitTilt);
-        m.pos = { x: ox, y: oy, z: oz2 };
-        m.rot.x += m.rotVel.x;
-        m.rot.y += m.rotVel.y;
-        const ths = m.hovered ? 1.22 : 1;
-        m.hoverScale += (ths - m.hoverScale) * 0.1;
-      });
-
-      // Project + sort
-      const proj = medals.map((m) => {
-        const rp = rotatePoint(m.pos, sceneRotX, sceneRotY);
-        const { sx, sy, scale } = project(rp, FOV);
-        const depth = Math.max(0, (rp.z + 400) / 800);
-        return { m, sx, sy, scale, depth, rz: rp.z, rpx: rp.x, rpy: rp.y };
-      }).sort((a, b) => a.rz - b.rz);
-
-      // Update hover
-      const mx2 = mouseRef.current.x * W;
-      const my2 = mouseRef.current.y * H;
-      proj.forEach(({ m, sx, sy, scale }) => {
-        m.hovered = Math.hypot(mx2 - sx, my2 - sy) < m.size * scale * 1.15;
-      });
-
-      // Connection lines
-      ctx!.save();
-      for (let i = 0; i < proj.length; i++) {
-        for (let j = i + 1; j < proj.length; j++) {
-          const a = proj[i], b = proj[j];
-          const d = Math.hypot(a.sx - b.sx, a.sy - b.sy);
-          const maxD = Math.min(W, H) * 0.52;
-          if (d < maxD) {
-            const al = (1 - d / maxD) * 0.14 * Math.min(a.depth, b.depth);
-            ctx!.beginPath();
-            ctx!.moveTo(a.sx, a.sy);
-            ctx!.lineTo(b.sx, b.sy);
-            ctx!.strokeStyle = `rgba(0,255,100,${al})`;
-            ctx!.lineWidth = 0.7;
-            ctx!.stroke();
-          }
+      const rc = new THREE.Raycaster();
+      rc.setFromCamera(mouse, camera);
+      const hits = rc.intersectObjects(orbData.map((o) => o.core));
+      if (hits.length > 0) {
+        const idx = orbData.findIndex((o) => o.core === hits[0].object);
+        if (idx !== -1) {
+          activeIndexRef.current = idx;
+          setActiveIndex(idx);
+          targetRot = -(idx / TOTAL) * Math.PI * 2;
         }
       }
-      ctx!.restore();
+    };
 
-      // Draw medals
-      proj.forEach(({ m, sx, sy, scale, depth }) => {
-        drawMedal(
-          sx, sy,
-          m.size * scale,
-          m.color, m.label, m.sub,
-          m.featured, depth,
-          m.rot.x, m.rot.y,
-          m.hoverScale,
-        );
+    canvas.addEventListener("mousedown", onMouseDown);
+    canvas.addEventListener("click", onClick);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    canvas.addEventListener("touchstart", onTouchStart, { passive: true });
+    canvas.addEventListener("touchmove", onTouchMove, { passive: true });
+    canvas.addEventListener("touchend", onTouchEnd);
+
+    // ── Animation ─────────────────────────────────────────────────────────────
+    let raf;
+    let t = 0;
+
+    const animate = () => {
+      raf = requestAnimationFrame(animate);
+      t += 0.011;
+
+      currentRot += (targetRot - currentRot) * 0.065;
+
+      // Particles drift
+      const pa = pGeo.attributes.position.array;
+      for (let i = 0; i < PC; i++) {
+        pa[i * 3 + 1] += pSpd[i] * 0.5;
+        if (pa[i * 3 + 1] > 30) pa[i * 3 + 1] = -30;
+      }
+      pGeo.attributes.position.needsUpdate = true;
+      particles.rotation.y = t * 0.015;
+
+      // Beacon
+      bCore.rotation.y = t * 0.7;
+      bCore.rotation.x = t * 0.35;
+      bWire.rotation.y = -t * 0.45;
+      bWire.rotation.z = t * 0.22;
+      beaconLight.intensity = 2.5 + Math.sin(t * 2.2) * 0.9;
+
+      // Orbs
+      orbData.forEach(({ grp, core, wire, ring, gMesh, pl, baseAngle, index }) => {
+        const active = index === activeIndexRef.current;
+        const orbAngle = baseAngle + currentRot;
+
+        grp.position.x = Math.sin(orbAngle) * RADIUS;
+        grp.position.z = Math.cos(orbAngle) * RADIUS;
+        grp.position.y = Math.sin(t * 1.3 + index * 1.05) * 0.3 + (active ? 1.1 : 0);
+
+        const targetScale = active ? 1.4 : 0.82;
+        const s = grp.scale.x + (targetScale - grp.scale.x) * 0.07;
+        grp.scale.setScalar(s);
+
+        core.rotation.y += active ? 0.022 : 0.007;
+        core.rotation.x += 0.005;
+        wire.rotation.y -= 0.011;
+        wire.rotation.z += 0.007;
+        ring.rotation.z = t * 0.6 + index;
+
+        gMesh.lookAt(camera.position);
+        const gScale = active ? 1 + Math.sin(t * 3) * 0.22 : 0.5 + Math.sin(t * 1.5 + index) * 0.08;
+        gMesh.scale.setScalar(gScale);
+
+        const targetLI = active ? 2.8 : 0.25;
+        pl.intensity += (targetLI - pl.intensity) * 0.07;
       });
 
-      drawHUD(time);
-    }
+      // Camera sway
+      camera.position.x = Math.sin(t * 0.12) * 0.7;
+      camera.position.y = 2.5 + Math.sin(t * 0.09) * 0.35;
+      camera.lookAt(0, 0, 0);
 
-    // Events
-    const onMove = (e: MouseEvent) => {
-      const r = canvas!.getBoundingClientRect();
-      mouseRef.current = {
-        x: (e.clientX - r.left) / r.width,
-        y: (e.clientY - r.top)  / r.height,
-      };
-      if (isDragging) {
-        manualRotY += (e.clientX - lastMouse.x) * 0.006;
-        manualRotX += (e.clientY - lastMouse.y) * 0.006;
-        lastMouse = { x: e.clientX, y: e.clientY };
-      }
+      renderer.render(scene, camera);
     };
-    const onDown = (e: MouseEvent) => { isDragging = true; lastMouse = { x: e.clientX, y: e.clientY }; canvas!.style.cursor = "grabbing"; };
-    const onUp   = () => { isDragging = false; canvas!.style.cursor = "grab"; };
+    animate();
 
-    canvas!.addEventListener("mousemove", onMove);
-    canvas!.addEventListener("mousedown", onDown);
-    canvas!.addEventListener("mouseup",   onUp);
-    window.addEventListener("mouseup",    onUp);
-    window.addEventListener("resize",     resize);
-
-    resize();
-    rafRef.current = requestAnimationFrame(render);
+    const onResize = () => {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+    window.addEventListener("resize", onResize);
 
     return () => {
-      cancelAnimationFrame(rafRef.current);
-      canvas!.removeEventListener("mousemove", onMove);
-      canvas!.removeEventListener("mousedown", onDown);
-      canvas!.removeEventListener("mouseup",   onUp);
-      window.removeEventListener("mouseup",    onUp);
-      window.removeEventListener("resize",     resize);
+      cancelAnimationFrame(raf);
+      canvas.removeEventListener("mousedown", onMouseDown);
+      canvas.removeEventListener("click", onClick);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      canvas.removeEventListener("touchstart", onTouchStart);
+      canvas.removeEventListener("touchmove", onTouchMove);
+      canvas.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("resize", onResize);
+      renderer.dispose();
     };
   }, []);
-
-  return <canvas ref={canvasRef} style={{ width: "100%", height: "100%", display: "block", cursor: "grab" }} />;
 }
 
+// ─── Component ────────────────────────────────────────────────────────────────
 export default function AwardsSection() {
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+  const canvasRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [hovered, setHovered] = useState(null);
+  const activeIndexRef = useRef(0);
 
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true); },
-      { threshold: 0.06 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
+  const handleSetActive = (idx) => {
+    activeIndexRef.current = idx;
+    setActiveIndex(idx);
+  };
+
+  useThreeScene(canvasRef, handleSetActive, activeIndexRef);
+
+  const active = AWARDS[activeIndex];
 
   return (
-    <section ref={ref} id="awards" className="section" style={{ borderTop: "1px solid rgba(0,255,100,0.06)" }}>
-      <div className="container">
+    <section style={{
+      background: "#000008",
+      minHeight: "100vh",
+      fontFamily: "'Space Mono', 'Courier New', monospace",
+      position: "relative",
+      overflow: "hidden",
+      padding: "80px 0 70px",
+    }}>
+      {/* Scanlines */}
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
+        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,136,0.013) 2px, rgba(0,255,136,0.013) 4px)",
+      }} />
 
-        <div style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(16px)", transition: "all 0.7s ease" }}>
-          <p className="section-kicker">Awards & Recognition</p>
-          <h2 className="section-title">Recognition that adds <span>credibility and proof</span></h2>
-          <p className="section-copy">
-            {TOTAL_AWARDS} awards — a Global Excellence Award, a worldwide top-10 ranking,
-            three consecutive quarterly community recognitions, and the full-year top contributor title.
-            All within a single organisation of thousands of technical staff worldwide.
+      {/* Corner brackets */}
+      {[
+        { top: 18, left: 18, borderTop: "2px solid #00ff88", borderLeft: "2px solid #00ff88" },
+        { top: 18, right: 18, borderTop: "2px solid #00ff88", borderRight: "2px solid #00ff88" },
+        { bottom: 18, left: 18, borderBottom: "2px solid #00ff88", borderLeft: "2px solid #00ff88" },
+        { bottom: 18, right: 18, borderBottom: "2px solid #00ff88", borderRight: "2px solid #00ff88" },
+      ].map((s, i) => (
+        <div key={i} style={{ position: "absolute", width: 55, height: 55, opacity: 0.4, zIndex: 2, ...s }} />
+      ))}
+
+      <div style={{ position: "relative", zIndex: 2, maxWidth: 1280, margin: "0 auto", padding: "0 24px" }}>
+
+        {/* ── Header ── */}
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 10,
+            background: "rgba(0,255,136,0.07)", border: "1px solid rgba(0,255,136,0.28)",
+            borderRadius: 2, padding: "6px 22px", marginBottom: 22,
+          }}>
+            <span style={{ color: "#00ff88", fontSize: 9, letterSpacing: 4 }}>◈ AWARDS MATRIX</span>
+            <span style={{ color: "#00ff8833" }}>·</span>
+            <span style={{ color: "#00ff8866", fontSize: 9, letterSpacing: 2 }}>{AWARDS.length} RECOGNITIONS</span>
+          </div>
+
+          <h2 style={{
+            fontSize: "clamp(30px, 5vw, 62px)", fontWeight: 700, letterSpacing: -1,
+            margin: 0, lineHeight: 1.1,
+            background: "linear-gradient(130deg, #ffffff 0%, #00ff88 55%, #f5c842 100%)",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+          }}>
+            Distinguished<br />Achievements
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 11, letterSpacing: 3.5, marginTop: 14, textTransform: "uppercase" }}>
+            Drag · Click to Explore All Awards
           </p>
         </div>
 
+        {/* ── Canvas ── */}
         <div style={{
-          height: "clamp(400px, 54vh, 580px)",
-          borderRadius: 16,
-          border: "1px solid rgba(0,255,100,0.2)",
-          overflow: "hidden",
-          marginBottom: "2rem",
-          position: "relative",
-          opacity: visible ? 1 : 0,
-          transform: visible ? "none" : "translateY(24px) scale(0.97)",
-          transition: "all 0.9s cubic-bezier(0.16,1,0.3,1) 0.1s",
-          boxShadow: "0 0 100px rgba(0,255,100,0.1), 0 40px 80px rgba(0,0,0,0.7)",
-          userSelect: "none",
+          position: "relative", height: 490, borderRadius: 3, overflow: "hidden",
+          border: "1px solid rgba(0,255,136,0.11)",
+          background: "radial-gradient(ellipse at 50% 60%, rgba(0,70,35,0.18) 0%, transparent 70%)",
+          cursor: "grab",
         }}>
-          {visible && <AwardsCanvas3D />}
+          <canvas ref={canvasRef} style={{ width: "100%", height: "100%", display: "block" }} />
+
+          {/* HUD labels */}
+          <div style={{ position: "absolute", top: 14, left: 16, color: "rgba(0,255,136,0.45)", fontSize: 9, letterSpacing: 2.5 }}>◈ AWARDS MATRIX</div>
+          <div style={{ position: "absolute", top: 14, right: 16, color: "rgba(0,255,136,0.45)", fontSize: 9, letterSpacing: 2.5 }}>{activeIndex + 1} / {AWARDS.length}</div>
+
+          {/* Active badge */}
+          <div style={{
+            position: "absolute", bottom: 18, left: "50%", transform: "translateX(-50%)",
+            background: `linear-gradient(135deg, ${active.color}1a, transparent)`,
+            border: `1px solid ${active.color}44`,
+            padding: "6px 28px", borderRadius: 2,
+            color: active.color, fontSize: 10, letterSpacing: 3.5,
+            textTransform: "uppercase", whiteSpace: "nowrap",
+            backdropFilter: "blur(10px)",
+            boxShadow: `0 0 24px ${active.color}22`,
+          }}>
+            {active.icon} {active.tag}
+          </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.2rem", marginBottom: "1.4rem" }}>
-          {FEATURED_AWARDS.map((award, i) => (
-            <div key={award.title} className="card holo-card" style={{
-              border: `1px solid ${award.color}35`,
-              opacity: visible ? 1 : 0,
-              transform: visible ? "none" : "translateY(18px)",
-              transition: `all 0.7s ease ${0.2 + i * 0.12}s`,
-            }}>
-              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${award.color}, transparent)` }} />
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem" }}>
-                <div style={{ flex: 1 }}>
-                  <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "0.62rem", color: award.color, opacity: 0.7, letterSpacing: "0.12em", display: "block", marginBottom: 4, fontWeight: 700 }}>{award.badge}</span>
-                  <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "0.58rem", color: award.color, opacity: 0.5, letterSpacing: "0.08em", display: "block", marginBottom: 10 }}>{award.period}</span>
-                  <h3 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.95rem", fontWeight: 700, color: award.color, lineHeight: 1.35, marginBottom: "0.8rem" }}>{award.title}</h3>
-                  <p style={{ fontFamily: "'Rajdhani',sans-serif", fontSize: "0.91rem", color: "rgba(240,255,244,0.65)", lineHeight: 1.72 }}>{award.description}</p>
-                </div>
-                <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "2.2rem", color: `${award.color}18`, flexShrink: 0, animation: "pulseSlow 3s ease-in-out infinite" }}>◆</div>
-              </div>
-            </div>
+        {/* ── Dot nav ── */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 9, marginTop: 18 }}>
+          {AWARDS.map((a, i) => (
+            <button key={i} onClick={() => handleSetActive(i)} style={{
+              width: activeIndex === i ? 30 : 8, height: 8,
+              borderRadius: 4, border: "none", padding: 0, cursor: "pointer",
+              background: activeIndex === i ? a.color : "rgba(255,255,255,0.12)",
+              transition: "all 0.3s ease",
+              boxShadow: activeIndex === i ? `0 0 14px ${a.color}99` : "none",
+            }} />
           ))}
         </div>
 
-        <div style={{ background: "rgba(0,8,4,0.6)", backdropFilter: "blur(12px)", border: "1px solid rgba(0,255,100,0.1)", borderRadius: 14, padding: "1.6rem", opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(18px)", transition: "all 0.7s ease 0.35s" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1.4rem", borderBottom: "1px solid rgba(0,255,100,0.1)", paddingBottom: "0.9rem" }}>
-            <div style={{ width: 2, height: 16, background: "#38bdf8", borderRadius: 2 }} />
-            <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "0.7rem", color: "#38bdf8", letterSpacing: "0.1em", fontWeight: 700 }}>SOPHOS STAFF COMMUNITY — CY25 RECOGNITION STREAK</span>
+        {/* ── Detail Card ── */}
+        <div key={activeIndex} style={{
+          marginTop: 44, display: "grid",
+          gridTemplateColumns: "280px 1fr",
+          gap: 28, animation: "fadeSlide 0.4s ease",
+        }}>
+          {/* Left stat panel */}
+          <div style={{
+            background: `linear-gradient(145deg, ${active.color}0f 0%, rgba(0,0,0,0.55) 100%)`,
+            border: `1px solid ${active.color}2e`,
+            borderRadius: 4, padding: 28, position: "relative", overflow: "hidden",
+          }}>
+            <div style={{
+              position: "absolute", top: -50, right: -50, width: 130, height: 130,
+              borderRadius: "50%", background: active.color, filter: "blur(70px)", opacity: 0.12, pointerEvents: "none",
+            }} />
+            {/* Top accent */}
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${active.color}, transparent)`, borderRadius: "4px 4px 0 0" }} />
+
+            <div style={{ color: active.color, fontSize: 9, letterSpacing: 3, marginBottom: 6, opacity: 0.75 }}>{active.category}</div>
+            <div style={{ color: "rgba(255,255,255,0.28)", fontSize: 10, marginBottom: 24, letterSpacing: 2 }}>{active.date}</div>
+
+            <div style={{ fontSize: 52, lineHeight: 1, marginBottom: 18, color: active.color, filter: `drop-shadow(0 0 22px ${active.color})` }}>
+              {active.icon}
+            </div>
+
+            <div style={{ width: "100%", height: 1, background: `linear-gradient(90deg, ${active.color}55, transparent)`, marginBottom: 18 }} />
+
+            <div style={{ color: "rgba(255,255,255,0.18)", fontSize: 9, letterSpacing: 2.5 }}>
+              AWARD {String(activeIndex + 1).padStart(2, "0")} OF {String(AWARDS.length).padStart(2, "0")}
+            </div>
           </div>
-          <div className="awards-grid">
-            {COMMUNITY_AWARDS.map((award, i) => (
-              <div key={award.title} className="card award-card holo-card" style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? "none" : "translateY(14px)",
-                transition: `all 0.6s ease ${0.45 + i * 0.1}s`,
-                borderLeft: `2px solid ${award.color}45`,
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.7rem" }}>
-                  <span style={{ fontFamily: "'Share Tech Mono',monospace", fontSize: "0.6rem", color: award.color, opacity: 0.72, letterSpacing: "0.1em", fontWeight: 700 }}>{award.period}</span>
-                  <span style={{ color: award.color, opacity: 0.55, fontSize: "0.85rem" }}>◈</span>
-                </div>
-                <h3 style={{ color: award.color, marginBottom: "0.6rem" }}>{award.title}</h3>
-                <p>{award.description}</p>
-              </div>
-            ))}
+
+          {/* Right content panel */}
+          <div style={{
+            background: "rgba(255,255,255,0.018)",
+            border: "1px solid rgba(255,255,255,0.055)",
+            borderRadius: 4, padding: 36, position: "relative",
+          }}>
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, height: 2,
+              background: `linear-gradient(90deg, ${active.color}, transparent)`,
+              borderRadius: "4px 4px 0 0",
+            }} />
+            <h3 style={{
+              fontSize: "clamp(17px, 2.2vw, 25px)", fontWeight: 700,
+              color: "#ffffff", margin: "0 0 18px", lineHeight: 1.35,
+              fontFamily: "'Space Mono', monospace",
+            }}>
+              {active.title}
+            </h3>
+            <p style={{
+              color: "rgba(255,255,255,0.5)", lineHeight: 1.9, fontSize: 14,
+              margin: 0, fontFamily: "system-ui, -apple-system, sans-serif",
+              fontWeight: 300, letterSpacing: 0.2,
+            }}>
+              {active.description}
+            </p>
+            <div style={{
+              marginTop: 28, display: "inline-flex", alignItems: "center", gap: 8,
+              background: `${active.color}0e`, border: `1px solid ${active.color}2e`,
+              padding: "5px 16px", borderRadius: 2,
+              color: active.color, fontSize: 9, letterSpacing: 3.5,
+            }}>
+              ◈ {active.tag}
+            </div>
           </div>
         </div>
 
+        {/* ── Award grid thumbnails ── */}
+        <div style={{
+          display: "grid", gridTemplateColumns: "repeat(6, 1fr)",
+          gap: 10, marginTop: 30,
+        }}>
+          {AWARDS.map((award, i) => (
+            <button
+              key={i}
+              onClick={() => handleSetActive(i)}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered(null)}
+              style={{
+                background: activeIndex === i ? `${award.color}15` : hovered === i ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.018)",
+                border: activeIndex === i ? `1px solid ${award.color}55` : "1px solid rgba(255,255,255,0.055)",
+                borderRadius: 4, padding: "14px 8px", cursor: "pointer",
+                transition: "all 0.25s ease", textAlign: "center",
+                boxShadow: activeIndex === i ? `0 0 22px ${award.color}1a` : "none",
+              }}
+            >
+              <div style={{
+                fontSize: 22, color: award.color, marginBottom: 7,
+                filter: activeIndex === i ? `drop-shadow(0 0 10px ${award.color})` : "none",
+                transition: "filter 0.25s",
+              }}>
+                {award.icon}
+              </div>
+              <div style={{
+                color: activeIndex === i ? award.color : "rgba(255,255,255,0.22)",
+                fontSize: 7.5, letterSpacing: 1.5, textTransform: "uppercase",
+                fontFamily: "monospace", lineHeight: 1.45,
+              }}>
+                {award.tag}
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+        @keyframes fadeSlide {
+          from { opacity: 0; transform: translateY(14px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        button { font-family: inherit; }
+      `}</style>
     </section>
   );
 }
